@@ -1,0 +1,34 @@
+Information on the site:
+	static pages e.g. FAQ with opening hours, buying recommendations, payment methods, ...
+    Statistic
+    productpages with images, sizes, prices, availibility, "How does it fit?"
+
+Functions:
+    Managment Interface
+        Quickbuttons for "article sold out" with Timestamp
+	users with rights management 
+        admin: all rights
+        operator: changing FAQ and products (sold out, sizes, prices, ...)
+        user: create fashion lists for c3 Teams (after submit these orders get prepared and can get picked up after being notified)
+	DBS for articles, users, ...
+	static sites
+	    statistics, FAQ, ...
+
+Other:
+    no presale
+    secure <3  (XSS, HTTPS, ...)
+
+
+potential Structure
+
+LOGO                   ~ComicSansFashionSloganHere~
+       
+    +-------------+---------------+----------------+----------------+ 
+    |  Products   |     FAQ       |    Statistics  |    Login       |       -> Login adds "Manage" tab
+    +-------------+---------------+----------------+----------------+
+
+                                                            StatusOverview right column?
+PRODUCTS:
+
+
+IMAGE   |    PRODUCT     |    price      |       SIZES      |   SUPPLY_STATUS
