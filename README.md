@@ -2,7 +2,7 @@
 This is the repository for the C3FOC web site. Follow @c3foc on twitter for upcomming news.
 
 
-##Benötigte python packages
+##needed python packages
 
  * django
  * django-markdown-app
@@ -13,7 +13,7 @@ This is the repository for the C3FOC web site. Follow @c3foc on twitter for upco
  * admin_panel
  * article
 
-##Bibliotheken
+##libs
 
- * c3slib: Bibliotheken zum managen der Daten
+ * c3slib: lib for data management
 
