@@ -2,3 +2,4 @@
 
  * change the secret key inside every settings.py file to a randomly generated one
  * disable debug mode for every settings.py file
+ * change database engine in settings.py file

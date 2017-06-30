@@ -24,7 +24,7 @@ potential Structure
 LOGO                   ~ComicSansFashionSloganHere~
        
     +-------------+---------------+----------------+----------------+ 
-    |  Products   |     FAQ       |    Statistics  |    Login       |       -> Login adds "Manage" tab
+    |  Products   |     FAQ       |    Statistics  |    Login       |       -> Login makes "Login" -> "Manage" tab
     +-------------+---------------+----------------+----------------+
 
                                                             StatusOverview right column?
@@ -32,3 +32,10 @@ PRODUCTS:
 
 
 IMAGE   |    PRODUCT     |    price      |       SIZES      |   SUPPLY_STATUS
+
+
+
+
+->index: shop status + articles (frontpage)
+  | -> blog: static pages
+  | -> article: detailed page about article (frontpage/article)
