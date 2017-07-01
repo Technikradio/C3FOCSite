@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Media(models.Model):
-    MID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the image")
+    #MID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the image")
     category = models.CharField(max_length=25, help_text="The category of the media")
     headline = models.CharField(max_length=50, help_text="The heading of the image")
     text = models.CharField(max_length=15000, help_text="A longer text matching the image")
@@ -19,10 +19,10 @@ class Media(models.Model):
 
 
 class User(models.Model):
-    UID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the user")
-    username = models.CharField(max_length=256)
+    #UID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the user")
+    username = models.CharField(max_length=256,unique=True)
     passphrase = models.CharField(max_length=15000)
-    avatarMedia = models.ForeignKey(Media)
+    avatarMedia = models.ForeignKey(Media,null=True)
     creationTimestamp = models.DateTimeField(auto_now=True)
     notes = models.CharField(max_length=15000, help_text="some notes on the user (for example additional contact channels)")
     active = models.BooleanField()
@@ -36,7 +36,7 @@ class User(models.Model):
 
 
 class Article(models.Model):
-    AID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the article")
+    #AID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the article")
     price = models.CharField(max_length=10,help_text="The price of the article")
     largeText = models.CharField(max_length=15000, help_text="The markdown text of the article")
     type = models.SmallIntegerField(help_text="The type of article (e.g. for example a t-shirt")
@@ -52,7 +52,7 @@ class Article(models.Model):
 
 
 class Post(models.Model):
-    PID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the post")
+    #PID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the post")
     title = models.CharField(max_length=100)
     createdByUser = models.ForeignKey(User)
     cacheText = models.CharField(max_length=15000, help_text="The compiled version of the markdown >text<")
@@ -77,7 +77,7 @@ class Settings(models.Model):
 
 
 class GroupReservation(models.Model):
-    RID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the reservation")
+    #RID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the reservation")
     timestamp = models.DateTimeField(auto_now=True)
     ready = models.BooleanField()
     createdByUser = models.ForeignKey(User)
