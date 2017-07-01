@@ -17,3 +17,5 @@ This is the repository for the C3FOC web site. Follow @c3foc on twitter for upco
 
  * c3slib: lib for data management
 
+Have a look at PushToProduction file for detailed information on how to
+deploy this website
