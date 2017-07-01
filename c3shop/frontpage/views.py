@@ -15,7 +15,7 @@ def index(request):
     return HttpResponse(a)
 
 
-def detailed_article(resquest):
+def detailed_article(request):
     a = render_header(request)
     a += "<h1>article: Not yet implemented</h1>"
     a += render_footer(request)
