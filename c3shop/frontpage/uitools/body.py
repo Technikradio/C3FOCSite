@@ -5,19 +5,11 @@ NO_MEDIA_IMAGE = "/staticfiles/no-image.png"  # TODO change to static file
 
 
 def render_article_list():
-    #
-    # get the first article due to test reasons
-    #
-    # art = Article.get_next_in_order()
-    # return str(art.description)
-    a = Article()
-    a.description = "Test artikel (generiert)"
-    a.type = 0
-    a.size = "XXL"
-    a.price = "25,00€"
-    a.visible = True
-    a.quantity = 300
-    return render_article_overview(a)
+    a = ""
+    for art in Article.objects.all():
+        if art.visible == True:
+            a += render_article_overview(art)
+    return a
 
 
 def render_article_overview(target):
