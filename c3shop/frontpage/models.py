@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 
@@ -20,11 +21,12 @@ class Media(models.Model):
 
 class User(models.Model):
     # UID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the user")
-    username = models.CharField(max_length=256,unique=True)
+    username = models.CharField(max_length=256, unique=True)
     passphrase = models.CharField(max_length=15000)
-    avatarMedia = models.ForeignKey(Media,null=True)
+    avatarMedia = models.ForeignKey(Media, null=True)
     creationTimestamp = models.DateTimeField(auto_now=True)
-    notes = models.CharField(max_length=15000, help_text="some notes on the user (for example additional contact channels)")
+    notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact '\
+                                                         'channels)')
     active = models.BooleanField()
     dect = models.IntegerField()
     rights = models.SmallIntegerField()
@@ -32,12 +34,12 @@ class User(models.Model):
     displayName = models.CharField(max_length=75)
 
     def __str__(self):
-        return self.username + ": " + self.active
+        return str(self.username) + ": {active: " + str(self.active) + "}"
 
 
 class Article(models.Model):
     # AID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the article")
-    price = models.CharField(max_length=10,help_text="The price of the article")
+    price = models.CharField(max_length=10, help_text="The price of the article")
     largeText = models.CharField(max_length=15000, help_text="The markdown text of the article")
     type = models.SmallIntegerField(help_text="The type of article (e.g. for example a t-shirt")
     description = models.CharField(max_length=100, help_text="A short description of the article (e.g. heading)")

@@ -1,13 +1,13 @@
 from ..models import Article, Media
 
-DETAILED_PAGE = "/article?id="
+DETAILED_PAGE = "/article/"  # For example /article/550/
 NO_MEDIA_IMAGE = "/staticfiles/no-image.png"  # TODO change to static file
 
 
 def render_article_list():
     a = ""
     for art in Article.objects.all():
-        if art.visible == True:
+        if art.visible:
             a += render_article_overview(art)
     return a
 
@@ -44,4 +44,12 @@ def get_type_string(type_sym):
         return "Male"
     if type_sym == 3:
         return "Kids"
+
+
+def render_article_detail(article_id):
+    try:
+        art = Article.objects.get(pk=article_id)
+        return "showing article '" + art.description + ".<br/>"
+    except Exception as e:
+        return "failed to retrieve article " + str(article_id) + ":<br/>" + str(e)
 

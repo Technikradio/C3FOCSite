@@ -6,5 +6,5 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^$', views.detailed_article, name="article"),
+    url(r'^(?P<article_id>[0-9]+)$', views.detailed_article, name="article"),
 ]

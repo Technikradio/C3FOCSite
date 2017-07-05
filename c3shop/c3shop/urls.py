@@ -23,6 +23,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^$', include('frontpage.indexurls')),
-    url(r'^admin/', admin.site.urls),
+    url(r'^databaseadmin/', admin.site.urls),
     url(r'^article/', include('frontpage.articleurls'))
 ] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

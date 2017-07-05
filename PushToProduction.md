@@ -5,3 +5,7 @@
  * change database engine in settings.py file
  * have a look at the deploying how-to guide
  * have a look at the deploying static files guide
+
+#The following commands need to be executed:
+ * python3 manage.py migrate
+ * python3 manage.py createsuperuser
