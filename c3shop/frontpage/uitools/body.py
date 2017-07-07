@@ -1,4 +1,4 @@
-from ..models import Article, Media
+from ..models import Article, Media, ArticleMedia
 
 DETAILED_PAGE = "/article/"  # For example /article/550/
 NO_MEDIA_IMAGE = "/staticfiles/no-image.png"  # TODO change to static file
@@ -49,7 +49,38 @@ def get_type_string(type_sym):
 def render_article_detail(article_id):
     try:
         art = Article.objects.get(pk=article_id)
-        return "showing article '" + art.description + ".<br/>"
+        text = "<br/><h2>" + art.description + "</h2><br/>"
+        text += render_article_properties_division(art)
+        text += '<img src="' + art.flashImage.highResFile + '"/><br />'
+        text += '<div class="article_detailed_text_division">' + art.cachedText + "</div><br />"
+        text += render_article_image_list(art)
+        text += render_user_link(art.addedByUser)
+        return text
     except Exception as e:
-        return "failed to retrieve article " + str(article_id) + ":<br/>" + str(e)
+        return "<br />failed to retrieve article " + str(article_id) + ":<br/>" + str(e)
 
+
+def render_article_properties_division(art):
+    text = '<div class="article_properties_division"><br />Size: '
+    text += art.size + "<br />Type: " + get_type_string(int(art.type)) + "<br />Price: " + art.price + "<br />"
+    text += "Pieces left (app.): " + str(art.quantity) + "<br /></div><br />"
+    return text
+
+
+def render_article_image_list(art):
+    text = '<div class="article_images_division">'
+    article_media = ArticleMedia.objects.get(AID=art)
+    images = {}
+    for article_image in article_media:
+        images.add(Media.objects.get(pk=article_image.MID))
+    for image in images:
+        text += '<img src="' + image.highResFile + '"/><br/>'
+    text += "</div>"
+    return text
+
+
+def render_user_link(user):
+    text = '<div class="user_link_division">'
+    text += user.displayName
+    text += "</div><br/>"
+    return text
