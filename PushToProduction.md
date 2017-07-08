@@ -9,3 +9,4 @@
 #The following commands need to be executed:
  * python3 manage.py migrate
  * python3 manage.py createsuperuser
+ * python3 manage.py collectstatic

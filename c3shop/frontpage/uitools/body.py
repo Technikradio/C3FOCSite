@@ -1,7 +1,7 @@
 from ..models import Article, Media, ArticleMedia
 
 DETAILED_PAGE = "/article/"  # For example /article/550/
-NO_MEDIA_IMAGE = "/staticfiles/no-image.png"  # TODO change to static file
+NO_MEDIA_IMAGE = "/staticfiles/frontpage/no-image.png"  # TODO change to static file
 
 
 def render_article_list():
@@ -51,9 +51,11 @@ def render_article_detail(article_id):
         art = Article.objects.get(pk=article_id)
         text = "<br/><h2>" + art.description + "</h2><br/>"
         text += render_article_properties_division(art)
-        text += '<img src="' + art.flashImage.highResFile + '"/><br />'
+        text += render_image(art.flashImage) + "<br />"
         text += '<div class="article_detailed_text_division">' + art.cachedText + "</div><br />"
+        print("Passed introduction list")
         text += render_article_image_list(art)
+        print("Passed image list")
         text += render_user_link(art.addedByUser)
         return text
     except Exception as e:
@@ -69,18 +71,28 @@ def render_article_properties_division(art):
 
 def render_article_image_list(art):
     text = '<div class="article_images_division">'
-    article_media = ArticleMedia.objects.get(AID=art)
-    images = {}
+    article_media = ArticleMedia.objects.filter(AID=art)
+    images = []
     for article_image in article_media:
-        images.add(Media.objects.get(pk=article_image.MID))
+        images.append(article_image.MID)
     for image in images:
-        text += '<img src="' + image.highResFile + '"/><br/>'
+        text += render_image(image) + '<br/>'
     text += "</div>"
     return text
 
 
 def render_user_link(user):
     text = '<div class="user_link_division">'
+    text += render_image(user.avatarMedia)
     text += user.displayName
     text += "</div><br/>"
     return text
+
+
+def render_image(media):
+    if media is None:
+        return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was submitted"/>'
+    try:
+        return '<img src="' + media.highResFile + '" alt="This should display an image but something went wrong"/>'
+    except Exception as link_exception:
+        return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was located: ' + str(link_exception) + '"/>'

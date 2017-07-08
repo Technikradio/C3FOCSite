@@ -51,7 +51,7 @@ class Article(models.Model):
     flashImage = models.ForeignKey(Media, on_delete=None, null=True)  # The image visible in the list view
 
     def __str__(self):
-        return self.description + ": " + self.visible + "(size: " + str(self.size) + ", type: " + self.type + ")"
+        return self.description + ": " + str(self.visible) + "(size: " + str(self.size) + ", type: " + str(self.type) + ")"
 
 
 class Post(models.Model):
