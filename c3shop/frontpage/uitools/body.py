@@ -1,4 +1,4 @@
-from ..models import Article, Media, ArticleMedia
+from ..models import Article, Media, ArticleMedia, Post
 
 DETAILED_PAGE = "/article/"  # For example /article/550/
 NO_MEDIA_IMAGE = "/staticfiles/frontpage/no-image.png"  # TODO change to static file
@@ -83,16 +83,49 @@ def render_article_image_list(art):
 
 def render_user_link(user):
     text = '<div class="user_link_division">'
-    text += render_image(user.avatarMedia)
+    text += render_image(user.avatarMedia, high_res=False)
     text += user.displayName
     text += "</div><br/>"
     return text
 
 
-def render_image(media):
+def render_image(media, width=0, height=0, high_res=True):
+    width_str = ""
+    height_str = ""
+    if width != 0:
+        width_str = "width={0}".format(str(width))
+        if height != 0:
+            height_str = " height={0}".format(str(height))
+    elif height != 0:
+        height_str = "height={0}".format(str(height))
     if media is None:
         return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was submitted"/>'
     try:
-        return '<img src="' + media.highResFile + '" alt="This should display an image but something went wrong"/>'
+        if high_res:
+            return '<img src="' + media.highResFile + '" alt="This should display an HQ image but' \
+                                                      ' something went wrong" ' + width_str + height_str + '/>'
+        else:
+            return '<img src="' + media.lowResFile + '" alt="This should display an LQ image but' \
+                                                     ' something went wrong" ' + width_str + height_str + '/>'
     except Exception as link_exception:
         return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was located: ' + str(link_exception) + '"/>'
+
+
+# TODO implement visibility level
+def render_post(post_id):
+    post = Post.objects.get(pk=post_id)
+    time = "No Date available"
+    try:
+        time = str(post.timestamp)
+    except Exception as e:
+        print("While reading the timestamp for the article " + str(post_id) + " an error occurred:")
+        print(e)
+    text = "<br /><h2>" + post.title + "</h2>"
+    text += post.cacheText
+    text += "<p>This article was created on " + time + " by:</p>"
+    text += render_user_link(post.createdByUser)
+    return text
+
+
+def render_user_detail(user_id):
+    return "not jet implemented, id: " + str(user_id)

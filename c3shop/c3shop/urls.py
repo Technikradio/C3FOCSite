@@ -24,5 +24,7 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^$', include('frontpage.indexurls')),
     url(r'^databaseadmin/', admin.site.urls),
-    url(r'^article/', include('frontpage.articleurls'))
+    url(r'^article/', include('frontpage.articleurls')),
+    url(r'^post/', include('frontpage.posturls')),
+    url(r'^user/', include('frontpage.userurls')),
 ] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

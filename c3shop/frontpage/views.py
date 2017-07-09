@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_header
-from .uitools.body import render_article_list, render_article_detail
+from .uitools.body import render_article_list, render_article_detail, render_post, render_user_detail
 
 # Create your views here.
 
@@ -22,3 +22,16 @@ def detailed_article(request, article_id):
     a += render_footer(request)
     return HttpResponse(a)
 
+
+def detailed_post(request, post_id):
+    a = render_header(request)
+    a += render_post(post_id)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def display_user(request, user_id):
+    a = render_header(request)
+    a += render_user_detail(user_id)
+    a += render_footer(request)
+    return HttpResponse(a)
