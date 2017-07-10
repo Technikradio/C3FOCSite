@@ -16,8 +16,9 @@ def make_testing_db():
     u.dect = 5234
     u.displayName = "Test User 01"
     u.rights = 0
-    u.save()
     u.avatarMedia = m
+    u.notes = "<center>This is to test html insertion</center>"
+    u.save()
     print("User created")
 
     a = Article()

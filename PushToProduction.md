@@ -5,6 +5,7 @@
  * change database engine in settings.py file
  * have a look at the deploying how-to guide
  * have a look at the deploying static files guide
+ * change body.py SERVER_ROOT
 
 #The following commands need to be executed:
  * python3 manage.py migrate

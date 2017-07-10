@@ -1,7 +1,8 @@
-from ..models import Article, Media, ArticleMedia, Post
+from ..models import Article, Media, ArticleMedia, Post, User
 
-DETAILED_PAGE = "/article/"  # For example /article/550/
-NO_MEDIA_IMAGE = "/staticfiles/frontpage/no-image.png"  # TODO change to static file
+SERVER_ROOT = "localhost:8000"
+DETAILED_PAGE = SERVER_ROOT + "/article/"  # For example /article/550/
+NO_MEDIA_IMAGE = SERVER_ROOT + "/staticfiles/frontpage/no-image.png"  # TODO change to static file
 
 
 def render_article_list():
@@ -24,11 +25,11 @@ def render_article_overview(target):
     art = '<a href="' + link + '"><article><table><tr><td><img ' \
                                'class="article_list_image" alt="For some weired reason the image is missing" src="'
     art += flash_image_link + '"></td><td>'
-    art += '<h3>' + target.description + '</h3><div class="article_list_detail">' + \
+    art += '<h3>' + escape_text(target.description) + '</h3><div class="article_list_detail">' + \
            get_type_string(int(target.type)) + " "
-    art += target.size + " "
+    art += escape_text(target.size) + " "
     if target.quantity > 0:
-        art += target.price + "<br/>" + str(target.quantity) + " left"
+        art += escape_text(target.price) + "<br/>" + str(target.quantity) + " left"
     else:
         art += "<br/>sold out"
     art += "</div></td></tr></table></article></a>"
@@ -49,7 +50,7 @@ def get_type_string(type_sym):
 def render_article_detail(article_id):
     try:
         art = Article.objects.get(pk=article_id)
-        text = "<br/><h2>" + art.description + "</h2><br/>"
+        text = "<br/><h2>" + escape_text(art.description) + "</h2><br/>"
         text += render_article_properties_division(art)
         text += render_image(art.flashImage) + "<br />"
         text += '<div class="article_detailed_text_division">' + art.cachedText + "</div><br />"
@@ -64,7 +65,7 @@ def render_article_detail(article_id):
 
 def render_article_properties_division(art):
     text = '<div class="article_properties_division"><br />Size: '
-    text += art.size + "<br />Type: " + get_type_string(int(art.type)) + "<br />Price: " + art.price + "<br />"
+    text += escape_text(art.size) + "<br />Type: " + get_type_string(int(art.type)) + "<br />Price: " + escape_text(art.price) + "<br />"
     text += "Pieces left (app.): " + str(art.quantity) + "<br /></div><br />"
     return text
 
@@ -83,12 +84,14 @@ def render_article_image_list(art):
 
 def render_user_link(user):
     text = '<div class="user_link_division">'
+    text += '<a href="' + SERVER_ROOT + "/user/display/" + str(user.pk) + '">'
     text += render_image(user.avatarMedia, high_res=False)
-    text += user.displayName
-    text += "</div><br/>"
+    text += escape_text(user.displayName)
+    text += "</a></div><br/>"
     return text
 
 
+# TODO implement detailed media view
 def render_image(media, width=0, height=0, high_res=True):
     width_str = ""
     height_str = ""
@@ -120,7 +123,7 @@ def render_post(post_id):
     except Exception as e:
         print("While reading the timestamp for the article " + str(post_id) + " an error occurred:")
         print(e)
-    text = "<br /><h2>" + post.title + "</h2>"
+    text = "<br /><h2>" + escape_text(post.title) + "</h2>"
     text += post.cacheText
     text += "<p>This article was created on " + time + " by:</p>"
     text += render_user_link(post.createdByUser)
@@ -128,4 +131,14 @@ def render_post(post_id):
 
 
 def render_user_detail(user_id):
-    return "not jet implemented, id: " + str(user_id)
+    user = User.objects.get(pk=user_id)
+    text = "<h2>" + escape_text(user.displayName) + "</h2>"
+    text += render_image(user.avatarMedia)
+    text += '<p class="user_meta">Registered since: ' + str(user.creationTimestamp) + "<br />Active: " + \
+            str(user.active) + "<br />DECT number: " + str(user.dect) + "</p>"
+    text += '<p class="user_notes">' + escape_text(user.notes) + "</p>"
+    return text
+
+
+def escape_text(text):
+    return text.replace('<', '&lt;').replace('>', '&gt;')
