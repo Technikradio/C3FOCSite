@@ -1,4 +1,4 @@
-from frontpage.models import Article, User, Media, ArticleMedia, MediaUpload, Post
+from frontpage.models import Article, Profile, Media, ArticleMedia, MediaUpload, Post
 
 
 def make_testing_db():
@@ -10,16 +10,16 @@ def make_testing_db():
     m.save()
     print("media created")
 
-    u = User()
+    u = Profile()
     u.username = "testuser01"
     u.active = True
     u.dect = 5234
-    u.displayName = "Test User 01"
+    u.displayName = "Test Profile 01"
     u.rights = 0
     u.avatarMedia = m
     u.notes = "<center>This is to test html insertion</center>"
     u.save()
-    print("User created")
+    print("Profile created")
 
     a = Article()
     a.cachedText = "<h2>This is a dummy article due to testing purposes</h2>"

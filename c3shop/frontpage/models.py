@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -12,25 +12,24 @@ class Media(models.Model):
     cachedText = models.CharField(max_length=15000, help_text="The compiled version of the markdown >text<")
     lowResFile = models.CharField(max_length=15000, help_text="A link to a low resolution version of the image")
     highResFile = models.CharField(max_length=15000, help_text="A link to a high resolution version of the image")
-    # uploadedByUser = models.ForeignKey(User)
+    # uploadedByUser = models.ForeignKey(Profile)
     uploadTimestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.headline + ": " + str(self.uploadTimestamp)
 
 
-class User(models.Model):
+class Profile(models.Model):
+    # changes: username -> authuser; secretkey -> deleted; passphrase -> deleted
     # UID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the user")
-    username = models.CharField(max_length=256, unique=True)
-    passphrase = models.CharField(max_length=15000)
+    authuser = models.OneToOneField(User)
     avatarMedia = models.ForeignKey(Media, null=True)
     creationTimestamp = models.DateTimeField(auto_now=True)
     notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact '\
                                                          'channels)')
     active = models.BooleanField()
     dect = models.IntegerField()
-    rights = models.SmallIntegerField()
-    secretSeed = models.CharField(max_length=512)
+    rights = models.SmallIntegerField() # The higher the number the more rights a user will have
     displayName = models.CharField(max_length=75)
 
     def __str__(self):
@@ -47,7 +46,7 @@ class Article(models.Model):
     quantity = models.IntegerField(help_text="How many articles of this kind are left?")
     size = models.CharField(max_length=10, help_text="The size of the article")
     cachedText = models.CharField(max_length=15000, help_text="The compiled markdown long text")
-    addedByUser = models.ForeignKey(User)
+    addedByUser = models.ForeignKey(Profile)
     flashImage = models.ForeignKey(Media, on_delete=None, null=True)  # The image visible in the list view
 
     def __str__(self):
@@ -57,7 +56,7 @@ class Article(models.Model):
 class Post(models.Model):
     # PID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the post")
     title = models.CharField(max_length=100)
-    createdByUser = models.ForeignKey(User)
+    createdByUser = models.ForeignKey(Profile)
     cacheText = models.CharField(max_length=15000, help_text="The compiled version of the markdown >text<")
     visibleLevel = models.SmallIntegerField(help_text="What access level does the viewer need to have a look at this")
     timestamp = models.DateTimeField(auto_now=True)
@@ -73,7 +72,7 @@ class Settings(models.Model):
     requiredLevel = models.SmallIntegerField()
     changeTimestamp = models.DateTimeField(auto_now=True)
     changeReason = models.CharField(max_length=15000)
-    changedByUser = models.ForeignKey(User)
+    changedByUser = models.ForeignKey(Profile)
 
     def __str__(self):
         return str(self.SName) + ": " + str(self.property)
@@ -83,7 +82,7 @@ class GroupReservation(models.Model):
     # RID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the reservation")
     timestamp = models.DateTimeField(auto_now=True)
     ready = models.BooleanField()
-    createdByUser = models.ForeignKey(User)
+    createdByUser = models.ForeignKey(Profile)
     open = models.BooleanField()
     notes = models.CharField(max_length=15000)
     pickupDate = models.DateTimeField()
@@ -107,4 +106,4 @@ class ArticleMedia(models.Model):
 
 class MediaUpload(models.Model):
     MID = models.ForeignKey(Media)
-    UID = models.ForeignKey(User)
+    UID = models.ForeignKey(Profile)

@@ -97,7 +97,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='User',
+            name='Profile',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('username', models.CharField(max_length=256)),
@@ -115,22 +115,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='settings',
             name='changedByUser',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.User'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.Profile'),
         ),
         migrations.AddField(
             model_name='post',
             name='createdByUser',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.User'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.Profile'),
         ),
         migrations.AddField(
             model_name='mediaupload',
             name='UID',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.User'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.Profile'),
         ),
         migrations.AddField(
             model_name='groupreservation',
             name='createdByUser',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.User'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.Profile'),
         ),
         migrations.AddField(
             model_name='articlerequested',
@@ -145,6 +145,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='article',
             name='addedByUser',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.User'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='frontpage.Profile'),
         ),
     ]

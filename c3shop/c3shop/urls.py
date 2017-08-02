@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^article/', include('frontpage.articleurls')),
     url(r'^post/', include('frontpage.posturls')),
     url(r'^user/', include('frontpage.userurls')),
+    url(r'^admin/', include('frontpage.adminurls')),
 ] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

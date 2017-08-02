@@ -1,4 +1,5 @@
-from ..models import Article, Media, ArticleMedia, Post, User
+from ..models import Article, Media, ArticleMedia, Post, Profile
+import logging
 
 SERVER_ROOT = "localhost:8000"
 DETAILED_PAGE = SERVER_ROOT + "/article/"  # For example /article/550/
@@ -20,7 +21,7 @@ def render_article_overview(target):
     try:
         flash_image_link = str(simage.highResFile)
     except:
-        print("using default image to present article list item")
+        logging.debug("using default image to present article list item")
         pass
     art = '<a href="' + link + '"><article><table><tr><td><img ' \
                                'class="article_list_image" alt="For some weired reason the image is missing" src="'
@@ -54,9 +55,9 @@ def render_article_detail(article_id):
         text += render_article_properties_division(art)
         text += render_image(art.flashImage) + "<br />"
         text += '<div class="article_detailed_text_division">' + art.cachedText + "</div><br />"
-        print("Passed introduction list")
+        logging.debug("Passed introduction list")
         text += render_article_image_list(art)
-        print("Passed image list")
+        logging.debug("Passed image list")
         text += render_user_link(art.addedByUser)
         return text
     except Exception as e:
@@ -121,8 +122,8 @@ def render_post(post_id):
     try:
         time = str(post.timestamp)
     except Exception as e:
-        print("While reading the timestamp for the article " + str(post_id) + " an error occurred:")
-        print(e)
+        logging.debug("While reading the timestamp for the article " + str(post_id) + " an error occurred:")
+        logging.debug(str(e))
     text = "<br /><h2>" + escape_text(post.title) + "</h2>"
     text += post.cacheText
     text += "<p>This article was created on " + time + " by:</p>"
@@ -131,7 +132,7 @@ def render_post(post_id):
 
 
 def render_user_detail(user_id):
-    user = User.objects.get(pk=user_id)
+    user = Profile.objects.get(pk=user_id)
     text = "<h2>" + escape_text(user.displayName) + "</h2>"
     text += render_image(user.avatarMedia)
     text += '<p class="user_meta">Registered since: ' + str(user.creationTimestamp) + "<br />Active: " + \
@@ -141,4 +142,26 @@ def render_user_detail(user_id):
 
 
 def escape_text(text):
+    """
+    This function takes a text and makes it html proof
+    :param text: The text to escape
+    :return: The escaped text
+    """
     return text.replace('<', '&lt;').replace('>', '&gt;')
+
+
+def require_login(request, min_required_user_rights=0):
+    """
+    This function makes sure that the current browser is logged in or will otherwise return a redirect response
+    :type request: http_request
+    :type min_required_user_rights: int
+    """
+    user_id = request.session["user"]
+    if not user_id:
+        return True
+    user = Profile.objects.get(pk=int(user_id))
+    if not user:
+        return True
+    if user.rights < min_required_user_rights:
+        return True
+    return False  # makes sure that
