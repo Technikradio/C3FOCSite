@@ -1,6 +1,8 @@
 from frontpage.models import Article, Profile, Media, ArticleMedia, MediaUpload, Post
+from django.contrib.auth.models import User
 
 
+# This function assumes that the create superuser command has already been run.
 def make_testing_db():
 
     m = Media()
@@ -11,7 +13,7 @@ def make_testing_db():
     print("media created")
 
     u = Profile()
-    u.username = "testuser01"
+    u.authuser = User.objects.all()[0]
     u.active = True
     u.dect = 5234
     u.displayName = "Test Profile 01"

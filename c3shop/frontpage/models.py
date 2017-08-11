@@ -33,7 +33,7 @@ class Profile(models.Model):
     displayName = models.CharField(max_length=75)
 
     def __str__(self):
-        return str(self.username) + ": {active: " + str(self.active) + "}"
+        return str(self.authuser.username) + ": {active: " + str(self.active) + "}"
 
 
 class Article(models.Model):

@@ -1,4 +1,6 @@
 from ..models import Article, Media, ArticleMedia, Post, Profile
+from django.conf import settings
+from django.shortcuts import redirect
 import logging
 
 SERVER_ROOT = "localhost:8000"
@@ -46,6 +48,17 @@ def get_type_string(type_sym):
         return "Male"
     if type_sym == 3:
         return "Kids"
+
+
+def get_right_string(rights):
+    if rights == 0:
+        return "unprivileged"  # He isn't allowed to do anything
+    if rights == 1:
+        return "normal user"  # He is allowed to make team orders
+    if rights == 2:
+        return "shop manager"  # He is also allowed to manage the article db
+    if rights == 3:
+        return "admin"  # He is allowed to do anything
 
 
 def render_article_detail(article_id):
@@ -156,12 +169,30 @@ def require_login(request, min_required_user_rights=0):
     :type request: http_request
     :type min_required_user_rights: int
     """
-    user_id = request.session["user"]
-    if not user_id:
-        return True
-    user = Profile.objects.get(pk=int(user_id))
-    if not user:
-        return True
-    if user.rights < min_required_user_rights:
-        return True
+    if not request.user.is_authenticated:
+        return redirect('%s?next="%s"' % (settings.LOGIN_URL, request.path))
+
+    profile = Profile.objects.get(authuser=request.user)
+    if not profile:
+        return redirect('%s?next="%s"' % (settings.LOGIN_URL, request.path))
+    if profile.rights < min_required_user_rights:
+        return redirect('%s?next="%s"' % (settings.LOGIN_URL, request.path))
     return False  # makes sure that
+
+
+def render_user_list(request, objects_per_site=50):
+    page = 0
+    if request.GET.get('page'):
+        page = int(request.GET['page'])
+        logging.debug("Displaying page " + str(page))
+    start = page * objects_per_site
+    end = ((page + 1) * objects_per_site) - 1
+    a = '<div class="user_list">'
+    a += 'Displaying page ' + str(page) + ' with ' + str(objects_per_site) + \
+         ' entries per each.<br /><table><tr><th>Avatar</th><th>Username</th><th>Display name</th><th>Rights</th></tr>'
+    for p in Profile.objects.filter(pk__range=(start, end)):
+        # TODO generate link to detailed user view
+        a += '<tr><td>' + render_image(p.avatarMedia, width=32, height=32) + '</td><td>' + escape_text(p.authuser.username)\
+             + '</td><td>' + escape_text(p.displayName) + '</td><td>' + get_right_string(p.rights) + '</td></tr>'
+    a += '</table></div>'
+    return a

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_header
-from .uitools.body import render_article_list, render_article_detail, render_post, render_user_detail, require_login
+from .uitools.body import *
 
 # Create your views here.
 
@@ -37,7 +37,7 @@ def display_user(request, user_id):
     return HttpResponse(a)
 
 
-def admin_login(request, redirect):
+def admin_login(request):
     pass
 
 
@@ -45,5 +45,27 @@ def admin_edit_post(request, post_id):
     response = require_login(request, min_required_user_rights=1)
     if response:
         return response
-    pass
+    a = render_header(request, admin=True)
+    # TODO implement post editing
+    a += render_footer(request)
+    return HttpResponse(a)
 
+
+def admin_add_user(request):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return response
+    a = render_header(request, admin=True)
+    # TODO implement user adding
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def admin_list_users(request):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return response
+    a = render_header(request, admin=True)
+    a += render_user_list(request)
+    a += render_footer(request)
+    return HttpResponse(a)

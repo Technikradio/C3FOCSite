@@ -18,6 +18,7 @@ from . import settings
 from django.conf.urls.static import static
 """
 from django.conf.urls import url, include
+from django.contrib.auth import views as auth_views
 from django.contrib import admin
 
 
@@ -28,4 +29,6 @@ urlpatterns = [
     url(r'^post/', include('frontpage.posturls')),
     url(r'^user/', include('frontpage.userurls')),
     url(r'^admin/', include('frontpage.adminurls')),
-] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    url(r'^login/$', auth_views.login, {'template_name': 'frontpage/registration/login.html'},  name='login'),
+    url(r'^logout/$', auth_views.logout, name='logout'),
+]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
