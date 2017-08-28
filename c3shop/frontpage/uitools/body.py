@@ -63,7 +63,7 @@ def get_right_string(rights):
 
 def render_article_detail(article_id):
     try:
-        art = Article.objects.get(pk=article_id)
+        art = Article.objects.get(pk=int(article_id))
         text = "<br/><h2>" + escape_text(art.description) + "</h2><br/>"
         text += render_article_properties_division(art)
         text += render_image(art.flashImage) + "<br />"
@@ -130,7 +130,7 @@ def render_image(media, width=0, height=0, high_res=True):
 
 # TODO implement visibility level
 def render_post(post_id):
-    post = Post.objects.get(pk=post_id)
+    post = Post.objects.get(pk=int(post_id))
     time = "No Date available"
     try:
         time = str(post.timestamp)
@@ -145,7 +145,7 @@ def render_post(post_id):
 
 
 def render_user_detail(user_id):
-    user = Profile.objects.get(pk=user_id)
+    user = Profile.objects.get(pk=int(user_id))
     text = "<h2>" + escape_text(user.displayName) + "</h2>"
     text += render_image(user.avatarMedia)
     text += '<p class="user_meta">Registered since: ' + str(user.creationTimestamp) + "<br />Active: " + \
