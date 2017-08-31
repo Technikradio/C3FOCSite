@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^post/', include('frontpage.posturls')),
     url(r'^user/', include('frontpage.userurls')),
     url(r'^admin/', include('frontpage.adminurls')),
-    url(r'^login/$', auth_views.login, {'template_name': 'frontpage/registration/login.html'},  name='login'),
+    url(r'^login/$', auth_views.login,
+        {'template_name': 'frontpage/registration/login.html'},
+        name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

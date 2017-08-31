@@ -63,7 +63,7 @@ and apply to other apps and django's native admin panel.
 * 0 -> No special permits
 * 1 -> Use the 'N units sold button' on articles
 * 2 -> Edit other properties of articles and add new ones
-* 3 -> Write and edit Articles
+* 3 -> Write and edit posts
 * 4 -> Add users and change settings
 
 ## Deployment

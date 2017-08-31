@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_header
 from .uitools.body import *
+from .management import edit_post, edit_user
 
 # Create your views here.
 
@@ -41,22 +42,37 @@ def admin_login(request):
     pass
 
 
-def admin_edit_post(request, post_id):
-    response = require_login(request, min_required_user_rights=1)
+def admin_edit_post(request):
+
+    response = require_login(request, min_required_user_rights=3)
     if response:
         return response
     a = render_header(request, admin=True)
-    # TODO implement post editing
+    post_id_string = ""
+    if request.GET.get("post_id"):
+        post_id_string = 'post_id="' + str(request.GET["post_id"]) + '"'
+    redirect_string = ""
+    if post_id_string != "":
+        redirect_string += "+"
+    redirect_string += 'redirect="' + request.path + '"'
+    edit_post.render_edit_page(request, '/admin/actions/save-post?' + post_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
 
 
 def admin_add_user(request):
-    response = require_login(request, min_required_user_rights=1)
+    response = require_login(request, min_required_user_rights=4)
     if response:
         return response
     a = render_header(request, admin=True)
-    # TODO implement user adding
+    user_id_string = ""
+    if request.GET.get("user_id"):
+        user_id_string = 'user_id="' + str(request.GET["user_id"]) + '"'
+    redirect_string = ""
+    if user_id_string != "":
+        redirect_string += "+"
+    redirect_string += 'redirect="' + request.path + '"'
+    edit_user.render_edit_page(request, '/admin/actions/save-post?' + user_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
 
@@ -69,3 +85,11 @@ def admin_list_users(request):
     a += render_user_list(request)
     a += render_footer(request)
     return HttpResponse(a)
+
+
+def action_save_post(request):
+    return edit_post.do_edit_action(request, "../../")
+
+
+def action_save_user(request):
+    return edit_user.do_edit_action(request, "../../")

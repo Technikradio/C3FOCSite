@@ -87,4 +87,4 @@ def do_edit_action(request: HttpRequest, default_forward_url: str = ".."):
     else:
         return HttpResponseBadRequest()
     mpost.save()
-    redirect(forward_url)
+    return redirect(forward_url)
