@@ -1,3 +1,4 @@
+import math
 
 class FormObject:
     object_name = ""
@@ -70,13 +71,20 @@ class InputField(FormObject):
     button_text = ""
     input_type = ""  # The type of the text field ( later used by PasswordTextField, EmailTextField,
                      # NumberTextField, etc.)
-    do_cr_after_input = True
+    maxlenght = 0
+    minimum = math.NaN
+    maximum = math.NaN
+    regex_pattern = None
 
-    def __init__(self, button_text="", name="", field_type="text", do_cr_after_input=True):
+    do_cr_after_input = True
+    required = True
+
+    def __init__(self, button_text="", name="", field_type="text", do_cr_after_input=True, required=True):
         super.__init__(name=name)
         self.button_text = button_text
         self.input_type = field_type
         self.do_cr_after_input = do_cr_after_input
+        self.required = required
 
     def generate_html_code(self, form: Form):
         a = '<input type="' + self.input_type + '"'
@@ -84,6 +92,16 @@ class InputField(FormObject):
             a += ' name="' + self.object_name + '"'
         if not self.button_text == "":
             a += ' value="' + self.button_text + '"'
+        if self.maxlenght > 0:
+            a += ' maxlenght="' + str(self.maxlenght) + '"'
+        if self.minimum == math.NaN:
+            a += ' min="' + str(self.minimum) + '"'
+        if self.maximum == math.NaN:
+            a += ' min="' + str(self.maximum) + '"'
+        if self.regex_pattern:
+            a += ' pattern="' + self.regex_pattern + '"'
+        if self.required:
+            a += ' required="' + str(self.required).lower() + '"'
         a += "/>"
         if self.do_cr_after_input:
             a += '<br />'
@@ -94,6 +112,18 @@ class TextField(InputField):
 
     def __init__(self, button_text="", name="", do_cr_after_input=True):
         super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="text")
+
+
+class PasswordField(InputField):
+
+    def __init__(self, button_text="", name="", do_cr_after_input=True):
+        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="password")
+
+
+class EmailField(InputField):
+
+    def __init__(self, button_text="", name="", do_cr_after_input=True):
+        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="email")
 
 
 class SubmitButton(InputField):
@@ -162,3 +192,9 @@ class TextArea(FormObject):
             a += ' placeholder="' + str(self.placeholder) + '"'
         a += '>' + self.text + '</textarea>'
         return a
+
+
+class NumberField(InputField):
+
+    def __init__(self, button_text="", name="", do_cr_after_input=True):
+        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="number")

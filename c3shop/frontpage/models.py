@@ -29,7 +29,7 @@ class Profile(models.Model):
                                                          'channels)')
     active = models.BooleanField()
     dect = models.IntegerField()
-    rights = models.SmallIntegerField() # The higher the number the more rights a user will have
+    rights = models.SmallIntegerField()  # The higher the number the more rights a user will have, see README.md
     displayName = models.CharField(max_length=75)
 
     def __str__(self):
@@ -59,6 +59,7 @@ class Post(models.Model):
     createdByUser = models.ForeignKey(Profile)
     cacheText = models.CharField(max_length=15000, help_text="The compiled version of the markdown >text<")
     visibleLevel = models.SmallIntegerField(help_text="What access level does the viewer need to have a look at this")
+    # putting -1 in the above means that it will be disabled.
     timestamp = models.DateTimeField(auto_now=True)
     text = models.CharField(max_length=15000, help_text="The markdown version of the article text")
 

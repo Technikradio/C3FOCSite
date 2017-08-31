@@ -50,6 +50,22 @@ requires the usage of the sometimes buggy django-forms but doesn't give
 enough extra functionality in order to take on the hassle of maintaining
 it properly. A simple 'show preview' button should do the trick as well.
 
+#### User rights
+
+The following rights show what logged in users are allowed to do. This
+corresponds to the <code>c3shop.frontpage.models.Profile.rights</code>
+value. A user who has a higher rights value is allowed to do all the
+stuff that requires a lower rights value. The reason this isn't bound to
+django's right management is due to me not wanting to allow other apps
+to mess with these permissions. The ones from django keep in existence
+and apply to other apps and django's native admin panel.
+
+* 0 -> No special permits
+* 1 -> Use the 'N units sold button' on articles
+* 2 -> Edit other properties of articles and add new ones
+* 3 -> Write and edit Articles
+* 4 -> Add users and change settings
+
 ## Deployment
 
 Have a look at PushToProduction file for detailed information on how to

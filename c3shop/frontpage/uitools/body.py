@@ -169,7 +169,7 @@ def require_login(request, min_required_user_rights=0):
     :type request: http_request
     :type min_required_user_rights: int
     """
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         return redirect('%s?next="%s"' % (settings.LOGIN_URL, request.path))
 
     profile = Profile.objects.get(authuser=request.user)
@@ -185,6 +185,7 @@ def render_user_list(request, objects_per_site=50):
     if request.GET.get('page'):
         page = int(request.GET['page'])
         logging.debug("Displaying page " + str(page))
+    # calculating the users to display on the requested page
     start = page * objects_per_site
     end = ((page + 1) * objects_per_site) - 1
     a = '<div class="user_list">'
