@@ -4,6 +4,7 @@ from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_header
 from .uitools.body import *
 from .management import edit_post, edit_user
+from .uitools import ulog
 
 # Create your views here.
 
@@ -38,8 +39,14 @@ def display_user(request, user_id):
     return HttpResponse(a)
 
 
-def admin_login(request):
-    pass
+def login(request):
+    return ulog.login(request)
+
+
+def admin_home(request):
+    a = render_header(request)
+    a += render_footer(request)
+    return HttpResponse(a)
 
 
 def admin_edit_post(request):
@@ -93,3 +100,7 @@ def action_save_post(request):
 
 def action_save_user(request):
     return edit_user.do_edit_action(request, "../../")
+
+
+def logout(request):
+    return ulog.logout(request)
