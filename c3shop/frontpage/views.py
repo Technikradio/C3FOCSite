@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_header
 from .uitools.body import *
+from .uitools import ulog
 
 # Create your views here.
 
@@ -37,8 +38,14 @@ def display_user(request, user_id):
     return HttpResponse(a)
 
 
-def admin_login(request):
-    pass
+def login(request):
+    return ulog.login(request)
+
+
+def admin_home(request):
+    a = render_header(request)
+    a += render_footer(request)
+    return HttpResponse(a)
 
 
 def admin_edit_post(request, post_id):
@@ -69,3 +76,7 @@ def admin_list_users(request):
     a += render_user_list(request)
     a += render_footer(request)
     return HttpResponse(a)
+
+
+def logout(request):
+    return ulog.logout(request)
