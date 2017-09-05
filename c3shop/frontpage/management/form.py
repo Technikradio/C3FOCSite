@@ -1,9 +1,10 @@
-import math
+import sys
+
 
 class FormObject:
     object_name = ""
 
-    def generate_html_code(self, form: Form):
+    def generate_html_code(self, form):
         return self.object_name
 
     def __init__(self, name: str = ""):
@@ -72,8 +73,8 @@ class InputField(FormObject):
     input_type = ""  # The type of the text field ( later used by PasswordTextField, EmailTextField,
                      # NumberTextField, etc.)
     maxlenght = 0
-    minimum = math.NaN
-    maximum = math.NaN
+    minimum = sys.maxsize
+    maximum = sys.maxsize
     regex_pattern = None
 
     do_cr_after_input = True
@@ -94,9 +95,9 @@ class InputField(FormObject):
             a += ' value="' + self.button_text + '"'
         if self.maxlenght > 0:
             a += ' maxlenght="' + str(self.maxlenght) + '"'
-        if self.minimum == math.NaN:
+        if self.minimum == sys.maxsize:
             a += ' min="' + str(self.minimum) + '"'
-        if self.maximum == math.NaN:
+        if self.maximum == sys.maxsize:
             a += ' min="' + str(self.maximum) + '"'
         if self.regex_pattern:
             a += ' pattern="' + self.regex_pattern + '"'
