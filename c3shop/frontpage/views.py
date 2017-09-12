@@ -67,7 +67,7 @@ def admin_edit_post(request):
     return HttpResponse(a)
 
 
-def admin_add_user(request):
+def admin_edit_user(request):
     response = require_login(request, min_required_user_rights=4)
     if response:
         return response

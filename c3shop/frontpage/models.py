@@ -25,7 +25,7 @@ class Profile(models.Model):
     authuser = models.OneToOneField(User)
     avatarMedia = models.ForeignKey(Media, null=True)
     creationTimestamp = models.DateTimeField(auto_now=True)
-    notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact '\
+    notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact ' +
                                                          'channels)')
     active = models.BooleanField()
     dect = models.IntegerField()
@@ -50,7 +50,8 @@ class Article(models.Model):
     flashImage = models.ForeignKey(Media, on_delete=None, null=True)  # The image visible in the list view
 
     def __str__(self):
-        return self.description + ": " + str(self.visible) + "(size: " + str(self.size) + ", type: " + str(self.type) + ")"
+        return self.description + ": " + str(self.visible) + "(size: " + str(self.size) + ", type: " + str(self.type)\
+               + ")"
 
 
 class Post(models.Model):

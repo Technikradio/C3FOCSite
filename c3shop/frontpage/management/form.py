@@ -1,5 +1,5 @@
 import sys
-
+from enum import Enum
 
 class FormObject:
     object_name = ""
@@ -36,6 +36,12 @@ class Form:
         return a
 
 
+class CheckEnum(Enum):
+    DISABLED = -1
+    NOT_CHECKED = 0
+    CHECKED = 1
+
+
 class PlainText(FormObject):
     text = ""
 
@@ -70,22 +76,25 @@ class FieldGroup(FormObject):
 
 class InputField(FormObject):
     button_text = ""
-    input_type = ""  # The type of the text field ( later used by PasswordTextField, EmailTextField,
-                     # NumberTextField, etc.)
-    maxlenght = 0
+    input_type = ""  # The type of the text field ( later used by PasswordTextField,
+    # EmailTextField, NumberTextField, etc.)
+    max_length = 0
     minimum = sys.maxsize
     maximum = sys.maxsize
     regex_pattern = None
 
     do_cr_after_input = True
     required = True
+    checked: CheckEnum = CheckEnum.DISABLED
 
-    def __init__(self, button_text="", name="", field_type="text", do_cr_after_input=True, required=True):
+    def __init__(self, button_text="", name="", field_type="text", do_cr_after_input=True, required=True,
+                 component_checked: CheckEnum = CheckEnum.DISABLED):
         super.__init__(name=name)
         self.button_text = button_text
         self.input_type = field_type
         self.do_cr_after_input = do_cr_after_input
         self.required = required
+        self.checked = component_checked
 
     def generate_html_code(self, form: Form):
         a = '<input type="' + self.input_type + '"'
@@ -93,8 +102,8 @@ class InputField(FormObject):
             a += ' name="' + self.object_name + '"'
         if not self.button_text == "":
             a += ' value="' + self.button_text + '"'
-        if self.maxlenght > 0:
-            a += ' maxlenght="' + str(self.maxlenght) + '"'
+        if self.max_length > 0:
+            a += ' maxlenght="' + str(self.max_length) + '"'
         if self.minimum == sys.maxsize:
             a += ' min="' + str(self.minimum) + '"'
         if self.maximum == sys.maxsize:
@@ -103,6 +112,8 @@ class InputField(FormObject):
             a += ' pattern="' + self.regex_pattern + '"'
         if self.required:
             a += ' required="' + str(self.required).lower() + '"'
+        if self.checked == CheckEnum.CHECKED:
+            a += " checked"
         a += "/>"
         if self.do_cr_after_input:
             a += '<br />'
@@ -138,7 +149,7 @@ class RadioList(FormObject):
     group = None
     do_cr_at_end = None
 
-    def __init__(self, name="", elements=[], text="", do_cr_at_end=True):
+    def __init__(self, name="", elements=[], text="", do_cr_at_end=True, checked_position=0):
         super.__init__(name=name)
         self.group = FieldGroup(name=name, text=text)
         item = 0
@@ -148,8 +159,11 @@ class RadioList(FormObject):
             is_last = False
             if total - item == 0:
                 is_last = True
+            checked = CheckEnum.NOT_CHECKED
+            if checked_position == item:
+                checked = CheckEnum.CHECKED
             self.group.add_content(InputField(button_text=rb, name=name, field_type="radio",
-                                              do_cr_after_input=False))
+                                              do_cr_after_input=False, component_checked=checked))
             self.group.add_content(PlainText(' ' + rb))
             if not is_last:
                 self.group.add_content(PlainText('<br />'))
@@ -199,3 +213,24 @@ class NumberField(InputField):
 
     def __init__(self, button_text="", name="", do_cr_after_input=True):
         super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="number")
+
+
+class CheckBox(InputField):
+    """
+    This class represents a checkbox. Please note that it will ignore the CR Flag and places a break anyway.
+    """
+
+    text = ""
+
+    def __init__(self, text="", name="", identifier="", checked: CheckEnum = CheckEnum.NOT_CHECKED):
+        if identifier is not "":
+            super.__init__(button_text=identifier, name=name, do_cr_after_input=False, checked=checked)
+        else:
+            super.__init__(button_text=name, name=name, do_cr_after_input=False, checked=checked)
+        self.input_type = "checkbox"
+        self.text = text
+
+    def generate_html_code(self, form: Form):
+        a = super.generate_html_code(form)
+        a += " " + self.text + "<br/>"
+        return a
