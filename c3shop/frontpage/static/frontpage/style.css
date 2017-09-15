@@ -7,6 +7,10 @@ image {
     border: 10px inset;
 }
 
- div.article_list_detail {
+div.article_list_detail {
 
- }
+}
+
+code {
+    font-family: monospace;
+}
