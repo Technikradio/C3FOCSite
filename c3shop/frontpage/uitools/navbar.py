@@ -6,7 +6,7 @@ NAV_BAR_SETTINGS_KEY: str = "frontpage.ui.navbar.content"
 
 
 def process_link(position: int, item):
-    return '<a href="' + item.href + '">' + item.text + '</a>'
+    return '<a href="' + item.get('href') + '">' + item.get('text') + '</a>'
 
 
 def render_nav_bar(request: HttpRequest):
@@ -17,7 +17,7 @@ def render_nav_bar(request: HttpRequest):
         pos = -1
         for item in parts:
             pos += 1
-            if str(item.type) == "link":
+            if str(item.get('type')) == "link":
                 a += process_link(pos, item)
         a += '</div>'
         return a
