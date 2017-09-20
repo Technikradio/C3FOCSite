@@ -11,7 +11,7 @@ def process_link(position: int, item):
 
 def render_nav_bar(request: HttpRequest):
     try:
-        feature_line: str = Settings.objects.find(SName=NAV_BAR_SETTINGS_KEY).property
+        feature_line: str = Settings.objects.get(SName=NAV_BAR_SETTINGS_KEY).property
         parts = json.loads(feature_line)
         a = '<div class="nav">'
         pos = -1
@@ -21,5 +21,5 @@ def render_nav_bar(request: HttpRequest):
                 a += process_link(pos, item)
         a += '</div>'
         return a
-    except:
-        return "<h3>An error was thrown resulting in the incapability to display the nav bar</h3>"
+    except Exception as e:
+        return "<h3>An error was thrown resulting in the incapability to display the nav bar:</h3>" + str(e)
