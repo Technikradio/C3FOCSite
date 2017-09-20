@@ -73,7 +73,7 @@ class Settings(models.Model):
     property = models.CharField(max_length=15000)
     requiredLevel = models.SmallIntegerField()
     changeTimestamp = models.DateTimeField(auto_now=True)
-    changeReason = models.CharField(max_length=15000)
+    changeReason = models.CharField(max_length=15000, null=True)
     changedByUser = models.ForeignKey(Profile)
 
     def __str__(self):

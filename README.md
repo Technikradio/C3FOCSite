@@ -70,3 +70,26 @@ and apply to other apps and django's native admin panel.
 
 Have a look at PushToProduction file for detailed information on how to
 deploy this website.
+
+## Settings
+#### Nav Bar
+The settings for the navigation bar located in the header contains the
+following setting keys:
+* <code>frontpage.ui.navbar.content</code>
+    - The content of this variable is used to determine which items the
+      nav bar should contain.
+    - The setting contains multiple items notated in JSON format.
+    - Each item must contain a <code>type</code> object
+    - Only the <code>link</code> type is supported yet but others may
+      come
+    - A valid example may look like the following:
+        <code>
+        [{
+            "type":"link",
+            "href":"example.com","text":"Visit example.com"
+        },{"type":"link","text":"Visit the top level website",
+        "href":".."}]
+        </code>
+    - The example above would display two links displaying "Visit
+    example.com" and "Visit the top level website" and would redirect to
+    example.com and ..
