@@ -1,7 +1,11 @@
 from django.http import HttpRequest
 
+"""
+The difference between this skeleton and the uitools.* header and footer is that this is used to display a minimalistic
+menu like page.
+"""
 
-def render_headbar(httprequest, title="c3foc - admin"):
+def render_headbar(httprequest: HttpRequest, title="c3foc - admin"):
     a = """
     <!DOCTYPE html>
     <html lang="en">
@@ -15,5 +19,5 @@ def render_headbar(httprequest, title="c3foc - admin"):
     return a
 
 
-def render_footer(httprequest):
+def render_footer(httprequest: HttpRequest):
     return "</body></html>"

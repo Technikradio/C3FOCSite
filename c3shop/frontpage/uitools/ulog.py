@@ -1,6 +1,7 @@
 from django.contrib import auth
 from . import headerfunctions, footerfunctions
 from django.http import HttpResponse, HttpResponseRedirect
+import logging
 
 
 def redirect(url):
@@ -13,7 +14,11 @@ def redirect(url):
 
 
 def render_login_form(request, was_password_wrong):
-    a = '<div class="login-form"><h2>Login</h2><form method="post" action="' + request.path + '" name="login-form">'
+    forward = ""
+    if request.GET.get("next"):
+        forward = '?next=' + request.GET["next"]
+    a = "<div class='login-form'><h2>Login</h2><form method='post' action='" + request.path + forward + \
+        "' name='login-form'>"
     if was_password_wrong:
         a += 'Your login credentials were incorrect.<br />'
     a += 'Username: <input type="text" name="username" /><br />'
@@ -23,6 +28,7 @@ def render_login_form(request, was_password_wrong):
 
 
 def login(request, default_redirect="/"):
+    # TODO change all print statements to log lines
     """
     This method shows a login form if no POST credentials are given or will redirect the
     user after a success full login.
@@ -34,17 +40,25 @@ def login(request, default_redirect="/"):
     if request.GET.get("next"):
         forward = request.GET["next"]
     wrong = False
+    print("Starting authentication (forward: " + forward)
     if request.POST.get("username") and request.POST.get("password"):
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = auth.authenticate(request, username=username, password=password)
-        if user is not None:
-            # User successfully authenticated himself. Log him in
-            auth.login(request, user)
-            return redirect(forward)
-        else:
+        try:
+            username = request.POST["username"]
+            password = request.POST["password"]
+            print("retrieved credentials trying to login. Please wait...")
+            user = auth.authenticate(request, username=username, password=password)
+            if user is not None:
+                # User successfully authenticated himself. Log him in
+                auth.login(request, user)
+                print("Successfully logged in...")
+                return redirect(forward)
+            else:
+                wrong = True
+                print("wrong credentials, displaying again")
+        except Exception as e:
+            print(str(e))
             wrong = True
-            # Wrong credentials. Show login message again and an error message.
+    print("There was no correct credential transmit yet")
     a = headerfunctions.render_header(request, admin=True, title="C3FOC - Login")
     a += render_login_form(request, wrong)
     a += footerfunctions.render_footer(request)

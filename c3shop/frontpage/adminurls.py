@@ -2,6 +2,8 @@ from django.conf.urls import url, include
 from . import views
 
 urlpatterns = [
+    url(r'^posts', views.admin_list_posts, name='list_posts'),
+    url(r'^posts/', views.admin_list_posts, name='list_posts'),
     url(r'^posts/edit', views.admin_edit_post, name="post_edit"),
     url(r'^users', views.admin_list_users, name="list_users"),
     url(r'^users/', views.admin_list_users, name="list_users"),

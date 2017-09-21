@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_header
 from .uitools.body import *
-from .management import edit_post, edit_user
+from .management import edit_post, edit_user, post_page
 from .uitools import ulog
 
 # Create your views here.
@@ -63,6 +63,16 @@ def admin_edit_post(request):
         redirect_string += "+"
     redirect_string += 'redirect="' + request.path + '"'
     edit_post.render_edit_page(request, '/admin/actions/save-post?' + post_id_string + redirect_string)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def admin_list_posts(request):
+    response = require_login(request)
+    if response:
+        return response
+    a = render_header(request, admin=True)
+    a += post_page.render_post_list(request)
     a += render_footer(request)
     return HttpResponse(a)
 
