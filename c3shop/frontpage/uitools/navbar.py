@@ -19,6 +19,8 @@ def render_nav_bar(request: HttpRequest):
             pos += 1
             if str(item.get('type')) == "link":
                 a += process_link(pos, item)
+        if request.user.is_authenticated():
+            a += '<a href="/admin/">Admin area</a>'
         a += '</div>'
         return a
     except Exception as e:
