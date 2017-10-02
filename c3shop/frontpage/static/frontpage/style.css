@@ -15,6 +15,11 @@ code {
     font-family: monospace;
 }
 
+.featurebar {
+    width: 100px;
+    /*use darker background color from template*/
+}
+
 .button {
     display: block;
     /*width: 115px;*/
