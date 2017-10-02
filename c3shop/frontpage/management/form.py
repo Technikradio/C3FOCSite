@@ -1,6 +1,7 @@
 import sys
 from enum import Enum
 
+
 class FormObject:
     object_name = ""
 

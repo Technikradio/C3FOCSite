@@ -1,6 +1,7 @@
 from django.contrib import auth
 from . import headerfunctions, footerfunctions
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
+from . import dataforge
 import logging
 
 
@@ -13,12 +14,13 @@ def redirect(url):
     return HttpResponseRedirect(url)
 
 
-def render_login_form(request, was_password_wrong):
+def render_login_form(request: HttpRequest, was_password_wrong):
     forward = ""
     if request.GET.get("next"):
         forward = '?next=' + request.GET["next"]
     a = "<div class='login-form'><h2>Login</h2><form method='post' action='" + request.path + forward + \
         "' name='login-form'>"
+    a += dataforge.get_csrf_form_element(request)
     if was_password_wrong:
         a += 'Your login credentials were incorrect.<br />'
     a += 'Username: <input type="text" name="username" /><br />'
@@ -27,7 +29,7 @@ def render_login_form(request, was_password_wrong):
     return a
 
 
-def login(request, default_redirect="/"):
+def login(request: HttpRequest, default_redirect="/"):
     # TODO change all print statements to log lines
     """
     This method shows a login form if no POST credentials are given or will redirect the
@@ -65,7 +67,7 @@ def login(request, default_redirect="/"):
     return HttpResponse(a)
 
 
-def logout(request, default_redirect="/"):
+def logout(request: HttpRequest, default_redirect="/"):
     """
     This function logs a user out and redirect him to a certain location
     :param request: the current HTTP request
