@@ -72,7 +72,7 @@ Have a look at PushToProduction file for detailed information on how to
 deploy this website.
 
 ## Settings
-#### Nav Bar
+#### Nav Bar and Footer
 The settings for the navigation bar located in the header contains the
 following setting keys:
 * <code>frontpage.ui.navbar.content</code>
@@ -93,3 +93,7 @@ following setting keys:
     - The example above would display two links displaying "Visit
     example.com" and "Visit the top level website" and would redirect to
     example.com and ..
+* <code>frontpage.ui.footer.content</code>
+    - This setting entry is basically the same as the one above but
+      handles the footer of the content parts.
+    - It uses the same JSON syntax

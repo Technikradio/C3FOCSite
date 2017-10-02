@@ -59,7 +59,7 @@ def login(request, default_redirect="/"):
             print(str(e))
             wrong = True
     print("There was no correct credential transmit yet")
-    a = headerfunctions.render_header(request, admin=True, title="C3FOC - Login")
+    a = headerfunctions.render_content_header(request, admin_popup=True, title="C3FOC - Login")
     a += render_login_form(request, wrong)
     a += footerfunctions.render_footer(request)
     return HttpResponse(a)

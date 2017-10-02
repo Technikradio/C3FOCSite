@@ -10,6 +10,7 @@ def render_features_bar():
     a += 'Media<br />'
     a += 'reservations<br />'
     a += 'Global settings<br />'
+    a += '<br/><a href="/logout/"> Logout </a><br/>'
     a += '</div>'
     return a
 
