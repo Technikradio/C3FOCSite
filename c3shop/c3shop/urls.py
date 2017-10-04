@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^post/', include('frontpage.posturls')),
     url(r'^user/', include('frontpage.userurls')),
     url(r'^admin/', include('frontpage.adminurls')),
+    url(r'^medium/', include('frontpage.mediaurls')),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
+    url(r'^search', views.search, name='search'),
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

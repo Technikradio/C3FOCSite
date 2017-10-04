@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page
-from .uitools import ulog
+from .uitools import ulog, searching
 
 # Create your views here.
 
@@ -115,3 +115,26 @@ def action_save_user(request):
 
 def logout(request):
     return ulog.logout(request)
+
+
+def search(request: HttpRequest):
+    a = render_content_header(request)
+    a += searching.render_result_page(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def detailed_media(request: HttpRequest, medium_id):
+    a = render_content_header(request)
+    a += render_image_detail(request, medium_id)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def handler404(request: HttpRequest):
+    a = render_content_header(request)
+    a += render_404_page(request)
+    a += render_footer()
+    response: HttpResponse = HttpResponse(a)
+    response.status_code = 404
+    return response

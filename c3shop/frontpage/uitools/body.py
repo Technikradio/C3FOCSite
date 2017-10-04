@@ -1,6 +1,7 @@
 from ..models import Article, Media, ArticleMedia, Post, Profile
 from django.conf import settings
 from django.shortcuts import redirect
+from django.http.response import Http404
 import logging
 
 SERVER_ROOT = "localhost:8000"
@@ -105,8 +106,7 @@ def render_user_link(user):
     return text
 
 
-# TODO implement detailed media view
-def render_image(media, width=0, height=0, high_res=True):
+def render_image(media, width=0, height=0, high_res=True, include_link=True):
     width_str = ""
     height_str = ""
     if width != 0:
@@ -117,13 +117,18 @@ def render_image(media, width=0, height=0, high_res=True):
         height_str = "height={0}".format(str(height))
     if media is None:
         return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was submitted"/>'
+    lb = ""
+    a = ""
+    if include_link:
+        lb = '<a href="/media/' + str(media.pk) + '">'
+        a = "</a>"
     try:
         if high_res:
-            return '<img src="' + media.highResFile + '" alt="This should display an HQ image but' \
-                                                      ' something went wrong" ' + width_str + height_str + '/>'
+            return lb + '<img src="' + media.highResFile + '" alt="This should display an HQ image but' \
+                                                      ' something went wrong" ' + width_str + height_str + '/>' + a
         else:
-            return '<img src="' + media.lowResFile + '" alt="This should display an LQ image but' \
-                                                     ' something went wrong" ' + width_str + height_str + '/>'
+            return lb + '<img src="' + media.lowResFile + '" alt="This should display an LQ image but' \
+                                                     ' something went wrong" ' + width_str + height_str + '/>' + a
     except Exception as link_exception:
         return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was located: ' + str(link_exception) + '"/>'
 
@@ -197,3 +202,18 @@ def render_user_list(request, objects_per_site=50):
              + '</td><td>' + escape_text(p.displayName) + '</td><td>' + get_right_string(p.rights) + '</td></tr>'
     a += '</table></div>'
     return a
+
+
+def render_image_detail(request, medium_id):
+    image = Media.objects.get(pk=int(medium_id))
+    if image is None:
+        raise Http404("No media found")
+    a = "<h2>" + image.headline + "</h2><center>"
+    a += render_image(image)
+    a += "</center><article>" + image.cachedText + "</article>"
+    return a
+
+
+def render_404_page(request):
+    return '<h2>This is not the site you\'re looking for</h2><br>You tried to open the following path:<br/><br/>"' + \
+           request.path + '"<br/><br />...but it doesn\'t seam to exist.'

@@ -20,6 +20,18 @@ code {
     /*use darker background color from template*/
 }
 
+.small_search_bar {
+    width: 150px;
+}
+
+.large_search_bar {
+    width: 80%;
+}
+
+.search_preview {
+    margin: 25px;
+}
+
 .button {
     display: block;
     /*width: 115px;*/

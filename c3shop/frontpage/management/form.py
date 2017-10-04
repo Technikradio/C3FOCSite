@@ -234,3 +234,9 @@ class CheckBox(InputField):
         a = super.generate_html_code(form)
         a += " " + self.text + "<br/>"
         return a
+
+
+class SearchBar(InputField):
+
+    def __init__(self, button_text="", name="", do_cr_after_input=True):
+        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="search")
