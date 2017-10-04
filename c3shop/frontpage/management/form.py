@@ -13,7 +13,7 @@ class FormObject:
         This constructor initializes a new FormObject. It takes the name of the object as its only parameter
         :type name: str
         """
-        super.__init__()
+        super(FormObject, self).__init__()
         self.object_name = name
 
 
@@ -47,7 +47,7 @@ class PlainText(FormObject):
     text = ""
 
     def __init__(self, document_text: str = "", name: str = ""):
-        super.__init__(name=name)
+        super(PlainText, self).__init__(name=name)
         self.text = document_text
 
     def generate_html_code(self, form: Form):
@@ -59,7 +59,7 @@ class FieldGroup(FormObject):
     content = []
 
     def __init__(self, name="", text=""):
-        super.__init__(name=name)
+        super(FieldGroup, self).__init__(name=name)
         self.text = text
 
     def add_content(self, f_object: FormObject):
@@ -90,7 +90,7 @@ class InputField(FormObject):
 
     def __init__(self, button_text="", name="", field_type="text", do_cr_after_input=True, required=True,
                  component_checked: CheckEnum = CheckEnum.DISABLED):
-        super.__init__(name=name)
+        super(InputField, self).__init__(name=name)
         self.button_text = button_text
         self.input_type = field_type
         self.do_cr_after_input = do_cr_after_input
@@ -105,10 +105,10 @@ class InputField(FormObject):
             a += ' value="' + self.button_text + '"'
         if self.max_length > 0:
             a += ' maxlenght="' + str(self.max_length) + '"'
-        if self.minimum == sys.maxsize:
+        if not self.minimum == sys.maxsize:
             a += ' min="' + str(self.minimum) + '"'
-        if self.maximum == sys.maxsize:
-            a += ' min="' + str(self.maximum) + '"'
+        if not self.maximum == sys.maxsize:
+            a += ' max="' + str(self.maximum) + '"'
         if self.regex_pattern:
             a += ' pattern="' + self.regex_pattern + '"'
         if self.required:
@@ -124,25 +124,29 @@ class InputField(FormObject):
 class TextField(InputField):
 
     def __init__(self, button_text="", name="", do_cr_after_input=True):
-        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="text")
+        super(TextField, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
+                                        field_type="text")
 
 
 class PasswordField(InputField):
 
     def __init__(self, button_text="", name="", do_cr_after_input=True):
-        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="password")
+        super(PasswordField, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
+                                            field_type="password")
 
 
 class EmailField(InputField):
 
     def __init__(self, button_text="", name="", do_cr_after_input=True):
-        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="email")
+        super(EmailField, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
+                                         field_type="email")
 
 
 class SubmitButton(InputField):
 
     def __init__(self, button_text="OK", name="", do_cr_after_input=True):
-        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="submit")
+        super(SubmitButton, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
+                                           field_type="submit")
 
 
 class RadioList(FormObject):
@@ -151,7 +155,7 @@ class RadioList(FormObject):
     do_cr_at_end = None
 
     def __init__(self, name="", elements=[], text="", do_cr_at_end=True, checked_position=0):
-        super.__init__(name=name)
+        super(RadioList, self).__init__(name=name)
         self.group = FieldGroup(name=name, text=text)
         item = 0
         total = len(elements)
@@ -185,7 +189,7 @@ class TextArea(FormObject):
     placeholder = ""
 
     def __init__(self, name="", max_colums=0, max_rows=0, label_text=None, text="", placeholder: str = ""):
-        super.__init__(name=name)
+        super(TextArea, self).__init__(name=name)
         self.colums = max_colums
         self.rows = max_rows
         self.label_content = label_text
@@ -213,7 +217,8 @@ class TextArea(FormObject):
 class NumberField(InputField):
 
     def __init__(self, button_text="", name="", do_cr_after_input=True):
-        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="number")
+        super(NumberField, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
+                                          field_type="number")
 
 
 class CheckBox(InputField):
@@ -225,9 +230,9 @@ class CheckBox(InputField):
 
     def __init__(self, text="", name="", identifier="", checked: CheckEnum = CheckEnum.NOT_CHECKED):
         if identifier is not "":
-            super.__init__(button_text=identifier, name=name, do_cr_after_input=False, checked=checked)
+            super(CheckBox, self).__init__(button_text=identifier, name=name, do_cr_after_input=False, checked=checked)
         else:
-            super.__init__(button_text=name, name=name, do_cr_after_input=False, checked=checked)
+            super(CheckBox, self).__init__(button_text=name, name=name, do_cr_after_input=False, checked=checked)
         self.input_type = "checkbox"
         self.text = text
 
@@ -240,4 +245,5 @@ class CheckBox(InputField):
 class SearchBar(InputField):
 
     def __init__(self, button_text="", name="", do_cr_after_input=True):
-        super.__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input, field_type="search")
+        super(SearchBar, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
+                                        field_type="search")

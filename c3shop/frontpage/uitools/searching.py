@@ -12,7 +12,7 @@ def render_search_bar(small: bool = True):
     a = "small_search_bar"
     if not small:
         a = "large_search_bar"
-    return '<div class="' + a + '">' + f.render_html() + "</div>"
+    return '<span class="' + a + '">' + f.render_html() + "</span>"
 
 
 """
