@@ -4,3 +4,8 @@
 import logging
 
 logging.debug("performing basic init checks")
+"""
+if Profile.objects.all().count() < 1:
+    from .magic import init_db
+    logging.warning("(RE-)Initialized the database")
+"""

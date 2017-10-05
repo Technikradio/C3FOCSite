@@ -1,5 +1,5 @@
 # C3FOCSite
-This is the repository for the C3FOC web site. Follow @c3foc on twitter for upcomming news.
+This is the repository for the C3FOC web site. Follow @c3foc on twitter for upcoming news.
 The website is written for and using python3. Using python2.x may work but is untested and unintended.
 
 ## required python packages
@@ -9,6 +9,7 @@ The website is written for and using python3. Using python2.x may work but is un
  * MarkdownSuperscript
  * MarkdownSubscript
  * pyembed-markdown
+ * django_extensions
 
 ## Structure
 
@@ -97,3 +98,13 @@ following setting keys:
     - This setting entry is basically the same as the one above but
       handles the footer of the content parts.
     - It uses the same JSON syntax
+
+## Setup
+First install all dependencies using pip3. Then run the following commands:
+<code>
+python3 manage.py migrate
+python3 manage.py collectsatics
+PYCAM="from test.init_database import *\ninit_db()"
+python3 manage.py shell_plus < echo $PYCAM
+</code>
+At last configure your web server to serve the static files.

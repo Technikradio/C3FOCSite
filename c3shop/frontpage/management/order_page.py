@@ -5,13 +5,19 @@ from ..uitools.body import escape_text
 
 # TODO replace bool str with icon
 def render_open_order_table():
-    a = '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th></tr>'
-    m = GroupReservation.objects.get(open=True).filter(ready=False)
-    for o in m:
-        a += '<tr><td>' + str(o.ready) + '</td><td>' + str(o.pickupDate) + '</td><td>' + \
-             escape_text(o.createdByUser.displayName) + '</td></tr>'
-    a += '</table>'
-    return a
+    try:
+        a = '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th></tr>'
+        if GroupReservation.objects.all().filter(open=True).count() > 0:
+            m = GroupReservation.objects.get(open=True).filter(ready=False)
+            for o in m:
+                a += '<tr><td>' + str(o.ready) + '</td><td>' + str(o.pickupDate) + '</td><td>' + \
+                    escape_text(o.createdByUser.displayName) + '</td></tr>'
+            a += '</table>'
+        else:
+            a += "</table><h5>You don't have any open reservations at the moment :-)</h5>"
+        return a
+    except Exception as e:
+        return "Unable to retrieve order data: " + str(e)
 
 
 def generate_edit_link(o: GroupReservation):

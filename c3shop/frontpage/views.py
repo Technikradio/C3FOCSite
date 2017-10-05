@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpRequest
+from django.views.decorators.csrf import csrf_exempt
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
@@ -39,6 +40,7 @@ def display_user(request, user_id):
     return HttpResponse(a)
 
 
+@csrf_exempt
 def login(request):
     return ulog.login(request)
 

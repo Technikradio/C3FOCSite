@@ -59,6 +59,8 @@ def get_right_string(rights):
     if rights == 2:
         return "shop manager"  # He is also allowed to manage the article db
     if rights == 3:
+        return "author"  # He is allowed to manage articles
+    if rights == 4:
         return "admin"  # He is allowed to do anything
 
 
@@ -165,7 +167,7 @@ def escape_text(text):
     :param text: The text to escape
     :return: The escaped text
     """
-    return text.replace('<', '&lt;').replace('>', '&gt;')
+    return str(text.replace('<', '&lt;').replace('>', '&gt;'))
 
 
 def require_login(request, min_required_user_rights=0):
@@ -199,7 +201,7 @@ def render_user_list(request, objects_per_site=50):
     for p in Profile.objects.filter(pk__range=(start, end)):
         # TODO generate link to detailed user view
         a += '<tr><td>' + render_image(p.avatarMedia, width=32, height=32) + '</td><td>' + escape_text(p.authuser.username)\
-             + '</td><td>' + escape_text(p.displayName) + '</td><td>' + get_right_string(p.rights) + '</td></tr>'
+             + '</td><td>' + escape_text(p.displayName) + '</td><td>' + str(get_right_string(p.rights)) + '</td></tr>'
     a += '</table></div>'
     return a
 

@@ -35,7 +35,9 @@ def render_order_panel():
 def render_dashboard(request: HttpRequest):
     a = render_headbar(request)
     a += render_features_bar()
+    a += '<div class="panel_board">'
     a += render_statistics_panel(request)
     a += render_order_panel()
+    a += '</div>'
     a += render_footer(request)
     return a

@@ -1,5 +1,9 @@
 /*
  * style sheet for the frontpage app
+ * Headline color: #fd9b26
+ * dark background: #282626
+ * Less dark background: #393737
+ * Font color: #fefefe
  */
 
 
@@ -13,11 +17,39 @@ div.article_list_detail {
 
 code {
     font-family: monospace;
+    background: #eeeeee;
+    color: #0e0e0e;
+}
+
+a:visited {
+    color: #0fefefe;
+}
+
+a:hover {
+    color: #0fefefe;
+}
+
+a:active {
+    color: #fd9b26;
+}
+
+a:link {
+    color: #0fefefe;
+}
+
+body {
+    background: #393737;
+    color: #fefefe;
 }
 
 .featurebar {
-    width: 100px;
+    position: fixed;
+    padding: 15px;
+    width: 9%;
+    top: 50px;
     /*use darker background color from template*/
+    background: #282626;
+    line-height: 25px;
 }
 
 .small_search_bar {
@@ -34,6 +66,15 @@ code {
 
 .order_table {
 
+}
+
+.panel_board {
+    position: fixed;
+    right: -35px;
+    height: 95%;
+    width: 89%;
+    top: 50px;
+    /*background: #696767;*/
 }
 
 .button {

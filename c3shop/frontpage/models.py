@@ -27,7 +27,7 @@ class Profile(models.Model):
     creationTimestamp = models.DateTimeField(auto_now=True)
     notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact ' +
                                                          'channels)')
-    active = models.BooleanField()
+    active = models.BooleanField(default=True)
     dect = models.IntegerField()
     rights = models.SmallIntegerField()  # The higher the number the more rights a user will have, see README.md
     displayName = models.CharField(max_length=75)
