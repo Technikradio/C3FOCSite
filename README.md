@@ -108,3 +108,7 @@ PYCAM="from test.init_database import *\ninit_db()"
 python3 manage.py shell_plus < echo $PYCAM
 </code>
 At last configure your web server to serve the static files.
+
+## Password rules
+ * At least 6 characters long
+ * must contain upper and lower case letters
