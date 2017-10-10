@@ -29,17 +29,23 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
     if profile:
         f.add_content(PlainText("Email address: "))
         f.add_content(TextField(name='email', text=str(profile.authuser.email)))
+        f.add_content(PlainText("Display name: "))
         f.add_content(TextField(name='display_name', button_text=profile.displayName))
         f.add_content(PlainText('DECT: '))
-        f.add_content(NumberField(name='dect', button_text=str(profile.dect)))
+        f.add_content(NumberField(name='dect', button_text=str(profile.dect), minimum=0))
+        f.add_content(PlainText("Rights: "))
+        f.add_content(NumberField(name="rights", button_text=str(profile.rights), minimum=0, maximum=4))
         f.add_content(PlainText('Notes:<br/>'))
         f.add_content(TextArea(name='notes', text=str(profile.notes)))
     else:
         f.add_content(PlainText("Email address: "))
         f.add_content(TextField(name='email'))
+        f.add_content(PlainText("Display name: "))
         f.add_content(TextField(name='display_name'))
         f.add_content(PlainText('DECT: '))
-        f.add_content(NumberField(name='dect'))
+        f.add_content(NumberField(name='dect', minimum=0))
+        f.add_content(PlainText("Rights: "))
+        f.add_content(NumberField(name="rights", button_text=str(0), minimum=0, maximum=4))
         f.add_content(PlainText('Notes:<br/>'))
         f.add_content(TextArea(name='notes', placeholder="Hier könnte ihre Werbung stehen"))
     if profile:
@@ -51,9 +57,11 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
     f.add_content(PasswordField(name='confirm_password'))
     f.add_content(PlainText(get_csrf_form_element(http_request)))
     f.add_content(SubmitButton())
-    a = page_skeleton.render_headbar(http_request, "Edit User")
+    # a = page_skeleton.render_headbar(http_request, "Edit User")
+    a = '<div class="admin-popup">'
     a += f.render_html()
-    a += page_skeleton.render_footer(http_request)
+    # a += page_skeleton.render_footer(http_request)
+    a += "</div>"
     return a
 
 

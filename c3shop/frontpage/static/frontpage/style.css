@@ -41,6 +41,15 @@ a:active {
 body {
     background: #393737;
     color: #fefefe;
+    height: 100%;
+    min-height: 100%;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 15px;
 }
 
 table, th, td {
@@ -117,7 +126,7 @@ form {
     padding: 15px;
 }
 
-admin-popup {
+.admin-popup {
     padding: 15px;
     width: 80%;
     position: fixed;

@@ -221,9 +221,13 @@ class TextArea(FormObject):
 
 class NumberField(InputField):
 
-    def __init__(self, button_text="", name="", do_cr_after_input=True):
+    def __init__(self, button_text="", name="", do_cr_after_input=True, maximum=None, minimum=None):
         super(NumberField, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
                                           field_type="number")
+        if max:
+            self.maximum = str(maximum)
+        if min:
+            self.minimum = str(minimum)
 
 
 class CheckBox(InputField):

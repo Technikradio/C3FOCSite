@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^users/edit', views.admin_edit_user, name="user_edit"),
     url(r'^actions/save-post', views.action_save_post, name="action_save_post"),
     url(r'^actions/save-user', views.action_save_user, name="action_save_post"),
+    url(r'âctions/add-article-to-reservation', views),
     url(r'^orders$', views.admin_display_orders, name="list_orders"),
     url(r'^orders/$', views.admin_display_orders, name="list_orders"),
 ]

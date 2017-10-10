@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
-from .management import edit_post, edit_user, post_page, dashboard_page, order_page
+from .management import edit_post, edit_user, post_page, dashboard_page, order_page, edit_reservation
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -92,7 +92,7 @@ def admin_edit_user(request):
     if user_id_string != "":
         redirect_string += "+"
     redirect_string += 'redirect="' + request.path + '"'
-    edit_user.render_edit_page(request, '/admin/actions/save-post?' + user_id_string + redirect_string)
+    a += edit_user.render_edit_page(request, '/admin/actions/save-post?' + user_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
 
@@ -113,6 +113,10 @@ def action_save_post(request):
 
 def action_save_user(request):
     return edit_user.do_edit_action(request, "../../")
+
+
+def action_add_article_to_reservation(request: HttpRequest):
+    return edit_reservation.add_article_action(request, "../..")
 
 
 def logout(request):
