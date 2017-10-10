@@ -24,14 +24,19 @@ def generate_edit_link(o: GroupReservation):
     return "/admin/orders/edit?order_id=" + str(o.pk)
 
 
+def generate_app_status_image(state: bool):
+
+    # TODO replace bool str with icon
+    return str(state)
+
+
 def render_order_list(request: HttpRequest):
     # TODO add method to select how many orders to display
     # TODO create icon for adding an order
     # TODO make layout more fancy
-    # TODO replace bool str with icon
     page = 1
     items_per_page = 50
-    total_items = GroupReservation.objects.all().size()
+    total_items = GroupReservation.objects.all().count()
     max_page = total_items / items_per_page
     if request.GET.get('page'):
         page = int(request.GET["page"])
@@ -46,8 +51,8 @@ def render_order_list(request: HttpRequest):
     objects = GroupReservation.objects.filter(pk__rage=(start_range, end_range))
     for order in objects:
         a += '<a href="' + generate_edit_link(order) + '"><tr><td>' + str(order.pk) + "</td><td> " \
-             + str(order.ready) + " </td><td>" + order.pickupDate + "</td><td>" + str(order.createdByUser.displayName) \
-             + "</td></tr></a>"
+             + generate_app_status_image(order.ready) + " </td><td>" + order.pickupDate + "</td><td>" + \
+             str(order.createdByUser.displayName) + "</td></tr></a>"
     a += '</table>'
     if page > 1:
         a += '<a href="' + request.path + '?page=' + str(page - 1) + '&objects=' + str(objects) + '" class="button">' \

@@ -22,24 +22,35 @@ code {
 }
 
 a:visited {
-    color: #0fefefe;
+    color: #fefefe;
+}
+
+a:link {
+    color: #fefefe;
 }
 
 a:hover {
-    color: #0fefefe;
+    color: #fefefe;
 }
+
 
 a:active {
     color: #fd9b26;
 }
 
-a:link {
-    color: #0fefefe;
-}
-
 body {
     background: #393737;
     color: #fefefe;
+}
+
+table, th, td {
+    border: 2px solid #fefefe;
+    border-collapse: collapse;
+    padding: 15px;
+}
+
+tr:hover {
+    background-color: #eeeeee
 }
 
 .featurebar {
@@ -53,7 +64,9 @@ body {
 }
 
 .small_search_bar {
-    width: 150px;
+    position: fixed;
+    width: 200px;
+    right: 15px;
 }
 
 .large_search_bar {
@@ -64,8 +77,9 @@ body {
     margin: 25px;
 }
 
-.order_table {
-
+form {
+    display: inline;
+    padding: 15px;
 }
 
 .panel_board {
@@ -80,11 +94,32 @@ body {
 .button {
     display: block;
     /*width: 115px;*/
-    height: 25px;
-    background: #4E9CAF;
+    height: 20px;
+    background: #fd9b26;
     padding: 10px;
     text-align: center;
     border-radius: 5px;
     color: white;
     font-weight: bold;
+    display: inline;
+}
+
+.button:img {
+    width: 20px;
+    height: 20px;
+    background: #fefefe;
+}
+
+.user-menu {
+    position: fixed;
+    right: 15px;
+    text-align: right;
+    padding: 15px;
+}
+
+admin-popup {
+    padding: 15px;
+    width: 80%;
+    position: fixed;
+    left: 10%;
 }

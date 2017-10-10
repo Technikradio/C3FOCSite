@@ -65,7 +65,7 @@ def admin_edit_post(request):
     if post_id_string != "":
         redirect_string += "+"
     redirect_string += 'redirect="' + request.path + '"'
-    edit_post.render_edit_page(request, '/admin/actions/save-post?' + post_id_string + redirect_string)
+    a += edit_post.render_edit_page(request, '/admin/actions/save-post?' + post_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
 

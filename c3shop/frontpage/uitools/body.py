@@ -196,12 +196,17 @@ def render_user_list(request, objects_per_site=50):
     start = page * objects_per_site
     end = ((page + 1) * objects_per_site) - 1
     a = '<div class="user_list">'
-    a += 'Displaying page ' + str(page) + ' with ' + str(objects_per_site) + \
-         ' entries per each.<br /><table><tr><th>Avatar</th><th>Username</th><th>Display name</th><th>Rights</th></tr>'
+    a += '<a href="/admin/users/edit"><img class="button" src= "/staticfiles/frontpage/add-user.png" alt="Add user" />'\
+         '</a><br />Displaying page ' + str(page) + ' with ' + str(objects_per_site) + ' entries per each.' \
+         '<br /><table><tr><th>Edit</th><th>Avatar</th><th>Username</th><th>Display name</th>' \
+         '<th>Rights</th></tr>'
     for p in Profile.objects.filter(pk__range=(start, end)):
         # TODO generate link to detailed user view
-        a += '<tr><td>' + render_image(p.avatarMedia, width=32, height=32) + '</td><td>' + escape_text(p.authuser.username)\
-             + '</td><td>' + escape_text(p.displayName) + '</td><td>' + str(get_right_string(p.rights)) + '</td></tr>'
+        a += '<tr><td><a href="/admin/users/edit?user_id=' + str(p.pk) + \
+             '"><img class="button" src="/staticfiles/frontpage/edit.png" />' \
+            '</a></td><td>' + render_image(p.avatarMedia, width=32, height=32) + '</td><td>' + \
+             escape_text(p.authuser.username) + '</td><td>' + escape_text(p.displayName) + '</td><td>' + \
+             str(get_right_string(p.rights)) + '</td></tr>'
     a += '</table></div>'
     return a
 

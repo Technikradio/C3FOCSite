@@ -18,8 +18,8 @@ def render_login_form(request: HttpRequest, was_password_wrong):
     forward = ""
     if request.GET.get("next"):
         forward = '?next=' + request.GET["next"]
-    a = "<div class='login-form'><h2>Login</h2><form method='post' action='" + request.path + forward + \
-        "' name='login-form'>"
+    a = '<div class="login-form"><h2>Login</h2><form method="post" action="' + request.path + forward + \
+        '" name="login-form">'
     a += dataforge.get_csrf_form_element(request)
     if was_password_wrong:
         a += 'Your login credentials were incorrect.<br />'
@@ -30,7 +30,6 @@ def render_login_form(request: HttpRequest, was_password_wrong):
 
 
 def login(request: HttpRequest, default_redirect="/"):
-    # TODO change all print statements to log lines
     """
     This method shows a login form if no POST credentials are given or will redirect the
     user after a success full login.
@@ -42,25 +41,25 @@ def login(request: HttpRequest, default_redirect="/"):
     if request.GET.get("next"):
         forward = request.GET["next"]
     wrong = False
-    print("Starting authentication (forward: " + forward)
+    logging.debug("Starting authentication (forward: " + forward)
     if request.POST.get("username") and request.POST.get("password"):
         try:
             username = request.POST["username"]
             password = request.POST["password"]
-            print("retrieved credentials trying to login. Please wait...")
+            logging.debug("retrieved credentials trying to login. Please wait...")
             user = auth.authenticate(request, username=username, password=password)
             if user is not None:
                 # User successfully authenticated himself. Log him in
                 auth.login(request, user)
-                print("Successfully logged in...")
+                logging.info("Successfully logged user '" + user.username + "' in...")
                 return redirect(forward)
             else:
                 wrong = True
-                print("wrong credentials, displaying again")
+                logging.debug("wrong credentials, displaying again")
         except Exception as e:
-            print(str(e))
+            logging.warning(str(e))
             wrong = True
-    print("There was no correct credential transmit yet")
+    logging.debug("There was no correct credential transmit yet")
     a = headerfunctions.render_content_header(request, admin_popup=True, title="C3FOC - Login")
     a += render_login_form(request, wrong)
     a += footerfunctions.render_footer(request)

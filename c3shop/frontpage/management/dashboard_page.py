@@ -5,6 +5,7 @@ from django.http import HttpRequest
 
 def render_features_bar():
     a = '<div class="featurebar">'
+    a += '<a href="/admin">Dashboard</a><br />'
     a += '<a href="/admin/posts">Posts</a><br />'
     a += '<a href="/admin/users">Users</a><br />'
     a += 'Articles<br />'

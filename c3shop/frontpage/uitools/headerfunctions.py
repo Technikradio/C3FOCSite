@@ -14,5 +14,8 @@ def render_content_header(http_request, title="C3FOC", admin_popup=False):
         a += render_search_bar()
     else:
         a += title
+        a += ' | <a href="/admin">Back to dashboard</a><span class="user-menu">'
+        a += '<a href="/logout"> logout </a>'
+        a += '</span>'
     a += '</header>'
     return a

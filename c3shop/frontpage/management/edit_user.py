@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from . import page_skeleton, magic
 from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, PasswordField
 from ..models import Profile
+from ..uitools.dataforge import get_csrf_form_element
 
 
 def render_edit_page(http_request: HttpRequest, action_url: str):
@@ -48,6 +49,7 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
     f.add_content(PasswordField(name='password'))
     f.add_content(PlainText('Confirm your password: '))
     f.add_content(PasswordField(name='confirm_password'))
+    f.add_content(PlainText(get_csrf_form_element(http_request)))
     f.add_content(SubmitButton())
     a = page_skeleton.render_headbar(http_request, "Edit User")
     a += f.render_html()

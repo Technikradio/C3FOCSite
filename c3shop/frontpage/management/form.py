@@ -22,6 +22,11 @@ class Form:
     method = "post"
     content = []
 
+    def __init__(self):
+        self.content = []
+        self.action_url = ""
+        self.method = "post"
+
     def add_content(self, f_object: FormObject):
         self.content.append(f_object)
 
@@ -102,7 +107,7 @@ class InputField(FormObject):
         if not self.object_name == "":
             a += ' name="' + self.object_name + '"'
         if not self.button_text == "":
-            a += ' value="' + self.button_text + '"'
+            a += ' value="' + str(self.button_text) + '"'
         if self.max_length > 0:
             a += ' maxlenght="' + str(self.max_length) + '"'
         if not self.minimum == sys.maxsize:
@@ -198,10 +203,10 @@ class TextArea(FormObject):
 
     def generate_html_code(self, form: Form):
         a = None
-        if not self.label_content is None:
-            a = '<label for="' + self.object_name + '">' + self.label_content + '</label><textarea id="' + \
+        if self.label_content is not None:
+            a = '<label for="' + self.object_name + '">' + self.label_content + '</label><br /><textarea id="' + \
                 self.object_name + '" '
-        else :
+        else:
             a = '<textarea '
         a += 'name="' + self.object_name + '"'
         if self.colums > 0:

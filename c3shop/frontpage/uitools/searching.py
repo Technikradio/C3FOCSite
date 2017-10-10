@@ -1,5 +1,5 @@
 from django.http import HttpRequest
-from ..management.form import Form, SearchBar
+from ..management.form import Form, SearchBar, SubmitButton
 from ..models import *
 
 
@@ -7,7 +7,8 @@ def render_search_bar(small: bool = True):
     f = Form()
     f.method = "get"
     f.action_url = "/search"
-    f.add_content(SearchBar(name="search"))
+    f.add_content(SearchBar(name="search", do_cr_after_input=False))
+    f.add_content(SubmitButton(do_cr_after_input=False))
     # TODO implement placeholder
     a = "small_search_bar"
     if not small:

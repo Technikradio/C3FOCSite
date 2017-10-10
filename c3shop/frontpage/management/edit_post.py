@@ -1,8 +1,9 @@
 from django.http import HttpRequest, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect
-from . import page_skeleton, magic
+from . import magic
 from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField
 from ..models import Post, Profile
+from ..uitools.dataforge import get_csrf_form_element
 
 
 def render_edit_page(http_request: HttpRequest, action_url: str):
@@ -20,11 +21,14 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
         post = Post.objects.get(pk=post_id)
     f = Form()
     f.action_url = action_url
+    if not post:
+        f.add_content(PlainText('Add new Post: <br />'))
     f.add_content(PlainText("Post title:"))
     if post is None:
         f.add_content(TextField(name="title"))
-        f.add_content(TextArea(name="post_text", label_text="Post content (as MarkDown)",
+        f.add_content(TextArea(name="post_text", label_text="<br/>Post content (as MarkDown):",
                                placeholder="Write the post as markdown here"))
+        f.add_content(PlainText('<br />'))
         f.add_content(PlainText("Required user permission: "))
         number_field = NumberField(name="required_permission")
         number_field.minimum = -1
@@ -35,16 +39,19 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
         f.add_content(TextField(button_text=post.title, name="title"))
         f.add_content(TextArea(name="post_text", label_text="Post content (as MarkDown)", text=post.text,
                                placeholder="Write the post as markdown here"))
+        f.add_content(PlainText('<br />'))
         f.add_content(PlainText("Required user permission: "))
         number_field = NumberField(name="required_permission")
         number_field.minimum = -1
         number_field.maximum = 4
         number_field.button_text = post.visibleLevel
         f.add_content(number_field)
+    f.add_content(PlainText(get_csrf_form_element(http_request)))
     f.add_content(SubmitButton())
-    a = page_skeleton.render_headbar(http_request, "Edit Post")
-    a += f.render_html()
-    a += page_skeleton.render_footer(http_request)
+    # a = page_skeleton.render_headbar(http_request, "Edit Post")
+    a = f.render_html()
+    # print(f.render_html())
+    # a += page_skeleton.render_footer(http_request)
     return a
 
 
