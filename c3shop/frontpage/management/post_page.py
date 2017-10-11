@@ -11,12 +11,12 @@ def render_post_list(request: HttpRequest):
     # TODO make layout more fancy
     page = 1
     items_per_page = 50
+    if request.GET.get('objects'):
+        items_per_page = int(request.GET["objects"])
     total_items = Post.objects.all().count()  # This method isn't totally super dumb since django query sets are lazy.
     max_page = total_items / items_per_page
     if request.GET.get('page'):
         page = int(request.GET["page"])
-    if request.GET.get('objects'):
-        items_per_page = int(request.GET["objects"])
     if page > max_page:
         page = max_page
     start_range = 1 + page * items_per_page

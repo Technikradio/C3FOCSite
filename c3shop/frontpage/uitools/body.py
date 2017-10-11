@@ -108,7 +108,7 @@ def render_user_link(user):
     return text
 
 
-def render_image(media, width=0, height=0, high_res=True, include_link=True):
+def render_image(media, width=0, height=0, high_res=True, include_link=True, replace: str = ""):
     width_str = ""
     height_str = ""
     if width != 0:
@@ -117,8 +117,11 @@ def render_image(media, width=0, height=0, high_res=True, include_link=True):
             height_str = " height={0}".format(str(height))
     elif height != 0:
         height_str = "height={0}".format(str(height))
+    alt_img = NO_MEDIA_IMAGE
+    if not replace == "":
+        alt_img = replace
     if media is None:
-        return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was submitted"/>'
+        return '<img src="' + alt_img + '" alt="No suitable image was submitted"/>'
     lb = ""
     a = ""
     if include_link:
@@ -204,7 +207,8 @@ def render_user_list(request, objects_per_site=50):
         # TODO generate link to detailed user view
         a += '<tr><td><a href="/admin/users/edit?user_id=' + str(p.pk) + \
              '"><img class="button" src="/staticfiles/frontpage/edit.png" />' \
-            '</a></td><td>' + render_image(p.avatarMedia, width=32, height=32) + '</td><td>' + \
+            '</a></td><td>' + render_image(p.avatarMedia, width=24, height=24,
+                                           replace="/staticfiles/frontpage/no-avatar.png") + '</td><td>' + \
              escape_text(p.authuser.username) + '</td><td>' + escape_text(p.displayName) + '</td><td>' + \
              str(get_right_string(p.rights)) + '</td></tr>'
     a += '</table></div>'

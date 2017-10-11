@@ -18,17 +18,24 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
     f = Form()
     f.action_url = action_url
     if profile:
-        f.add_content(PlainText('Edit user "' + profile.authuser.username + '"'))
+        f.add_content(PlainText('<h3>Edit user "' + profile.authuser.username + '"</h3>'))
+        f.add_content(PlainText('<a href="/admin/media/select?action_url=/admin/actions/add-article-to-reservation'
+                                '&payload=' + str(user_id) + '"><img class="button" alt="Change avatar" '
+                                'src="/staticfiles/frontpage/change-avatar.png"/></a><br />'))
     else:
-        f.add_content(PlainText('Add new user'))
+        f.add_content(PlainText('<h3>Add new user</h3>'))
     if not profile:
         f.add_content(PlainText("username (can't be edited later on): "))
         f.add_content(TextField(name='username'))
+    if http_request.GET.get('fault') and profile:
+        f.add_content(PlainText("Unable to edit user due to: " + str(http_request.GET['fault'])))
+    elif http_request.GET.get('fault'):
+        f.add_content(PlainText("Unable to add user due to: " + str(http_request.GET['fault'])))
     # TODO implement to display active field only when current user is admin
     f.add_content(PlainText('Display name: '))
     if profile:
         f.add_content(PlainText("Email address: "))
-        f.add_content(TextField(name='email', text=str(profile.authuser.email)))
+        f.add_content(TextField(name='email', button_text=str(profile.authuser.email)))
         f.add_content(PlainText("Display name: "))
         f.add_content(TextField(name='display_name', button_text=profile.displayName))
         f.add_content(PlainText('DECT: '))
@@ -49,9 +56,9 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
         f.add_content(PlainText('Notes:<br/>'))
         f.add_content(TextArea(name='notes', placeholder="Hier könnte ihre Werbung stehen"))
     if profile:
-        f.add_content(PlainText('<br/>Change password (leave blank in order to not change it):'))
+        f.add_content(PlainText('<br /><br />Change password (leave blank in order to not change it):'))
     else:
-        f.add_content(PlainText('<br/>Choose a password: '))
+        f.add_content(PlainText('<br />Choose a password: '))
     f.add_content(PasswordField(name='password'))
     f.add_content(PlainText('Confirm your password: '))
     f.add_content(PasswordField(name='confirm_password'))
@@ -77,6 +84,10 @@ def check_password_conformity(pw1: str, pw2: str):
     return True
 
 
+def recreate_form(reason: str):
+    return redirect('/admin/users/edit?fault=' + str(reason))
+
+
 def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/users"):
     """
     This functions saves the changes to the user or adds a new one. It completely creates the HttpResponse
@@ -87,39 +98,54 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
     forward_url = default_forward_url
     if request.GET.get("redirect"):
         forward_url = request.GET["redirect"]
-    if not request.user.is_authentificated():
+    if not request.user.is_authenticated():
         return HttpResponseForbidden()
     profile = Profile.objects.get(authuser=request.user)
     if profile.rights < 2:
         return HttpResponseForbidden()
     try:
-        if request.GET.get("user_id"):
-            pid = int(request.GET["user_id"])
-            displayname = str(request.GET["display_name"])
-            dect = int(request.GET["dect"])
-            notes = str(request.GET["notes"])
-            pw1 = str(request.GET["password"])
-            pw2 = str(request.GET["confirm_password"])
-            mail = str(request.GET["email"])
+        if request.POST.get("user_id"):
+            pid = int(request.POST["user_id"])
+            displayname = str(request.POST["display_name"])
+            dect = int(request.POST["dect"])
+            notes = str(request.POST["notes"])
+            pw1 = str(request.POST["password"])
+            pw2 = str(request.POST["confirm_password"])
+            mail = str(request.POST["email"])
+            rights = int(request.POST["rights"])
             user: Profile = Profile.objects.get(pk=pid)
             user.displayName = displayname
             user.dect = dect
             user.notes = notes
+            user.rights = rights
+            au: User = user.authuser
             if check_password_conformity(pw1, pw2):
-                au: User = user.authuser
-                # TODO change password
-                au.save()
+                au.set_password(pw1)
+            au.email = mail
+            au.save()
             user.save()
         else:
             # assume new user
-            username = str(request.GET["username"])
-            displayname = str(request.GET["display_name"])
-            dect = int(request.GET["dect"])
-            notes = str(request.GET["notes"])
-            pw1 = str(request.GET["password"])
-            pw2 = str(request.GET["confirm_password"])
-            mail = str(request.GET["email"])
-            # TODO create auth_user
+            username = str(request.POST["username"])
+            displayname = str(request.POST["display_name"])
+            dect = int(request.POST["dect"])
+            notes = str(request.POST["notes"])
+            pw1 = str(request.POST["password"])
+            pw2 = str(request.POST["confirm_password"])
+            mail = str(request.POST["email"])
+            rights = int(request.POST["rights"])
+            if not check_password_conformity(pw1, pw2):
+                recreate_form('password mismatch')
+            auth_user: User = User.objects.create_user(username=username, email=mail, password=pw1)
+            auth_user.save()
+            user: Profile = Profile()
+            user.rights = rights
+            user.displayName = displayname
+            user.authuser = auth_user
+            user.dect = dect
+            user.notes = notes
+            user.active = True
+            user.save()
             pass
         pass
     except Exception as e:

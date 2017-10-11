@@ -104,8 +104,7 @@ class ArticleMedia(models.Model):
 
 
 # The reason why we split this from the media table is due to tree conflicts while creating the database
-
-
+# This table is to identify which user uploaded which image
 class MediaUpload(models.Model):
     MID = models.ForeignKey(Media)
     UID = models.ForeignKey(Profile)

@@ -4,7 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
-from .management import edit_post, edit_user, post_page, dashboard_page, order_page, edit_reservation
+from .management import edit_post, edit_user, post_page, dashboard_page, order_page, edit_reservation, media_select
+from .management import media_actions
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -64,7 +65,7 @@ def admin_edit_post(request):
     redirect_string = ""
     if post_id_string != "":
         redirect_string += "+"
-    redirect_string += 'redirect="' + request.path + '"'
+    redirect_string += 'redirect="' + str(request.path) + '"'
     a += edit_post.render_edit_page(request, '/admin/actions/save-post?' + post_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
@@ -92,7 +93,7 @@ def admin_edit_user(request):
     if user_id_string != "":
         redirect_string += "+"
     redirect_string += 'redirect="' + request.path + '"'
-    a += edit_user.render_edit_page(request, '/admin/actions/save-post?' + user_id_string + redirect_string)
+    a += edit_user.render_edit_page(request, '/admin/actions/save-user?' + user_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
 
@@ -107,16 +108,19 @@ def admin_list_users(request):
     return HttpResponse(a)
 
 
+@csrf_exempt
 def action_save_post(request):
-    return edit_post.do_edit_action(request, "../../")
+    return edit_post.do_edit_action(request, "/admin/posts")
 
 
+@csrf_exempt
 def action_save_user(request):
-    return edit_user.do_edit_action(request, "../../")
+    return edit_user.action_save_user(request, "/admin/users")
 
 
+@csrf_exempt
 def action_add_article_to_reservation(request: HttpRequest):
-    return edit_reservation.add_article_action(request, "../..")
+    return edit_reservation.add_article_action(request, "/admin/orders")
 
 
 def logout(request):
@@ -147,11 +151,25 @@ def admin_display_orders(request: HttpRequest):
     return HttpResponse(a)
 
 
+def action_change_avatar(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return response
+    return media_actions.action_change_user_avatar(request)
+
+
 def admin_dashboard(request: HttpRequest):
     response = require_login(request)
     if response:
         return response
     return HttpResponse(dashboard_page.render_dashboard(request))
+
+
+def admin_select_media(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    return media_select.render_media_selection_page(request)
 
 
 def handler404(request: HttpRequest):

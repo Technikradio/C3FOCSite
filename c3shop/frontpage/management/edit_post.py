@@ -66,7 +66,7 @@ def do_edit_action(request: HttpRequest, default_forward_url: str = ".."):
     forward_url = default_forward_url
     if request.GET.get("redirect"):
         forward_url = request.GET["redirect"]
-    if not request.user.is_authentificated():
+    if not request.user.is_authenticated():
         return HttpResponseForbidden()
     profile = Profile.objects.get(authuser=request.user)
     if profile.rights < 2:
@@ -90,7 +90,7 @@ def do_edit_action(request: HttpRequest, default_forward_url: str = ".."):
     else:
         return HttpResponseBadRequest()
     if request.POST.get('required_permission'):
-        mpost.visibleLevel = int(request.POST["visibleLevel"])
+        mpost.visibleLevel = int(request.POST["required_permission"])
     else:
         return HttpResponseBadRequest()
     mpost.save()
