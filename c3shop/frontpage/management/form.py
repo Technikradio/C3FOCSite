@@ -102,7 +102,7 @@ class InputField(FormObject):
         self.required = required
         self.checked = component_checked
 
-    def generate_html_code(self, form: Form):
+    def generate_html_code(self, form: Form, end: bool = True):
         a = '<input type="' + self.input_type + '"'
         if not self.object_name == "":
             a += ' name="' + self.object_name + '"'
@@ -120,9 +120,10 @@ class InputField(FormObject):
             a += ' required="' + str(self.required).lower() + '"'
         if self.checked == CheckEnum.CHECKED:
             a += " checked"
-        a += "/>"
-        if self.do_cr_after_input:
-            a += '<br />'
+        if end:
+            a += "/>"
+            if self.do_cr_after_input:
+                a += '<br />'
         return a
 
 
@@ -246,7 +247,7 @@ class CheckBox(InputField):
         self.text = text
 
     def generate_html_code(self, form: Form):
-        a = super.generate_html_code(form)
+        a = super(CheckBox, self).generate_html_code(form)
         a += " " + self.text + "<br/>"
         return a
 
@@ -256,3 +257,22 @@ class SearchBar(InputField):
     def __init__(self, button_text="", name="", do_cr_after_input=True):
         super(SearchBar, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
                                         field_type="search")
+
+
+class FileUpload(InputField):
+
+    multiple: bool = False
+
+    def __init__(self, button_text="", name="", do_cr_after_input=True, multiple: bool = False):
+        super(FileUpload, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
+                                         field_type="file")
+        self.multiple = multiple
+
+    def generate_html_code(self, form: Form):
+        a = super(FileUpload, self).generate_html_code(form)
+        if self.multiple:
+            a += ' multiple="true"'
+        a += '/>'
+        if self.do_cr_after_input:
+            a += '<br />'
+        return a

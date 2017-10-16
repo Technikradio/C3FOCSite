@@ -119,6 +119,12 @@ form {
     background: #fefefe;
 }
 
+.icon {
+    width: 24px;
+    height: 24px;
+    background: #fefefe;
+}
+
 .user-menu {
     position: fixed;
     right: 15px;

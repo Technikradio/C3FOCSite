@@ -24,10 +24,19 @@ def generate_edit_link(o: GroupReservation):
     return "/admin/orders/edit?order_id=" + str(o.pk)
 
 
-def generate_app_status_image(state: bool):
+def generate_order_ready_status_image(state: bool):
+    if state:
+        return '<img src="/staticfiles/frontpage/done.png" alt="Ready" class="icon" />'
+    else:
+        return '<img src="/staticfiles/frontpage/not-done.png" alt="Not yet ready" class="icon" />'
 
-    # TODO replace bool str with icon
-    return str(state)
+
+def generate_order_open_status_image(state: bool):
+    # TODO find better icons
+    if state:
+        return '<img src="/staticfiles/frontpage/done.png" alt="Open" class="icon" />'
+    else:
+        return '<img src="/staticfiles/frontpage/not-done.png" alt="Closed" class="icon" />'
 
 
 def render_order_list(request: HttpRequest):
@@ -47,11 +56,12 @@ def render_order_list(request: HttpRequest):
     start_range = 1 + page * items_per_page
     end_range = (page + 1) * items_per_page
     a = '<h3>Orders:</h3><a href="/admin/posts/edit">Add a new Order</a>' \
-        '<table><tr><th> ID </th><th> Open </th><th> Pickup date </th><th> Issuer </th></tr>'
+        '<table><tr><th> ID </th><th> Open </th><th> Ready </th><th> Pickup date </th><th> Issuer </th></tr>'
     objects = GroupReservation.objects.filter(pk__rage=(start_range, end_range))
     for order in objects:
         a += '<a href="' + generate_edit_link(order) + '"><tr><td>' + str(order.pk) + "</td><td> " \
-             + generate_app_status_image(order.ready) + " </td><td>" + order.pickupDate + "</td><td>" + \
+             + generate_order_open_status_image(order.open) + " </td><td> " \
+             + generate_order_ready_status_image(order.ready) + " </td><td>" + order.pickupDate + "</td><td>" + \
              str(order.createdByUser.displayName) + "</td></tr></a>"
     a += '</table>'
     if page > 1:
