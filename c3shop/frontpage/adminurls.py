@@ -13,8 +13,11 @@ urlpatterns = [
     url(r'^actions/save-user', views.action_save_user, name="action_save_post"),
     url(r'^actions/add-article-to-reservation', views.action_add_article_to_reservation,
         name="action_add_to_reservation"),
+    url(r'^actions/add-single-media', views.action_add_single_media, name="action_single_media_add"),
+    url(r'^actions/add-bulk-media', views.action_add_bulk_media, name="action_bulk_media_add"),
     url(r'^action/change-user-avatar', views.action_change_avatar, name="action_change_avatar"),
     url(r'^media/select', views.admin_select_media, name="wizard_select_media"),
+    url(r'^media/add', views.admin_add_media, name="add_media"),
     url(r'^orders$', views.admin_display_orders, name="list_orders"),
     url(r'^orders/$', views.admin_display_orders, name="list_orders"),
 ]

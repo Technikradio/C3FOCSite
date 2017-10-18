@@ -3,14 +3,13 @@ from ..models import GroupReservation
 from ..uitools.body import escape_text
 
 
-# TODO replace bool str with icon
 def render_open_order_table():
     try:
         a = '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th></tr>'
         if GroupReservation.objects.all().filter(open=True).count() > 0:
             m = GroupReservation.objects.get(open=True).filter(ready=False)
             for o in m:
-                a += '<tr><td>' + str(o.ready) + '</td><td>' + str(o.pickupDate) + '</td><td>' + \
+                a += '<tr><td>' + generate_order_ready_status_image(o.ready) + '</td><td>' + str(o.pickupDate) + '</td><td>' + \
                     escape_text(o.createdByUser.displayName) + '</td></tr>'
             a += '</table>'
         else:
