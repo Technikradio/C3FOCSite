@@ -1,5 +1,7 @@
 import markdown
 from pyembed.markdown import PyEmbedMarkdown
+from django.http import HttpRequest
+from ..models import Profile
 
 
 def compile_markdown(markdown_sources: str):
@@ -18,3 +20,7 @@ def compile_markdown(markdown_sources: str):
         PyEmbedMarkdown(),
     ]
     return markdown.markdown(markdown_sources, extensions)
+
+
+def get_current_user(request: HttpRequest):
+    return Profile.objects.get(authuser=request.user)

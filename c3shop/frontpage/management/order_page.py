@@ -1,13 +1,19 @@
 from django.http import HttpRequest
-from ..models import GroupReservation
+from ..models import GroupReservation, Profile
 from ..uitools.body import escape_text
+from .magic import get_current_user
 
 
-def render_open_order_table():
+def render_open_order_table(u: Profile):
     try:
         a = '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th></tr>'
-        if GroupReservation.objects.all().filter(open=True).count() > 0:
+        p = GroupReservation.objects.all().filter(open=True)
+        if u.rights < 1:
+            p = p.filter(createdByUser=u)
+        if p.count() > 0:
             m = GroupReservation.objects.get(open=True).filter(ready=False)
+            if u.rights < 1:
+                m = m.filter(createdByUser=u)
             for o in m:
                 a += '<tr><td>' + generate_order_ready_status_image(o.ready) + '</td><td>' + str(o.pickupDate) + '</td><td>' + \
                     escape_text(o.createdByUser.displayName) + '</td></tr>'
@@ -74,9 +80,20 @@ def render_order_list(request: HttpRequest):
     return a
 
 
+def render_personal_req_management(request: HttpRequest):
+    a = "<div>"
+
+    a += '<span class="button">Add a new order (Not yet implemented)</span>'
+    a += "</div>"
+    return a
+
+
 def render_order_page(request: HttpRequest):
-    a = "<h2>The following orders are still open:</h2>"
-    a += render_open_order_table()
-    a += "<h2>Below is a list of all orders:"
-    a += render_order_list(request)
+    u: Profile = get_current_user(request)
+    a = render_personal_req_management(request)
+    a += "<h2>The following orders are still open:</h2>"
+    a += render_open_order_table(u)
+    if u.rights > 0:
+        a += "<h2>Below is a list of all orders:"
+        a += render_order_list(request)
     return a
