@@ -1,5 +1,5 @@
 from django.http import HttpRequest
-from .form import Form, FileUpload, PlainText, TextField, TextArea
+from .form import Form, FileUpload, PlainText, TextField, TextArea, SubmitButton
 
 
 def render_single_form(request: HttpRequest):
@@ -13,8 +13,9 @@ def render_single_form(request: HttpRequest):
     f.add_content(TextField(name="category"))
     f.add_content(PlainText("Image text:<br />"))
     f.add_content(TextArea(name="text"))
-    f.add_content(PlainText("Please select your file: "))
+    f.add_content(PlainText("<br />Please select your file: "))
     f.add_content(FileUpload(name="file", multiple=False))
+    f.add_content(SubmitButton())
     f.add_content(PlainText('</div>'))
     return f.render_html()
 
@@ -27,6 +28,7 @@ def render_multiple_form(request: HttpRequest):
     f.add_content(TextField(name="category"))
     f.add_content(PlainText("Select your files: "))
     f.add_content(FileUpload(name="files", multiple=True))
+    f.add_content(SubmitButton())
     return f.render_html()
 
 

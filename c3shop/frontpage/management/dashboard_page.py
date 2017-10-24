@@ -22,11 +22,11 @@ def render_statistics_panel(request: HttpRequest):
     a = '<div class="statistics">'
     # TODO implement order and other statistics here
     # Use user access level in order to determine which info is allowed to be rendered
-    open_res: int = GroupReservation.objects.get(open=True).count()
+    open_res: int = GroupReservation.objects.all().filter(open=True).count()
     if open_res == 0:
         a += "There are 0 open reservations! YAY!<br />"
     else:
-        non_done_res = GroupReservation.objects.get(open=True).filter(ready=False).count()
+        non_done_res = GroupReservation.objects.all().filter(open=True).filter(ready=False).count()
         a += "There are " + str(open_res) + " open reservations of which " + str(non_done_res) + \
              " still require some work.<br />"
     a += '</div>'

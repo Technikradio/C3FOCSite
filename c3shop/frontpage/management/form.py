@@ -273,7 +273,7 @@ class FileUpload(InputField):
         self.multiple = multiple
 
     def generate_html_code(self, form: Form):
-        a = super(FileUpload, self).generate_html_code(form)
+        a = super(FileUpload, self).generate_html_code(form, end=False)
         if self.multiple:
             a += ' multiple="true"'
         a += '/>'
