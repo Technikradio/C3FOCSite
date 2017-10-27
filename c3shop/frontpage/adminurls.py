@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^action/change-user-avatar', views.action_change_avatar, name="action_change_avatar"),
     url(r'^media/select', views.admin_select_media, name="wizard_select_media"),
     url(r'^media/add', views.admin_add_media, name="add_media"),
+    url(r'^media$', views.admin_show_media, name="media_page"),
     url(r'^orders$', views.admin_display_orders, name="list_orders"),
     url(r'^orders/$', views.admin_display_orders, name="list_orders"),
 ]

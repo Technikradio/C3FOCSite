@@ -5,7 +5,7 @@ from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page, order_page, edit_reservation, media_select
-from .management import media_actions, media_upload_page
+from .management import media_actions, media_upload_page, media_page
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -192,7 +192,7 @@ def admin_add_media(request: HttpRequest):
 
 
 def action_add_single_media(request: HttpRequest):
-    response = require_login(request, min_required_user_rights=1)
+    response = require_login(request, min_required_user_rights=0)
     if response:
         return response
     return media_actions.action_add_single_media(request)
@@ -203,3 +203,13 @@ def action_add_bulk_media(request: HttpRequest):
     if response:
         return response
     return media_actions.action_add_multiple_media(request)
+
+
+def admin_show_media(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += media_page.render_media_page(request)
+    a += render_footer(request)
+    return HttpResponse(a)
