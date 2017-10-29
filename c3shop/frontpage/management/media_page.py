@@ -1,16 +1,18 @@
 from django.http import HttpRequest
-from ..models import Media, Profile, GroupReservation
+from ..models import Media, Profile
 from .magic import get_current_user
 
 
 def render_media_list(request: HttpRequest, u: Profile):
-    m = GroupReservation.objects.all()
+    m = Media.objects.all()
     if u.rights < 1:
-        m.filter(createdByUser=u)
+        #Maybe implement filtering on own media
+        pass
     a = "<table><tr><th> Preview </th><tr> Headline </tr></tr>"
     for r in m:
         a += "<tr>"
-
+        a += '<td><img src="' + str(r.lowResFile) + '" /></td>'
+        a += '<td>' + str(r.headline) + '</td>'
         a += "</tr>"
     a += "</table>"
     return a
