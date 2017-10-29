@@ -73,6 +73,10 @@ Have a look at PushToProduction file for detailed information on how to
 deploy this website.
 
 ## Settings
+#### Store Open
+The <code>frontpage.store.open</code> setting manages the store icon
+on the index page. When it contains a <code>true</code> it will render
+the store as open, or otherwise (<code>false</code>) as closed.
 #### Nav Bar and Footer
 The settings for the navigation bar located in the header contains the
 following setting keys:
@@ -103,7 +107,7 @@ following setting keys:
 First install all dependencies using pip3. Then run the following commands:
 <code>
 python3 manage.py migrate
-python3 manage.py collectsatics
+python3 manage.py collectstatics
 PYCAM="from test.init_database import *\ninit_db()"
 python3 manage.py shell_plus < echo $PYCAM
 </code>

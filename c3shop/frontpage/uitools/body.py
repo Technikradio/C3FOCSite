@@ -1,4 +1,4 @@
-from ..models import Article, Media, ArticleMedia, Post, Profile
+from ..models import Article, Media, ArticleMedia, Post, Profile, Settings
 from django.conf import settings
 from django.shortcuts import redirect
 from django.http.response import Http404
@@ -228,3 +228,12 @@ def render_image_detail(request, medium_id):
 def render_404_page(request):
     return '<h2>This is not the site you\'re looking for</h2><br>You tried to open the following path:<br/><br/>"' + \
            request.path + '"<br/><br />...but it doesn\'t seam to exist.'
+
+
+def render_index_page(request):
+    a = ""
+    if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
+        a += '<div><img src="/staticfiles/frontpage/store-open.png"/>The store is currently open</div>'
+    else:
+        a += '<div><img src="/staticfiles/frontpage/store-closed.png"/>The store is currently closed.</div>'
+    return a

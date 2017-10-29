@@ -5,7 +5,7 @@ from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page, order_page, edit_reservation, media_select
-from .management import media_actions, media_upload_page, media_page
+from .management import media_actions, media_upload_page, media_page, random_actions
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -13,7 +13,7 @@ from .uitools import ulog, searching
 
 def index(request):
     a = render_content_header(request)
-    a += "<h1>index: Not yet implemented</h1>"
+    a += render_index_page(request)
     a += render_article_list()
     a += render_footer(request)
     return HttpResponse(a)
@@ -203,6 +203,13 @@ def action_add_bulk_media(request: HttpRequest):
     if response:
         return response
     return media_actions.action_add_multiple_media(request)
+
+
+def action_change_open_status(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=2)
+    if response:
+        return response
+    return random_actions.action_change_store_open_status(request)
 
 
 def admin_show_media(request: HttpRequest):

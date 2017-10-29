@@ -1,6 +1,7 @@
 from .page_skeleton import render_footer, render_headbar
 from .order_page import render_open_order_table
-from ..models import GroupReservation
+from ..models import GroupReservation, Profile, Settings
+from . import magic
 from django.http import HttpRequest
 
 
@@ -33,19 +34,33 @@ def render_statistics_panel(request: HttpRequest):
     return a
 
 
-def render_order_panel():
-    a = '<div class="open_orders">'
-    a += render_open_order_table()
+def render_order_panel(u: Profile):
+    a = '<div class="statistics">'
+    a += render_open_order_table(u)
+    a += '</div>'
+    return a
+
+
+def render_quick_store_panel():
+    a = '<div class="statistics">'
+    if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
+        a += "The store is currently open<br/>"
+    else:
+        a += "The store is currently closed<br/>"
+    a += '<br/><a href="/admin/actions/change-open-status" class="button">Toggle open status</a><br /><br />'
     a += '</div>'
     return a
 
 
 def render_dashboard(request: HttpRequest):
+    u: Profile = magic.get_current_user(request)
     a = render_headbar(request)
     a += render_features_bar()
     a += '<div class="panel_board">'
     a += render_statistics_panel(request)
-    a += render_order_panel()
+    a += render_order_panel(u)
+    if u.rights > 1:
+        a += render_quick_store_panel()
     a += '</div>'
     a += render_footer(request)
     return a

@@ -97,7 +97,14 @@ form {
     height: 95%;
     width: 89%;
     top: 50px;
+
     /*background: #696767;*/
+}
+
+.statistics {
+    /*padding: 15px;*/
+    background: #282626;
+    width: 20%;
 }
 
 .button {
