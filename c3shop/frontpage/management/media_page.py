@@ -19,7 +19,7 @@ def render_media_list(request: HttpRequest, u: Profile):
 
 
 def render_media_page(request: HttpRequest):
-    a = '<span class="button"><a href="/admin/media/add">Upload Media</a></span>'
+    a = '<br /><br /><span class="button"><a href="/admin/media/add">Upload Media</a></span><br /><br />'
     u: Profile = get_current_user(request)
     a += render_media_list(request, u)
     return a

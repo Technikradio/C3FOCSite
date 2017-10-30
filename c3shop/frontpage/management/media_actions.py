@@ -22,8 +22,8 @@ def action_change_user_avatar(request: HttpRequest):
 
 def handle_file(headline: str, category: str, text: str, file):
     m: Media = Media()
-    high_res_file_name = 'uploads/' + str(date.today().year) + '/HIGHRES_' + file.name
-    low_res_file_name = 'uploads/' + str(date.today().year) + '/LOWRES_' + file.name
+    high_res_file_name = 'uploads/' + str(date.today().year) + '/HIGHRES_' + file.name.replace(" ", "_")
+    low_res_file_name = 'uploads/' + str(date.today().year) + '/LOWRES_' + file.name.replace(" ", "_")
     with open(high_res_file_name, 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)

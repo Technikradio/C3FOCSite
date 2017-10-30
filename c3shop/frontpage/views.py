@@ -191,6 +191,7 @@ def admin_add_media(request: HttpRequest):
     return HttpResponse(a)
 
 
+@csrf_exempt
 def action_add_single_media(request: HttpRequest):
     response = require_login(request, min_required_user_rights=0)
     if response:
@@ -198,6 +199,7 @@ def action_add_single_media(request: HttpRequest):
     return media_actions.action_add_single_media(request)
 
 
+@csrf_exempt
 def action_add_bulk_media(request: HttpRequest):
     response = require_login(request, min_required_user_rights=1)
     if response:

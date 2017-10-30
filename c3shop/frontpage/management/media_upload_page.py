@@ -33,9 +33,11 @@ def render_multiple_form(request: HttpRequest):
 
 
 def render_upload_page(request: HttpRequest):
-    a = "You must decide to upload a single file or a bunch."
+    a = "<br />You must decide to upload a single file or a bunch."
     if request.GET.get("hint"):
         a += "<div><p3>There was an error uploading the file(s):</p3>" + str(request.GET["hint"]) + "</div>"
+    a += "<br /><h3>Upload a single image: </h3>"
     a += render_single_form(request)
+    a += "<br/><h3>Upload multiple images at once:</h3>"
     a += render_multiple_form(request)
     return a
