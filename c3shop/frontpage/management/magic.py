@@ -24,3 +24,7 @@ def compile_markdown(markdown_sources: str):
 
 def get_current_user(request: HttpRequest):
     return Profile.objects.get(authuser=request.user)
+
+
+def parse_bool(s: str):
+    return s in ("yes", "true", "t", "1")

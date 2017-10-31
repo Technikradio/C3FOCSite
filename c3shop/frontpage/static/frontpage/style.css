@@ -45,6 +45,10 @@ body {
     min-height: 100%;
 }
 
+header {
+    background: #282626;
+}
+
 footer {
     position: fixed;
     bottom: 0;

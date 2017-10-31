@@ -43,7 +43,7 @@ def render_order_panel(u: Profile):
 
 def render_quick_store_panel():
     a = '<div class="statistics">'
-    if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
+    if magic.parse_bool(Settings.objects.get(SName="frontpage.store.open").property.lower()):
         a += "The store is currently open<br/>"
     else:
         a += "The store is currently closed<br/>"

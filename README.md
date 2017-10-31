@@ -114,5 +114,18 @@ python3 manage.py shell_plus < echo $PYCAM
 At last configure your web server to serve the static files.
 
 ## Password rules
+At the moment there are the following rules for creating a new password:
  * At least 6 characters long
  * must contain upper and lower case letters
+
+## Article type definition
+The following mapping represents the different article types:
+ 0. unisex clothes
+ 1. female clothes
+ 2. male clothes
+ 3. kids clothes
+Shall there be more types required in the future this list may be
+expanded. In order to do so the following files would need to be changed:
+ * <code>c3shop/frontpage/uitools/body.py</code>: Section <code>get_type_string(type_sym)</code>
+ * <codec3shop/frontpage/management/article_actions.py></code>
+
