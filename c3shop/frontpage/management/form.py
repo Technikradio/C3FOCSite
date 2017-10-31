@@ -140,9 +140,9 @@ class TextField(InputField):
 
 class PasswordField(InputField):
 
-    def __init__(self, button_text="", name="", do_cr_after_input=True):
+    def __init__(self, button_text="", name="", do_cr_after_input=True, required: bool = True):
         super(PasswordField, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
-                                            field_type="password")
+                                            field_type="password", required=required)
 
 
 class EmailField(InputField):
@@ -242,13 +242,17 @@ class CheckBox(InputField):
 
     text = ""
 
-    def __init__(self, text="", name="", identifier="", checked: CheckEnum = CheckEnum.NOT_CHECKED):
+    def __init__(self, text="", name="", identifier="", checked: CheckEnum = CheckEnum.NOT_CHECKED,
+                 required: bool = False):
         if identifier is not "":
-            super(CheckBox, self).__init__(button_text=identifier, name=name, do_cr_after_input=False, checked=checked)
+            super(CheckBox, self).__init__(button_text=identifier, name=name, do_cr_after_input=False,
+                                           component_checked=checked)
         else:
-            super(CheckBox, self).__init__(button_text=name, name=name, do_cr_after_input=False, checked=checked)
+            super(CheckBox, self).__init__(button_text=name, name=name, do_cr_after_input=False,
+                                           component_checked=checked)
         self.input_type = "checkbox"
         self.text = text
+        self.required = required
 
     def generate_html_code(self, form: Form):
         a = super(CheckBox, self).generate_html_code(form)

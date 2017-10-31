@@ -88,11 +88,11 @@ def admin_edit_user(request):
     a = render_content_header(request, admin_popup=True)
     user_id_string = ""
     if request.GET.get("user_id"):
-        user_id_string = 'user_id="' + str(request.GET["user_id"]) + '"'
+        user_id_string = 'user_id=' + str(request.GET["user_id"]) + ''
     redirect_string = ""
     if user_id_string != "":
-        redirect_string += "+"
-    redirect_string += 'redirect="' + request.path + '"'
+        redirect_string += "&"
+    redirect_string += 'redirect=' + request.path + ''
     a += edit_user.render_edit_page(request, '/admin/actions/save-user?' + user_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)

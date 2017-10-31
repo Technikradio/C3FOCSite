@@ -2,9 +2,10 @@ from django.http import HttpRequest, HttpResponseForbidden, HttpResponseBadReque
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from . import page_skeleton, magic
-from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, PasswordField
+from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, PasswordField, CheckBox, CheckEnum
 from ..models import Profile
 from ..uitools.dataforge import get_csrf_form_element
+from .magic import get_current_user
 
 
 def render_edit_page(http_request: HttpRequest, action_url: str):
@@ -31,7 +32,15 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
         f.add_content(PlainText("Unable to edit user due to: " + str(http_request.GET['fault'])))
     elif http_request.GET.get('fault'):
         f.add_content(PlainText("Unable to add user due to: " + str(http_request.GET['fault'])))
-    # TODO implement to display active field only when current user is admin
+    current_user: Profile = get_current_user(http_request)
+    if current_user.rights > 3:
+        if not profile:
+            f.add_content(CheckBox(name="active", text="User Active", checked=CheckEnum.CHECKED))
+        else:
+            m: CheckEnum = CheckEnum.CHECKED
+            if not profile.active:
+                m = CheckEnum.NOT_CHECKED
+            f.add_content(CheckBox(name="active", text="User Active", checked=m))
     f.add_content(PlainText('Display name: '))
     if profile:
         f.add_content(PlainText("Email address: "))
@@ -59,9 +68,9 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
         f.add_content(PlainText('<br /><br />Change password (leave blank in order to not change it):'))
     else:
         f.add_content(PlainText('<br />Choose a password: '))
-    f.add_content(PasswordField(name='password'))
+    f.add_content(PasswordField(name='password', required=False))
     f.add_content(PlainText('Confirm your password: '))
-    f.add_content(PasswordField(name='confirm_password'))
+    f.add_content(PasswordField(name='confirm_password', required=False))
     f.add_content(PlainText(get_csrf_form_element(http_request)))
     f.add_content(SubmitButton())
     # a = page_skeleton.render_headbar(http_request, "Edit User")
@@ -104,8 +113,8 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
     if profile.rights < 2:
         return HttpResponseForbidden()
     try:
-        if request.POST.get("user_id"):
-            pid = int(request.POST["user_id"])
+        if request.GET.get("user_id"):
+            pid = int(request.GET["user_id"])
             displayname = str(request.POST["display_name"])
             dect = int(request.POST["dect"])
             notes = str(request.POST["notes"])
@@ -118,6 +127,8 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
             user.dect = dect
             user.notes = notes
             user.rights = rights
+            if request.POST.get("active"):
+                user.active = magic.parse_bool(request.POST["active"])
             au: User = user.authuser
             if check_password_conformity(pw1, pw2):
                 au.set_password(pw1)
