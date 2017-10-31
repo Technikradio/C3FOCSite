@@ -10,7 +10,7 @@ def render_features_bar():
     a += '<a href="/admin">Dashboard</a><br />'
     a += '<a href="/admin/posts">Posts</a><br />'
     a += '<a href="/admin/users">Users</a><br />'
-    a += 'Articles<br />'
+    a += '<a href="/admin/articles">Articles</a><br />'
     a += '<a href="/admin/media">Media</a><br />'
     a += '<a href="/admin/orders">reservations</a><br />'
     a += 'Global settings<br />'

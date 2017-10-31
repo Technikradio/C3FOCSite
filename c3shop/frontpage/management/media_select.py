@@ -20,9 +20,13 @@ def render_media_selection_page(request: HttpRequest):
         items_per_page = int(request.GET["objects"])
     total_items = Media.objects.all().count()
     max_page = total_items / items_per_page
+    if max_page < 1:
+        max_page = 1
     if page > max_page:
         page = max_page
     start_range = 1 + page * items_per_page
+    if start_range > total_items:
+        start_range = 0
     end_range = (page + 1) * items_per_page
     a = render_headbar(request, title="Select media")
     a += '<div class="admin-popup">'

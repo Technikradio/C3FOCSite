@@ -52,6 +52,8 @@ def render_order_list(request: HttpRequest):
     items_per_page = 50
     total_items = GroupReservation.objects.all().count()
     max_page = total_items / items_per_page
+    if max_page < 1:
+        max_page = 1
     if request.GET.get('page'):
         page = int(request.GET["page"])
     if request.GET.get('objects'):
@@ -59,6 +61,8 @@ def render_order_list(request: HttpRequest):
     if page > max_page:
         page = max_page
     start_range = 1 + page * items_per_page
+    if start_range > total_items:
+        start_range = 0
     end_range = (page + 1) * items_per_page
     a = '<h3>Orders:</h3><a href="/admin/posts/edit">Add a new Order</a>' \
         '<table><tr><th> ID </th><th> Open </th><th> Ready </th><th> Pickup date </th><th> Issuer </th></tr>'

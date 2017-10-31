@@ -5,8 +5,9 @@ from .magic import get_current_user, parse_bool
 from .magic import compile_markdown
 import logging
 
+
 def action_save_article(request: HttpRequest):
-    '''
+    """
     This function creates a new or saves an article based on the
     (hopefully) provided POST data elements:
         * price in cents
@@ -23,7 +24,9 @@ def action_save_article(request: HttpRequest):
     If the article to be saved is a newly generated one the function
     will redirect the user to the flash image selection dialog or
     otherwise will redirect the user to the articles page.
-    '''
+    :param request The current HttpRequest
+    :return The crafted response
+    """
     try:
         price = int(request.GET["price"])
         largetext = request.GET["largetext"]
@@ -36,7 +39,7 @@ def action_save_article(request: HttpRequest):
         aid = -1  # This means that it's a new article
         a: Article = None
         if request.GET.get("id"):
-            aid = str("aid")
+            aid = str(request.GET["id"])
             a = Article.objects.get(pk=aid)
         else:
             a = Article()
@@ -51,13 +54,13 @@ def action_save_article(request: HttpRequest):
         a.addedByUser = userp
         a.save()
         if aid < 0:
-            logging.info("User '" + userp.displayName + "' created a new article (UID: " \
-                    + userp.pk + ")")
-            return redirect("/admin/media/select")  # TODO fix to correct one
+            logging.info("User '" + userp.displayName + "' created a new article (UID: "
+                         + userp.pk + ")")
+            return redirect("/admin/media/select")  # TODO fix to correct one (Create handler view in media actions,
+            # provide a URL and use it here)
         else:
-            logging.info("User '" + userp.displayName + "' modified an article (UID: " \
-                    + userp.pk + " AID: " + str(aid) + ")")
-            return redirect("/admin/article")
+            logging.info("User '" + userp.displayName + "' modified an article (UID: "
+                         + userp.pk + " AID: " + str(aid) + ")")
+            return redirect("/admin/articles")
     except Exception as e:
-        return redirect('/admin/article/edit?vault=' + str(e))
-
+        return redirect('/admin/articles/edit?vault=' + str(e))

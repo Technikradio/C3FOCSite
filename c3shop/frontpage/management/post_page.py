@@ -15,11 +15,15 @@ def render_post_list(request: HttpRequest):
         items_per_page = int(request.GET["objects"])
     total_items = Post.objects.all().count()  # This method isn't totally super dumb since django query sets are lazy.
     max_page = total_items / items_per_page
+    if max_page < 1:
+        max_page = 1
     if request.GET.get('page'):
         page = int(request.GET["page"])
     if page > max_page:
         page = max_page
     start_range = 1 + page * items_per_page
+    if start_range > total_items:
+        start_range = 0
     end_range = (page + 1) * items_per_page
     a = '<div class="admin-popup">'
     a += '<h3>Posts:</h3><a href="/admin/posts/edit"><img class="button" alt="Add a new Post" ' \

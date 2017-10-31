@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 from . import views
 
 urlpatterns = [
@@ -17,6 +17,9 @@ urlpatterns = [
     url(r'^actions/add-bulk-media', views.action_add_bulk_media, name="action_bulk_media_add"),
     url(r'^actions/change-user-avatar', views.action_change_avatar, name="action_change_avatar"),
     url(r'^actions/change-open-status', views.action_change_open_status, name="action_change_open_status"),
+    url(r'^actions/save-article', views.action_save_article, name="action_save_article"),
+    url(r'^articles/edit', views.admin_edit_article, name="article_edit"),
+    url(r'^articles$', views.admin_show_articles, name="list_articles"),
     url(r'^media/select', views.admin_select_media, name="wizard_select_media"),
     url(r'^media/add', views.admin_add_media, name="add_media"),
     url(r'^media$', views.admin_show_media, name="media_page"),
