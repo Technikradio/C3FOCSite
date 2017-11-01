@@ -17,7 +17,7 @@ def action_save_article(request: HttpRequest):
         * visible a bool str if the article should be visible yet
         * quantity the amount of the current aviable pieces
         * size the size of the article (10 char text)
-        * [id] the ID of the article to edit (if non is provided
+        * [id] (GET) the ID of the article to edit (if non is provided
             it will be assumed that it is a new article)
     The user who added the article will be automatically determined.
     The flashImage will be handled by set action_set_image(request)
@@ -28,13 +28,13 @@ def action_save_article(request: HttpRequest):
     :return The crafted response
     """
     try:
-        price = int(request.GET["price"])
-        largetext = request.GET["largetext"]
-        article_type = request.GET["type"]
-        description = request.GET["description"]
-        visible = parse_bool(request.GET["visible"])
-        quantity = int(request.GET["quantity"])
-        size = request.GET["size"]
+        price = request.POST["price"]
+        largetext = request.POST["largetext"]
+        article_type = request.POST["type"]
+        description = request.POST["description"]
+        visible = parse_bool(request.POST["visible"])
+        quantity = int(request.POST["quantity"])
+        size = request.POST["size"]
         userp: Profile = get_current_user(request)
         aid = -1  # This means that it's a new article
         a: Article = None
@@ -43,14 +43,14 @@ def action_save_article(request: HttpRequest):
             a = Article.objects.get(pk=aid)
         else:
             a = Article()
-        a.price = price
-        a.largeText = largetext
+        a.price = str(price)
+        a.largeText = str(largetext)
         a.cachedText = compile_markdown(largetext)
-        a.type = article_type
-        a.description = description
+        a.type = int(article_type)
+        a.description = str(description)
         a.visible = visible
-        a.quantity = quantity
-        a.size = size
+        a.quantity = int(quantity)
+        a.size = str(size)
         a.addedByUser = userp
         a.save()
         if aid < 0:
