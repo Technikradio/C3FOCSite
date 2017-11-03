@@ -236,4 +236,15 @@ def render_index_page(request):
         a += '<div><img src="/staticfiles/frontpage/store-open.png"/>The store is currently open</div>'
     else:
         a += '<div><img src="/staticfiles/frontpage/store-closed.png"/>The store is currently closed.</div>'
+    a += render_article_list()
+    # Render last 5 posts
+    post_ids = []
+    size = Post.objects.all().count()
+    post_count = 5
+    if post_count > size:
+        post_count = size
+    for i in range(0, post_count):
+        post_ids.append(size - i)
+    for pid in post_ids:
+        a += render_post(pid)
     return a
