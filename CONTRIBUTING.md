@@ -1,5 +1,7 @@
-# Issue Template
-## Bugs
+# Contributing guidelines
+Below you will find some hints on how to make our and especially you live easier.
+## Issues
+### Bugs
 If you decide to submit the lastest and greatest bug you've found that's nice of you.
 But please make sure to follow these instructions:
  * In case you found the bug using your own installation:
@@ -25,7 +27,7 @@ instructions:
     $ pip3 check
     ``` 
  4. Please label them with 'Bug'.
- ## Enhancements
+ ### Enhancements
  In case you have a super cool idea on how to improve the C3FOC experience but struggle to
  create your own extensions let us know via an issue. But please follow the following instructions:
   1. Use a descriptive headline
