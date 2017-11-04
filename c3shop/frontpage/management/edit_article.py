@@ -2,7 +2,7 @@ from django.http import HttpRequest
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from . import page_skeleton, magic
-from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, PasswordField, CheckBox, CheckEnum
+from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, PasswordField, CheckBox, CheckEnum, Select
 from ..models import Article
 from ..uitools.dataforge import get_csrf_form_element
 from .magic import get_current_user
@@ -30,9 +30,8 @@ def render_edit_page(http_request: HttpRequest):
         f.add_content(NumberField(name="quantity", minimum=0))
         f.add_content(PlainText("Size: "))
         f.add_content(TextField(name="size"))
-        # TODO implement type as drop down menu
-        f.add_content(NumberField(button_text=0, name="type", minimum=0, maximum=3))
-        # END
+        f.add_content(Select(name="type", text="type", content=[(0, "Unisex"), (1, "Female"), (2, "Male"), (3, "Kids")]))
+        # f.add_content(NumberField(button_text=0, name="type", minimum=0, maximum=3))
         f.add_content(TextArea(name="largetext", label_text="Description",
                                placeholder="Write the large description here"))
         f.add_content(PlainText("<br />"))
@@ -46,7 +45,7 @@ def render_edit_page(http_request: HttpRequest):
         f.add_content(NumberField(name="quantity", minimum=0, button_text=article.quantity))
         f.add_content(PlainText("Size: "))
         f.add_content(TextField(name="size", button_text=article.size))
-        # Insert type here
+        f.add_content(Select(name="type", text="type", content=[(0, "Unisex"), (1, "Female"), (2, "Male"), (3, "Kids")], preselected=article.type))
         f.add_content(TextArea(name="largetext", label_text="Description",
                                text=article.largeText))
         f.add_content(PlainText("<br />"))

@@ -1,6 +1,10 @@
 # C3FOCSite
-This is the repository for the C3FOC web site. Follow @c3foc on twitter for upcoming news.
-The website is written for and using python3. Using python2.x may work but is untested and unintended.
+This is the repository for the C3FOC web site. Follow @c3foc on twitter
+for upcoming news. The website is written for and using python3.6.
+
+## required python version
+Due to the ussage of pythons new type safety system (a good idea for
+security) the software only works with python >= 3.6
 
 ## required python packages
 
@@ -10,6 +14,11 @@ The website is written for and using python3. Using python2.x may work but is un
  * MarkdownSubscript
  * pyembed-markdown
  * django_extensions
+
+## Database engine to use
+While it is fine to test the software using sqlite the intendet engine
+for production ussage is postgresql. The software works with pgsql
+version 9.6 but may work with older versions.
 
 ## Structure
 
@@ -104,14 +113,20 @@ following setting keys:
     - It uses the same JSON syntax
 
 ## Setup
-First install all dependencies using pip3. Then run the following commands:
-<code>
-python3 manage.py migrate
-python3 manage.py collectstatics
-PYCAM="from test.init_database import *\ninit_db()"
-python3 manage.py shell_plus < echo $PYCAM
-</code>
-At last configure your web server to serve the static files.
+First install all dependencies using pip3. After doing so setup your
+database server and alter the settings.py file. Make sure to change
+the following settings:
+ * Disable debug mode
+ * Change the database engine to your server
+ * Change the secret key to something secret
+Then run the following commands:
+<code>python3 manage.py migrate </code>
+<code>python3 manage.py collectstatics</code>
+<code>PYCAM="from test.init_database import *\ninit_db()"</code>
+<code>python3 manage.py shell_plus < echo $PYCAM</code>
+At last configure your web server to serve the static files and last
+but not least django. We suggest using nginx as your webserver but
+using apache >= 2.4 should be fine as well.
 
 ## Password rules
 At the moment there are the following rules for creating a new password:
@@ -127,5 +142,5 @@ The following mapping represents the different article types:
 Shall there be more types required in the future this list may be
 expanded. In order to do so the following files would need to be changed:
  * <code>c3shop/frontpage/uitools/body.py</code>: Section <code>get_type_string(type_sym)</code>
- * <codec3shop/frontpage/management/article_actions.py></code>
+ * <code>c3shop/frontpage/management/article_actions.py></code>
 

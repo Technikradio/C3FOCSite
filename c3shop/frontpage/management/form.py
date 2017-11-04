@@ -89,6 +89,40 @@ class FieldGroup(FormObject):
         return a
 
 
+class Select(FormObject):
+    options = []
+    text: str = ""
+    selected: int = 0
+    cr_at_end: bool = True
+    
+    def __init__(self, name: str = "", text: str = "", content = [], preselected: int = 0, do_cr_after_input: bool = True):
+        """
+        This constructor initializes the select object. Please keep in mind that content should be an
+        iteratable object containing tupels of the following format:
+        (name, displaytext)
+        """
+        super(Select, self).__init__(name=name)
+        self.text = text
+        self.cr_at_end = do_cr_after_input
+        self.selected = preselected
+        for p in content:
+            self.options.append(p)
+
+    def generate_html_code(self, form: Form):
+        a = self.text
+        a += '<select name="' + self.object_name + '">'
+        i = 0
+        for o in self.options:
+            p = ""
+            if self.selected == i:
+                p = ' selected'
+            a += '<option value="' + o[0] + '"' + p + '>' + o[1] + "</option>"
+        a += "</select>"
+        if self.cr_at_end:
+            a += "<br/>"
+        return a
+
+
 class InputField(FormObject):
     button_text = ""
     input_type = ""  # The type of the text field ( later used by PasswordTextField,
