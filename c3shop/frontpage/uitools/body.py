@@ -1,6 +1,7 @@
-from ..models import Article, Media, ArticleMedia, Post, Profile
+from ..models import Article, Media, ArticleMedia, Post, Profile, Settings
 from django.conf import settings
 from django.shortcuts import redirect
+from django.http.response import Http404
 import logging
 
 SERVER_ROOT = "localhost:8000"
@@ -58,12 +59,14 @@ def get_right_string(rights):
     if rights == 2:
         return "shop manager"  # He is also allowed to manage the article db
     if rights == 3:
+        return "author"  # He is allowed to manage articles
+    if rights == 4:
         return "admin"  # He is allowed to do anything
 
 
 def render_article_detail(article_id):
     try:
-        art = Article.objects.get(pk=article_id)
+        art = Article.objects.get(pk=int(article_id))
         text = "<br/><h2>" + escape_text(art.description) + "</h2><br/>"
         text += render_article_properties_division(art)
         text += render_image(art.flashImage) + "<br />"
@@ -105,8 +108,7 @@ def render_user_link(user):
     return text
 
 
-# TODO implement detailed media view
-def render_image(media, width=0, height=0, high_res=True):
+def render_image(media, width=0, height=0, high_res=True, include_link=True, replace: str = ""):
     width_str = ""
     height_str = ""
     if width != 0:
@@ -115,22 +117,30 @@ def render_image(media, width=0, height=0, high_res=True):
             height_str = " height={0}".format(str(height))
     elif height != 0:
         height_str = "height={0}".format(str(height))
+    alt_img = NO_MEDIA_IMAGE
+    if not replace == "":
+        alt_img = replace
     if media is None:
-        return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was submitted"/>'
+        return '<img src="' + alt_img + '" alt="No suitable image was submitted"/>'
+    lb = ""
+    a = ""
+    if include_link:
+        lb = '<a href="/media/' + str(media.pk) + '">'
+        a = "</a>"
     try:
         if high_res:
-            return '<img src="' + media.highResFile + '" alt="This should display an HQ image but' \
-                                                      ' something went wrong" ' + width_str + height_str + '/>'
+            return lb + '<img src="' + media.highResFile + '" alt="This should display an HQ image but' \
+                                                      ' something went wrong" ' + width_str + height_str + '/>' + a
         else:
-            return '<img src="' + media.lowResFile + '" alt="This should display an LQ image but' \
-                                                     ' something went wrong" ' + width_str + height_str + '/>'
+            return lb + '<img src="' + media.lowResFile + '" alt="This should display an LQ image but' \
+                                                     ' something went wrong" ' + width_str + height_str + '/>' + a
     except Exception as link_exception:
         return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was located: ' + str(link_exception) + '"/>'
 
 
 # TODO implement visibility level
 def render_post(post_id):
-    post = Post.objects.get(pk=post_id)
+    post = Post.objects.get(pk=int(post_id))
     time = "No Date available"
     try:
         time = str(post.timestamp)
@@ -145,7 +155,7 @@ def render_post(post_id):
 
 
 def render_user_detail(user_id):
-    user = Profile.objects.get(pk=user_id)
+    user = Profile.objects.get(pk=int(user_id))
     text = "<h2>" + escape_text(user.displayName) + "</h2>"
     text += render_image(user.avatarMedia)
     text += '<p class="user_meta">Registered since: ' + str(user.creationTimestamp) + "<br />Active: " + \
@@ -160,7 +170,7 @@ def escape_text(text):
     :param text: The text to escape
     :return: The escaped text
     """
-    return text.replace('<', '&lt;').replace('>', '&gt;')
+    return str(text.replace('<', '&lt;').replace('>', '&gt;'))
 
 
 def require_login(request, min_required_user_rights=0):
@@ -169,7 +179,7 @@ def require_login(request, min_required_user_rights=0):
     :type request: http_request
     :type min_required_user_rights: int
     """
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         return redirect('%s?next="%s"' % (settings.LOGIN_URL, request.path))
 
     profile = Profile.objects.get(authuser=request.user)
@@ -185,14 +195,56 @@ def render_user_list(request, objects_per_site=50):
     if request.GET.get('page'):
         page = int(request.GET['page'])
         logging.debug("Displaying page " + str(page))
+    # calculating the users to display on the requested page
     start = page * objects_per_site
     end = ((page + 1) * objects_per_site) - 1
     a = '<div class="user_list">'
-    a += 'Displaying page ' + str(page) + ' with ' + str(objects_per_site) + \
-         ' entries per each.<br /><table><tr><th>Avatar</th><th>Username</th><th>Display name</th><th>Rights</th></tr>'
+    a += '<a href="/admin/users/edit"><img class="button" src= "/staticfiles/frontpage/add-user.png" alt="Add user" />'\
+         '</a><br />Displaying page ' + str(page) + ' with ' + str(objects_per_site) + ' entries per each.' \
+         '<br /><table><tr><th>Edit</th><th>Avatar</th><th>Username</th><th>Display name</th>' \
+         '<th>Rights</th></tr>'
     for p in Profile.objects.filter(pk__range=(start, end)):
         # TODO generate link to detailed user view
-        a += '<tr><td>' + render_image(p.avatarMedia, width=32, height=32) + '</td><td>' + escape_text(p.authuser.username)\
-             + '</td><td>' + escape_text(p.displayName) + '</td><td>' + get_right_string(p.rights) + '</td></tr>'
+        a += '<tr><td><a href="/admin/users/edit?user_id=' + str(p.pk) + \
+             '"><img class="button" src="/staticfiles/frontpage/edit.png" />' \
+            '</a></td><td>' + render_image(p.avatarMedia, width=24, height=24,
+                                           replace="/staticfiles/frontpage/no-avatar.png") + '</td><td>' + \
+             escape_text(p.authuser.username) + '</td><td>' + escape_text(p.displayName) + '</td><td>' + \
+             str(get_right_string(p.rights)) + '</td></tr>'
     a += '</table></div>'
+    return a
+
+
+def render_image_detail(request, medium_id):
+    image = Media.objects.get(pk=int(medium_id))
+    if image is None:
+        raise Http404("No media found")
+    a = "<h2>" + image.headline + "</h2><center>"
+    a += render_image(image)
+    a += "</center><article>" + image.cachedText + "</article>"
+    return a
+
+
+def render_404_page(request):
+    return '<h2>This is not the site you\'re looking for</h2><br>You tried to open the following path:<br/><br/>"' + \
+           request.path + '"<br/><br />...but it doesn\'t seam to exist.'
+
+
+def render_index_page(request):
+    a = ""
+    if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
+        a += '<div><img src="/staticfiles/frontpage/store-open.png"/>The store is currently open</div>'
+    else:
+        a += '<div><img src="/staticfiles/frontpage/store-closed.png"/>The store is currently closed.</div>'
+    a += render_article_list()
+    # Render last 5 posts
+    post_ids = []
+    size = Post.objects.all().count()
+    post_count = 5
+    if post_count > size:
+        post_count = size
+    for i in range(0, post_count):
+        post_ids.append(size - i)
+    for pid in post_ids:
+        a += render_post(pid)
     return a

@@ -25,11 +25,11 @@ class Profile(models.Model):
     authuser = models.OneToOneField(User)
     avatarMedia = models.ForeignKey(Media, null=True)
     creationTimestamp = models.DateTimeField(auto_now=True)
-    notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact '\
+    notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact ' +
                                                          'channels)')
-    active = models.BooleanField()
+    active = models.BooleanField(default=True)
     dect = models.IntegerField()
-    rights = models.SmallIntegerField() # The higher the number the more rights a user will have
+    rights = models.SmallIntegerField()  # The higher the number the more rights a user will have, see README.md
     displayName = models.CharField(max_length=75)
 
     def __str__(self):
@@ -50,7 +50,8 @@ class Article(models.Model):
     flashImage = models.ForeignKey(Media, on_delete=None, null=True)  # The image visible in the list view
 
     def __str__(self):
-        return self.description + ": " + str(self.visible) + "(size: " + str(self.size) + ", type: " + str(self.type) + ")"
+        return self.description + ": " + str(self.visible) + "(size: " + str(self.size) + ", type: " + str(self.type)\
+               + ")"
 
 
 class Post(models.Model):
@@ -59,6 +60,7 @@ class Post(models.Model):
     createdByUser = models.ForeignKey(Profile)
     cacheText = models.CharField(max_length=15000, help_text="The compiled version of the markdown >text<")
     visibleLevel = models.SmallIntegerField(help_text="What access level does the viewer need to have a look at this")
+    # putting -1 in the above means that it will be disabled.
     timestamp = models.DateTimeField(auto_now=True)
     text = models.CharField(max_length=15000, help_text="The markdown version of the article text")
 
@@ -71,7 +73,7 @@ class Settings(models.Model):
     property = models.CharField(max_length=15000)
     requiredLevel = models.SmallIntegerField()
     changeTimestamp = models.DateTimeField(auto_now=True)
-    changeReason = models.CharField(max_length=15000)
+    changeReason = models.CharField(max_length=15000, null=True)
     changedByUser = models.ForeignKey(Profile)
 
     def __str__(self):
@@ -102,8 +104,7 @@ class ArticleMedia(models.Model):
 
 
 # The reason why we split this from the media table is due to tree conflicts while creating the database
-
-
+# This table is to identify which user uploaded which image
 class MediaUpload(models.Model):
     MID = models.ForeignKey(Media)
     UID = models.ForeignKey(Profile)

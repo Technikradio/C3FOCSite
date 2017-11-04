@@ -1,4 +1,4 @@
-from frontpage.models import Article, Profile, Media, ArticleMedia, MediaUpload, Post
+from frontpage.models import Article, Profile, Media, ArticleMedia, MediaUpload, Post, Settings
 from django.contrib.auth.models import User
 
 
@@ -53,4 +53,14 @@ def make_testing_db():
     p.createdByUser = u
     p.visibleLevel = 0
 
-
+    s = Settings()
+    s.changedByUser = u
+    s.property = '''[{
+            "type":"link",
+            "href":"example.com","text":"Visit example.com"
+        },{"type":"link","text":"Visit the top level website",
+        "href":".."}]'''
+    s.SName = 'frontpage.ui.navbar.content'
+    s.requiredLevel = 0
+    s.save()
+    print("NavBar setting created")

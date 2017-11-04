@@ -23,12 +23,14 @@ from frontpage import views
 
 
 urlpatterns = [
-    url(r'^$', include('frontpage.indexurls')),
     url(r'^databaseadmin/', admin.site.urls),
     url(r'^article/', include('frontpage.articleurls')),
     url(r'^post/', include('frontpage.posturls')),
     url(r'^user/', include('frontpage.userurls')),
     url(r'^admin/', include('frontpage.adminurls')),
+    url(r'^medium/', include('frontpage.mediaurls')),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
+    url(r'^search', views.search, name='search'),
+    url(r'^$', include('frontpage.indexurls')),
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,23 +1,27 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
+from django.views.decorators.csrf import csrf_exempt
 from .uitools.footerfunctions import render_footer
-from .uitools.headerfunctions import render_header
+from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
-from .uitools import ulog
+from .management import edit_post, edit_user, post_page, dashboard_page, order_page, edit_reservation, media_select
+from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
+from .management import edit_article
+from .uitools import ulog, searching
 
 # Create your views here.
 
 
 def index(request):
-    a = render_header(request)
-    a += "<h1>index: Not yet implemented</h1>"
+    a = render_content_header(request)
+    a += render_index_page(request)
     a += render_article_list()
     a += render_footer(request)
     return HttpResponse(a)
 
 
 def detailed_article(request, article_id):
-    a = render_header(request)
+    a = render_content_header(request)
     a += "<h1>article: Not yet implemented</h1>"
     a += render_article_detail(article_id)
     a += render_footer(request)
@@ -25,45 +29,82 @@ def detailed_article(request, article_id):
 
 
 def detailed_post(request, post_id):
-    a = render_header(request)
+    a = render_content_header(request)
     a += render_post(post_id)
     a += render_footer(request)
     return HttpResponse(a)
 
 
 def display_user(request, user_id):
-    a = render_header(request)
+    a = render_content_header(request)
     a += render_user_detail(user_id)
     a += render_footer(request)
     return HttpResponse(a)
 
 
+@csrf_exempt
 def login(request):
     return ulog.login(request)
 
 
 def admin_home(request):
-    a = render_header(request)
+    response = require_login(request)
+    if response:
+        return response
+    return HttpResponse(dashboard_page.render_dashboard(request))
+
+
+def admin_edit_post(request):
+
+    response = require_login(request, min_required_user_rights=3)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True, title="Edit post")
+    post_id_string = ""
+    if request.GET.get("post_id"):
+        post_id_string = 'post_id="' + str(request.GET["post_id"]) + '"'
+    redirect_string = ""
+    if post_id_string != "":
+        redirect_string += "+"
+    redirect_string += 'redirect="' + str(request.path) + '"'
+    a += edit_post.render_edit_page(request, '/admin/actions/save-post?' + post_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
 
 
-def admin_edit_post(request, post_id):
-    response = require_login(request, min_required_user_rights=1)
+def admin_list_posts(request):
+    response = require_login(request)
     if response:
         return response
-    a = render_header(request, admin=True)
-    # TODO implement post editing
+    a = render_content_header(request, admin_popup=True)
+    a += post_page.render_post_list(request)
     a += render_footer(request)
     return HttpResponse(a)
 
 
-def admin_add_user(request):
-    response = require_login(request, min_required_user_rights=1)
+def admin_edit_user(request):
+    response = require_login(request, min_required_user_rights=4)
     if response:
         return response
-    a = render_header(request, admin=True)
-    # TODO implement user adding
+    a = render_content_header(request, admin_popup=True)
+    user_id_string = ""
+    if request.GET.get("user_id"):
+        user_id_string = 'user_id=' + str(request.GET["user_id"]) + ''
+    redirect_string = ""
+    if user_id_string != "":
+        redirect_string += "&"
+    redirect_string += 'redirect=' + request.path + ''
+    a += edit_user.render_edit_page(request, '/admin/actions/save-user?' + user_id_string + redirect_string)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def admin_edit_article(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=3)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += edit_article.render_edit_page(request)
     a += render_footer(request)
     return HttpResponse(a)
 
@@ -72,11 +113,141 @@ def admin_list_users(request):
     response = require_login(request, min_required_user_rights=1)
     if response:
         return response
-    a = render_header(request, admin=True)
+    a = render_content_header(request, admin_popup=True)
     a += render_user_list(request)
     a += render_footer(request)
     return HttpResponse(a)
 
 
+@csrf_exempt
+def action_save_post(request):
+    return edit_post.do_edit_action(request, "/admin/posts")
+
+
+@csrf_exempt
+def action_save_user(request):
+    return edit_user.action_save_user(request, "/admin/users")
+
+
+@csrf_exempt
+def action_add_article_to_reservation(request: HttpRequest):
+    return edit_reservation.add_article_action(request, "/admin/orders")
+
+
+@csrf_exempt
+def action_save_article(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=2)
+    if response:
+        return response
+    return article_actions.action_save_article(request)
+
+
 def logout(request):
     return ulog.logout(request)
+
+
+def search(request: HttpRequest):
+    a = render_content_header(request)
+    a += searching.render_result_page(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def detailed_media(request: HttpRequest, medium_id):
+    a = render_content_header(request)
+    a += render_image_detail(request, medium_id)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def admin_display_orders(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += order_page.render_order_page()
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def action_change_avatar(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return response
+    return media_actions.action_change_user_avatar(request)
+
+
+def admin_dashboard(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    return HttpResponse(dashboard_page.render_dashboard(request))
+
+
+def admin_select_media(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    return media_select.render_media_selection_page(request)
+
+
+def handler404(request: HttpRequest):
+    a = render_content_header(request)
+    a += render_404_page(request)
+    a += render_footer()
+    response: HttpResponse = HttpResponse(a)
+    response.status_code = 404
+    return response
+
+
+def admin_add_media(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += media_upload_page.render_upload_page(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+@csrf_exempt
+def action_add_single_media(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    return media_actions.action_add_single_media(request)
+
+
+@csrf_exempt
+def action_add_bulk_media(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return response
+    return media_actions.action_add_multiple_media(request)
+
+
+def action_change_open_status(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=2)
+    if response:
+        return response
+    return random_actions.action_change_store_open_status(request)
+
+
+def admin_show_media(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += media_page.render_media_page(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def admin_show_articles(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += article_page.render_article_page(request)
+    a += render_footer(request)
+    return HttpResponse(a)
