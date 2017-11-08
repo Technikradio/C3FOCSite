@@ -116,7 +116,7 @@ class Select(FormObject):
             p = ""
             if self.selected == i:
                 p = ' selected'
-            a += '<option value="' + o[0] + '"' + p + '>' + o[1] + "</option>"
+            a += '<option value="' + str(o[0]) + '"' + p + '>' + str(o[1]) + "</option>"
         a += "</select>"
         if self.cr_at_end:
             a += "<br/>"

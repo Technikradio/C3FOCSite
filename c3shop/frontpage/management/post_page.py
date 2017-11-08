@@ -28,13 +28,14 @@ def render_post_list(request: HttpRequest):
     a = '<div class="admin-popup">'
     a += '<h3>Posts:</h3><a href="/admin/posts/edit"><img class="button" alt="Add a new Post" ' \
          'src="/staticfiles/frontpage/add-post.png"/></a><br />' \
-        '<table><tr><th> Post ID </th><th>Post title</th><th> visibility level</th>' \
+        '<table><tr><th> Edit </th><th> Post ID </th><th>Post title</th><th> visibility level</th>' \
         '<th> Author </th></tr>'
     objects = Post.objects.filter(pk__range=(start_range, end_range))
     for post in objects:
-        a += '<a href="' + generate_edit_link(post) + '"><tr><td>' + str(post.pk) + "</td><td>" + post.title + \
+        a += '<tr><td><a href="' + generate_edit_link(post) + '"><img src="/staticfiles/frontpage/edit.png" ' \
+                    'class="button"/></a></td><td>' + str(post.pk) + "</td><td>" + post.title + \
              "</td><td>" + str(post.visibleLevel) + "</td><td>" + str(post.createdByUser.authuser.username) + \
-             "</td></tr></a>"
+             "</td></tr>"
     a += '</table>'
     if page > 1:
         a += '<a href="' + request.path + '?page=' + str(page - 1) + '&objects=' + str(objects) + '" class="button">' \
