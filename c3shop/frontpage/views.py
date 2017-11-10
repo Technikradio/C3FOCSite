@@ -62,11 +62,11 @@ def admin_edit_post(request):
     a = render_content_header(request, admin_popup=True, title="Edit post")
     post_id_string = ""
     if request.GET.get("post_id"):
-        post_id_string = 'post_id="' + str(request.GET["post_id"]) + '"'
+        post_id_string = 'post_id=' + str(request.GET["post_id"]) + ''
     redirect_string = ""
     if post_id_string != "":
-        redirect_string += "+"
-    redirect_string += 'redirect="' + str(request.path) + '"'
+        redirect_string += "&"
+    redirect_string += 'redirect=' + str(request.path) + ''
     a += edit_post.render_edit_page(request, '/admin/actions/save-post?' + post_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
