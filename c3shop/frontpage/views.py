@@ -251,3 +251,20 @@ def admin_show_articles(request: HttpRequest):
     a += article_page.render_article_page(request)
     a += render_footer(request)
     return HttpResponse(a)
+
+
+def admin_confirm_action(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += random_actions.render_confirm_popup(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def admin_delete_post_action(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    return edit_post.do_delete_action(request)

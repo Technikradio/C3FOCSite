@@ -4,6 +4,7 @@
  * dark background: #282626
  * Less dark background: #393737
  * Font color: #fefefe
+ * Error color: #e74c3c
  */
 
 
@@ -148,4 +149,10 @@ form {
     width: 80%;
     position: fixed;
     left: 10%;
+}
+
+.error-panel {
+    padding: 25px;
+    width: 80%;
+    background: #e74c3c;
 }
