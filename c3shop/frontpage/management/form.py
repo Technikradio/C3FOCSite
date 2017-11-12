@@ -51,10 +51,10 @@ class CheckEnum(Enum):
     NOT_CHECKED = 0
     CHECKED = 1
 
-    def get_state(self, b: bool):
+    def get_state(b: bool):
         if b:
-            return self.CHECKED
-        return self.NOT_CHECKED
+            return CheckEnum.CHECKED
+        return CheckEnum.NOT_CHECKED
 
 
 class PlainText(FormObject):
