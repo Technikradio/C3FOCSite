@@ -5,7 +5,13 @@ from .magic import get_current_user
 import json
 
 RESERVATION_CONSTRUCTION_COOKIE_KEY: str = "c3shop.frontpage.reservation.cookiekey"
-
+EMPTY_COOKY_VALUE: str = '''
+{
+"notes": "",
+"articles": [],
+"pickup_date": "",
+}
+'''
 
 def add_article_action(request: HttpRequest, default_foreward_url: str):
     forward_url: str = default_foreward_url
@@ -38,7 +44,7 @@ def create_reservation_action(request: HttpRequest):
     r.pickupDate = current_reservation.get("pickup_date")  # TODO parse to date
     r.ready = False
     r.save()
-    for arts: current_reservation.get("articles"):
+    for arts in current_reservation.get("articles"):
         aid = int(arts.get("id"))
         q = int(arts.get("quantity"))
         notes = arts.get("notes")
@@ -52,9 +58,25 @@ def create_reservation_action(request: HttpRequest):
     return redirect(forward_url)
 
 
-def manipulate_reservation_action(request: HttpRequest):
+def manipulate_reservation_action(request: HttpRequest, default_foreward_url: str):
     """
     This function is used to alter the reservation beeing build inside
     a cookie. This function automatically crafts the required response.
     """
-    pass
+    js_string: str = ""
+    if request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY):
+        js_string = request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY)
+    else:
+        js_string = EMPTY_COOKY_VALUE
+    current_reservation = json.loads(js_string)
+    if request.POST.get("notes"):
+        current_reservation["notes"] = request.POST["notes"]
+    if request.POST.get("pickup_date"):
+        current_reservation["pickup_date"] = request.POST["pickup_date"]
+    forward_url: str = default_foreward_url
+    if request.GET.get("redirect"):
+        forward_url = request.GET["redirect"]
+    response: HttpResponseRedirect = HttpResponseRedirect(forward_url)
+    response.set_cookie(RESERVATION_CONSTRUCTION_COOKIE_KEY, json.dumps(current_reservation, indent=4))
+    return response
+
