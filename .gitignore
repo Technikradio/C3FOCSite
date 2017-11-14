@@ -92,3 +92,7 @@ ENV/
 #idea
 .idea/
 db.sqlite3
+
+
+# debugging fragments
+c3shop/uploads
