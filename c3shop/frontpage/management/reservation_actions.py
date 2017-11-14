@@ -13,6 +13,7 @@ EMPTY_COOKY_VALUE: str = '''
 }
 '''
 
+
 def add_article_action(request: HttpRequest, default_foreward_url: str):
     forward_url: str = default_foreward_url
     if request.GET.get("redirect"):

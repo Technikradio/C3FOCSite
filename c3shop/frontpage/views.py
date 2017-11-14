@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
-from .management import edit_post, edit_user, post_page, dashboard_page, order_page, edit_reservation, media_select
+from .management import edit_post, edit_user, post_page, dashboard_page, order_page, reservation_actions, media_select
 from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
 from .management import edit_article
 from .uitools import ulog, searching
@@ -131,7 +131,17 @@ def action_save_user(request):
 
 @csrf_exempt
 def action_add_article_to_reservation(request: HttpRequest):
-    return edit_reservation.add_article_action(request, "/admin/orders")
+    return reservation_actions.add_article_action(request, "/admin/orders")
+
+
+@csrf_exempt
+def action_alter_current_reservation(request: HttpRequest):
+    return reservation_actions.manipulate_reservation_action(request, "/admin/orders")
+
+
+@csrf_exempt
+def action_save_reservation(request: HttpRequest):
+    return reservation_actions.write_db_reservation_action(request, "/admin/orders")
 
 
 @csrf_exempt
