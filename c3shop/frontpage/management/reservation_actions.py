@@ -1,10 +1,11 @@
 from django.http import HttpRequest, HttpResponseRedirect
-from django.shortcuts import redirect
+# from django.shortcuts import redirect
 from ..models import GroupReservation, ArticleRequested, Article
 from .magic import get_current_user
 import json
 
-RESERVATION_CONSTRUCTION_COOKIE_KEY: str = "c3shop.frontpage.reservation.cookiekey"
+RESERVATION_CONSTRUCTION_COOKIE_KEY: str = "org.technikradio.c3shop.frontpage" + \
+        ".reservation.cookiekey"
 EMPTY_COOKY_VALUE: str = '''
 {
 "notes": "",
@@ -69,7 +70,10 @@ def write_db_reservation_action(request: HttpRequest):
         req.amount = q
         req.notes = notes
         req.save()
-    return redirect(forward_url)
+    # Do not simply redirect but also delete the construction cookie
+    res: HttpResponseRedirect = HttpResponseRedirect(forward_url)
+    res.delete_cookie(RESERVATION_CONSTRUCTION_COOKIE_KEY)
+    return res
 
 
 def manipulate_reservation_action(request: HttpRequest, default_foreward_url: str):

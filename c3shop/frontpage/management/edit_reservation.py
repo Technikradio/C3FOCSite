@@ -21,6 +21,7 @@ def render_edit_page(request: HttpRequest):
     f.action_url = "/admin/actions/alter-current-reservation"
     f.add_content(PlainText("<h3>Edit reservation: </h3>"))
     # TODO implement global settings form here
+    f.add_content(PlainText("Enter date: "))
     a = f.render_html()
     a += '<br />Add article: <a href="/admin/reservations/select-article">Add an ' + \
             'Article to the reservation</a>'
