@@ -323,3 +323,12 @@ class FileUpload(InputField):
         if self.do_cr_after_input:
             a += '<br />'
         return a
+
+
+class Date(InputField):
+    
+    def __init__(self, date:str = "", name: str = "", do_cr_after_input: bool = True):
+        super(Date, self).__init__(button_text=date, name=name, do_cr_after_input=do_cr_after_input, field_type="date")
+        pass
+
+

@@ -1,5 +1,5 @@
 from django.http import HttpRequest
-from .form import Form, PlainText
+from .form import Form, PlainText, Date, TextArea
 from .reservation_actions import EMPTY_COOKY_VALUE
 from .reservation_actions import RESERVATION_CONSTRUCTION_COOKIE_KEY
 from ..models import Article
@@ -22,6 +22,9 @@ def render_edit_page(request: HttpRequest):
     f.add_content(PlainText("<h3>Edit reservation: </h3>"))
     # TODO implement global settings form here
     f.add_content(PlainText("Enter date: "))
+    f.add_content(Date(name="pickup_date"))
+    f.add_content(PlainText("Notes:<br/>"))
+    f.add_content(TextArea(name="notes", placeholder="Write additional notes here."))
     a = f.render_html()
     a += '<br />Add article: <a href="/admin/reservations/select-article">Add an ' + \
             'Article to the reservation</a>'
