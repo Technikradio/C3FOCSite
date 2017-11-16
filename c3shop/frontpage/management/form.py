@@ -51,10 +51,10 @@ class CheckEnum(Enum):
     NOT_CHECKED = 0
     CHECKED = 1
 
-    def get_state(self, b: bool):
+    def get_state(b: bool):
         if b:
-            return self.CHECKED
-        return self.NOT_CHECKED
+            return CheckEnum.CHECKED
+        return CheckEnum.NOT_CHECKED
 
 
 class PlainText(FormObject):
@@ -116,7 +116,7 @@ class Select(FormObject):
             p = ""
             if self.selected == i:
                 p = ' selected'
-            a += '<option value="' + o[0] + '"' + p + '>' + o[1] + "</option>"
+            a += '<option value="' + str(o[0]) + '"' + p + '>' + str(o[1]) + "</option>"
         a += "</select>"
         if self.cr_at_end:
             a += "<br/>"

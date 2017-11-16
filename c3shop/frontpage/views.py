@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
@@ -62,11 +61,11 @@ def admin_edit_post(request):
     a = render_content_header(request, admin_popup=True, title="Edit post")
     post_id_string = ""
     if request.GET.get("post_id"):
-        post_id_string = 'post_id="' + str(request.GET["post_id"]) + '"'
+        post_id_string = 'post_id=' + str(request.GET["post_id"]) + ''
     redirect_string = ""
     if post_id_string != "":
-        redirect_string += "+"
-    redirect_string += 'redirect="' + str(request.path) + '"'
+        redirect_string += "&"
+    redirect_string += 'redirect=' + str(request.path) + ''
     a += edit_post.render_edit_page(request, '/admin/actions/save-post?' + post_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
@@ -171,7 +170,7 @@ def admin_display_orders(request: HttpRequest):
 
 
 def action_change_avatar(request: HttpRequest):
-    response = require_login(request, min_required_user_rights=1)
+    response = require_login(request)
     if response:
         return response
     return media_actions.action_change_user_avatar(request)
@@ -251,3 +250,27 @@ def admin_show_articles(request: HttpRequest):
     a += article_page.render_article_page(request)
     a += render_footer(request)
     return HttpResponse(a)
+
+
+def admin_confirm_action(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += random_actions.render_confirm_popup(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def admin_delete_post_action(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    return edit_post.do_delete_action(request)
+
+
+def admin_add_media_to_article_action(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=2)
+    if response:
+        return HttpResponseForbidden()
+    return article_actions.action_add_media_to_article(request)

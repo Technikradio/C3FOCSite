@@ -14,3 +14,23 @@ def action_change_store_open_status(request: HttpRequest):
     s.property = str(toggle_to)
     s.save()
     return redirect(redirect_url)
+
+
+def render_confirm_popup(request: HttpRequest):
+    back: str = request.GET.get("back_url")
+    forward: str = request.GET.get("forward_url")
+    payload: str = request.GET.get("payload")
+    if not back:
+        back = "/admin"
+    if not forward:
+        return "<h3>Something went wrong...</h3>There was an action requested but no forward url defined.<br/><br/>" + \
+               '<br/><a href="/admin/" class="button">Go back to Dashboard</a>'
+    if payload:
+        payload = "?payload=" + payload
+    else:
+        payload = ""
+    a = "<h3>The action you've requested may be a bit destructive...</h3>"
+    a += "Do you really want to do this?<br/><br/>"
+    a += '<a href="' + back + '" class="button">Go back</a> <a href="' + forward + payload
+    a += '" class="button">Continue</a>'
+    return a
