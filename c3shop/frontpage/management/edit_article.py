@@ -7,7 +7,9 @@ from ..uitools.dataforge import get_csrf_form_element
 
 def render_image_table(art: Article):
     imgs = ArticleMedia.objects.all().filter(AID=art)
-    a = ''
+    a = "<h3> Manage article images </h3>"
+    a += '<a href="/admin/media/select?action_url=/admin/actions/add-image-to-article&payload=' + str(art.pk) + \
+        '" ><img class="button" src="/staticfiles/frontpage/add-image.png"/></a>'
     a += '<table><tr><th> Preview </th><th> Headline </th></tr>'
     for img in imgs:
         media = img.MID
