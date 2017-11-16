@@ -13,14 +13,17 @@ PATH_TO_UPLOAD_FOLDER_ON_DISK: str = "./"
 
 def action_change_user_avatar(request: HttpRequest):
     try:
-        user_id = request.GET["payload"]
-        media_id = request.GET["media_id"]
+        user_id = int(request.GET["payload"])
+        media_id = int(request.GET["media_id"])
         user: Profile = Profile.objects.get(pk=int(user_id))
+        u: Profile = get_current_user(request)
+        if not (u == user) and u.rights < 4:
+            return redirect("/admin?error='You're not allowed to edit other users.'")
         medium = Media.objects.get(pk=int(media_id))
         user.avatarMedia = medium
         user.save()
     except Exception as e:
-        return HttpResponseBadRequest(e)
+        return redirect("/admin?error=" + str(e))
     return redirect("/admin/users")
 
 

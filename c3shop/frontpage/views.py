@@ -171,7 +171,7 @@ def admin_display_orders(request: HttpRequest):
 
 
 def action_change_avatar(request: HttpRequest):
-    response = require_login(request, min_required_user_rights=1)
+    response = require_login(request)
     if response:
         return response
     return media_actions.action_change_user_avatar(request)
@@ -268,3 +268,4 @@ def admin_delete_post_action(request: HttpRequest):
     if response:
         return response
     return edit_post.do_delete_action(request)
+
