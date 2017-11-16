@@ -18,7 +18,7 @@ def render_edit_page(request: HttpRequest):
     else:
         current_reservation = json.loads(EMPTY_COOKY_VALUE)
     f: Form = Form()
-    f.action_url = "/admin/actions/alter-current-reservation"
+    f.action_url = "/admin/actions/alter-current-reservation?redirect=/admin/reservations/edit"
     f.add_content(PlainText("<h3>Edit reservation: </h3>"))
     # TODO implement global settings form here
     f.add_content(PlainText("Enter date: "))

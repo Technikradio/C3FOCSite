@@ -175,7 +175,7 @@ def admin_display_orders(request: HttpRequest):
     if response:
         return response
     a = render_content_header(request, admin_popup=True)
-    a += order_page.render_order_page()
+    a += order_page.render_order_page(request)
     a += render_footer(request)
     return HttpResponse(a)
 
