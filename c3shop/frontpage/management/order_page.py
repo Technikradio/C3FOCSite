@@ -26,7 +26,7 @@ def render_open_order_table(u: Profile):
 
 
 def generate_edit_link(o: GroupReservation):
-    return "/admin/orders/edit?order_id=" + str(o.pk)
+    return "/admin/reservations/edit?id=" + str(o.pk)
 
 
 def generate_order_ready_status_image(state: bool):
@@ -87,17 +87,19 @@ def render_order_list(request: HttpRequest):
 def render_personal_req_management(request: HttpRequest):
     a = "<div>"
 
-    a += '<span class="button">Add a new order (Not yet implemented)</span>'
+    a += '<a href="/admin/reservations/edit"><span class="button">Add a new order</span></a>'
     a += "</div>"
     return a
 
 
 def render_order_page(request: HttpRequest):
     u: Profile = get_current_user(request)
-    a = render_personal_req_management(request)
+    a = '<div class="admin-popup">'
+    a += render_personal_req_management(request)
     a += "<h2>The following orders are still open:</h2>"
     a += render_open_order_table(u)
     if u.rights > 0:
-        a += "<h2>Below is a list of all orders:"
+        a += "<h2>Below is a list of all orders:</h2>"
         a += render_order_list(request)
+    a += "</div>"
     return a

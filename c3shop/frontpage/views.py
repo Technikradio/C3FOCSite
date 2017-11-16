@@ -6,7 +6,7 @@ from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page, order_page, reservation_actions, media_select
 from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
-from .management import edit_article
+from .management import edit_article, edit_reservation
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -131,17 +131,17 @@ def action_save_user(request):
 
 @csrf_exempt
 def action_add_article_to_reservation(request: HttpRequest):
-    return reservation_actions.add_article_action(request, "/admin/orders")
+    return reservation_actions.add_article_action(request, "/admin/reservations")
 
 
 @csrf_exempt
 def action_alter_current_reservation(request: HttpRequest):
-    return reservation_actions.manipulate_reservation_action(request, "/admin/orders")
+    return reservation_actions.manipulate_reservation_action(request, "/admin/reservations")
 
 
 @csrf_exempt
 def action_save_reservation(request: HttpRequest):
-    return reservation_actions.write_db_reservation_action(request, "/admin/orders")
+    return reservation_actions.write_db_reservation_action(request, "/admin/reservations")
 
 
 @csrf_exempt
@@ -261,3 +261,14 @@ def admin_show_articles(request: HttpRequest):
     a += article_page.render_article_page(request)
     a += render_footer(request)
     return HttpResponse(a)
+
+
+def admin_edit_reservation(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += edit_reservation.render_edit_page(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+

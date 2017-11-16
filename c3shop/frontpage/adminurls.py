@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^media/select', views.admin_select_media, name="wizard_select_media"),
     url(r'^media/add', views.admin_add_media, name="add_media"),
     url(r'^media$', views.admin_show_media, name="media_page"),
-    url(r'^orders$', views.admin_display_orders, name="list_orders"),
-    url(r'^orders/$', views.admin_display_orders, name="list_orders"),
+    url(r'^reservations$', views.admin_display_orders, name="list_orders"),
+    url(r'^reservations/$', views.admin_display_orders, name="list_orders"),
+    url(r'^reservations/edit', views.admin_edit_reservation, name='edit_reservation'),
 ]

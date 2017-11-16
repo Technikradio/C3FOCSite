@@ -10,7 +10,7 @@ def render_edit_page(request: HttpRequest):
     This method will return the reservation edit page.
     The first form will be used in order to manipulate global reservation
     settings. The table below will list all selected articles including
-    the amount and notes.
+    the amount and notes. If no cookie is present but the GET-Value [id] it will load it.
     """
     current_reservation = None
     if RESERVATION_CONSTRUCTION_COOKIE_KEY in request.COOKIES:
