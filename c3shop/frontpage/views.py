@@ -6,7 +6,7 @@ from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page, order_page, reservation_actions, media_select
 from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
-from .management import edit_article, edit_reservation
+from .management import edit_article, edit_reservation, article_select
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -272,3 +272,9 @@ def admin_edit_reservation(request: HttpRequest):
     a += render_footer(request)
     return HttpResponse(a)
 
+
+def admin_select_article(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    return article_select.render_article_selection_page(request)

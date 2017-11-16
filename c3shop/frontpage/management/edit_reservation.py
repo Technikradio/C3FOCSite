@@ -1,9 +1,10 @@
 from django.http import HttpRequest
-from .form import Form, PlainText, Date, TextArea
+from .form import Form, PlainText, Date, TextArea, SubmitButton
 from .reservation_actions import EMPTY_COOKY_VALUE
 from .reservation_actions import RESERVATION_CONSTRUCTION_COOKIE_KEY
 from ..models import Article
 import json
+
 
 def render_edit_page(request: HttpRequest):
     """
@@ -22,12 +23,14 @@ def render_edit_page(request: HttpRequest):
     f.add_content(PlainText("<h3>Edit reservation: </h3>"))
     # TODO implement global settings form here
     f.add_content(PlainText("Enter date: "))
-    f.add_content(Date(name="pickup_date"))
+    f.add_content(Date(name="pickup_date", date=current_reservation["pickup_date"]))
     f.add_content(PlainText("Notes:<br/>"))
-    f.add_content(TextArea(name="notes", placeholder="Write additional notes here."))
+    f.add_content(TextArea(name="notes", placeholder="Write additional notes here.", text=current_reservation["notes"]))
+    f.add_content(PlainText("<br/>"))
+    f.add_content(SubmitButton())
     a = f.render_html()
-    a += '<br />Add article: <a href="/admin/reservations/select-article">Add an ' + \
-            'Article to the reservation</a>'
+    a += '<br />Add article: <a href="/admin/reservations/select-article"><img src="/staticfiles/frontpage/order-' \
+         'article.png" class="button"/></a>'
     a += "<table><tr><th> Headline </th><th> Amount </th><th> Notes </th></tr>"
     for art in current_reservation["articles"]:
         art: Article = Article.objects.get(int(art["id"]))
