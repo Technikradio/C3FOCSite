@@ -66,7 +66,7 @@ def render_order_list(request: HttpRequest):
     end_range = (page + 1) * items_per_page
     a = '<h3>Orders:</h3><a href="/admin/posts/edit">Add a new Order</a>' \
         '<table><tr><th> ID </th><th> Open </th><th> Ready </th><th> Pickup date </th><th> Issuer </th></tr>'
-    objects = GroupReservation.objects.filter(pk__rage=(start_range, end_range))
+    objects = GroupReservation.objects.filter(pk__range=(start_range, end_range))
     for order in objects:
         a += '<a href="' + generate_edit_link(order) + '"><tr><td>' + str(order.pk) + "</td><td> " \
              + generate_order_open_status_image(order.open) + " </td><td> " \
