@@ -10,7 +10,7 @@ EMPTY_COOKY_VALUE: str = '''
 {
 "notes": "",
 "articles": [],
-"pickup_date": "",
+"pickup_date": ""
 }
 '''
 
