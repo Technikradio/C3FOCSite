@@ -278,3 +278,10 @@ def admin_select_article(request: HttpRequest):
     if response:
         return response
     return article_select.render_article_selection_page(request)
+
+
+def admin_select_article_detail(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    return article_select.render_detail_selection(request)

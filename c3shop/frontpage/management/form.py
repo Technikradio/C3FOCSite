@@ -95,7 +95,7 @@ class Select(FormObject):
     selected: int = 0
     cr_at_end: bool = True
     
-    def __init__(self, name: str = "", text: str = "", content = [], preselected: int = 0, do_cr_after_input: bool = True):
+    def __init__(self, name: str = "", text: str = "", content=[], preselected: int = 0, do_cr_after_input: bool = True):
         """
         This constructor initializes the select object. Please keep in mind that content should be an
         iteratable object containing tupels of the following format:
@@ -327,7 +327,7 @@ class FileUpload(InputField):
 
 class Date(InputField):
     
-    def __init__(self, date:str = "", name: str = "", do_cr_after_input: bool = True):
+    def __init__(self, date: str = "", name: str = "", do_cr_after_input: bool = True):
         super(Date, self).__init__(button_text=date, name=name, do_cr_after_input=do_cr_after_input, field_type="date")
         pass
 

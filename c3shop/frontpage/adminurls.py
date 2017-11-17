@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^reservations/$', views.admin_display_orders, name="list_orders"),
     url(r'^reservations/edit', views.admin_edit_reservation, name='edit_reservation'),
     url(r'^reservations/select-article', views.admin_select_article, name="wizard_select_article"),
+    url(r'^reservations/article-detail-select', views.admin_select_article_detail, name="wizard_select_article_p2"),
 ]

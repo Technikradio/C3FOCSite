@@ -1,7 +1,10 @@
+
 from django.http import HttpRequest
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from ..models import Article
 from .page_skeleton import render_headbar, render_footer
+from .form import Form, NumberField, TextArea, SubmitButton, PlainText
 
 
 def render_article_selection_page(request: HttpRequest):
@@ -21,12 +24,12 @@ def render_article_selection_page(request: HttpRequest):
     if start_range > total_items:
         start_range = 0
     end_range = (page + 1) * items_per_page
-    a = render_headbar(request, title="Select media")
+    a = render_headbar(request, title="Select article")
     a += '<div class="admin-popup">'
     a += '<h3>Please select your desired article</h3><table><tr><th>Select</th><th>Preview</th><th>Title</th></tr>'
     objects = Article.objects.filter(pk__range=(start_range, end_range))
     for article in objects:
-        s: str = ""
+        s: str = None
         p = article.flashImage
         if p:
             s = p.lowResFile
@@ -44,3 +47,24 @@ def render_article_selection_page(request: HttpRequest):
              '" class="button">Next page </a>'
     a += '</div>' + render_footer(request)
     return HttpResponse(a)
+
+
+def render_detail_selection(request: HttpRequest):
+    try:
+        a: Article = Article.objects.get(pk=int(request.GET["article_id"]))
+        f: Form = Form()
+        f.action_url = "/admin/actions/add-article-to-reservation?article_id=" + str(a.pk) + \
+                       "&redirect=/admin/reservations/edit"
+        f.add_content(PlainText("Specify amount: "))
+        f.add_content(NumberField(name="quantity", minimum=1, maximum=a.quantity))
+        # TODO change to total available amount
+        f.add_content(PlainText("Maybe add some optional notes:"))
+        f.add_content(TextArea(name="notes", label_text="Notes:", text=""))
+        f.add_content(SubmitButton())
+        a = render_headbar(request, title="Specify article details")
+        a += '<div class="admin-popup"><h3>Please specify further details:</h3>'
+        a += f.render_html()
+        a += '</div>' + render_footer(request)
+        return HttpResponse(a)
+    except Exception as e:
+        return redirect("/admin/?error=" + str(e))
