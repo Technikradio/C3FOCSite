@@ -1,3 +1,4 @@
+import logging
 from django.http import HttpRequest, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect
 from . import magic
@@ -21,6 +22,7 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
         post = Post.objects.get(pk=post_id)
     f = Form()
     f.action_url = action_url
+    f.add_content(PlainText('<br />'))
     if not post:
         f.add_content(PlainText('Add new Post: <br />'))
     f.add_content(PlainText("Post title:"))
@@ -77,9 +79,12 @@ def do_edit_action(request: HttpRequest, default_forward_url: str = ".."):
         # Assuming a new Post
         mpost = Post()
         mpost.createdByUser = profile
+        logging.log(logging.INFO, "User '" + str(profile) + "' is creating a new post")
     else:
         # We have a desired post id. Let's load that one
-        mpost = Post.objects.get(pk=int(request.GET["post_id"]))
+        ids: str = request.GET["post_id"]
+        mpost = Post.objects.get(pk=int(ids))
+        logging.log(logging.INFO, "Editing post [" + str(ids) + "] containing: " + str(mpost))
     if request.POST.get('title'):
         mpost.title = str(request.POST['title'])
     else:
@@ -95,3 +100,11 @@ def do_edit_action(request: HttpRequest, default_forward_url: str = ".."):
         return HttpResponseBadRequest()
     mpost.save()
     return redirect(forward_url)
+
+
+def do_delete_action(request: HttpRequest):
+    if not request.GET.get("payload"):
+        return redirect("/admin?error=NO_POST_ID_TO_DELETE")
+    id: int = int(request.GET["payload"])
+    Post.objects.get(pk=id).delete()
+    return redirect("/admin/posts")

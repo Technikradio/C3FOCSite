@@ -1,7 +1,11 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 from ..models import Article, Media, ArticleMedia, Post, Profile, Settings
+from ..management.magic import get_current_user
 from django.conf import settings
 from django.shortcuts import redirect
 from django.http.response import Http404
+from django.http import HttpRequest
 import logging
 
 SERVER_ROOT = "localhost:8000"
@@ -139,8 +143,21 @@ def render_image(media, width=0, height=0, high_res=True, include_link=True, rep
 
 
 # TODO implement visibility level
-def render_post(post_id):
-    post = Post.objects.get(pk=int(post_id))
+def render_post(post_id, request: HttpRequest):
+    # post: Post = None
+    try:
+        post = Post.objects.get(pk=int(post_id))
+    except ObjectDoesNotExist as e:
+        # TODO think about something better when the required post was deleted
+        return '<div class="error-panel">The object you\'re looking for seams to be banished in the ether.:<br/>'\
+               + str(post_id) + ": " + str(e) + "</div>"
+    if post.visibleLevel > 0:
+        # Check if user is allowed to see this post
+        if not request.user.is_authenticated():
+            return ""
+        else:
+            if get_current_user(request).rights < post.visibleLevel:
+                return "You don't have the required permission in order to review this item."
     time = "No Date available"
     try:
         time = str(post.timestamp)
@@ -246,5 +263,5 @@ def render_index_page(request):
     for i in range(0, post_count):
         post_ids.append(size - i)
     for pid in post_ids:
-        a += render_post(pid)
+        a += render_post(pid, request)
     return a
