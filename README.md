@@ -76,6 +76,15 @@ and apply to other apps and django's native admin panel.
 * 3 -> Write and edit posts
 * 4 -> Add users and change settings
 
+#### Cookie ussage
+The C3FOC site uses cookies. Before you start to cry: it's not about
+tracking anyone. Cookies are used for the following cases:
+ * keeping track of logged in users (should be obvious why)
+ * implementing CSFR protection
+ * beeing able to modify reservations before submitting them
+In case you're not a registered user: don't panic, we won't track you.
+In case you don't believe us: read the source code.
+
 ## Deployment
 
 Have a look at PushToProduction file for detailed information on how to

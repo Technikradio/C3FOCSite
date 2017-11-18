@@ -66,6 +66,18 @@ def action_save_article(request: HttpRequest):
         return redirect('/admin/articles/edit?vault=' + str(e))
 
 
+def action_change_splash_image(request: HttpRequest):
+    try:
+        m: Media = Media.objects.get(pk=int(request.GET["media_id"]))
+        a: Article = Article.objects.get(pk=int(request.GET["payload"]))
+        a.flashImage = m
+        a.save()
+        return redirect("/admin/articles/edit?id=" + str(a.pk))
+        pass
+    except Exception as e:
+        return redirect("/admin?error=" + str(e))
+
+
 def action_add_media_to_article(request):
     """
     This action adds the media specified by GET media_id to the article specified by GET payload
@@ -83,3 +95,4 @@ def action_add_media_to_article(request):
         pass
     except Exception as e:
         return redirect("/admin/?error=" + str(e))
+

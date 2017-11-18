@@ -49,7 +49,7 @@ def render_edit_page(http_request: HttpRequest):
     else:
         f.add_content(PlainText("<h3>Edit article #" + str(article.pk) + "</h3>Short Description / Name: "))
         f.add_content(TextField(name="description", button_text=article.description))
-        f.add_content(CheckBox(text="Visible: ", name="visible", checked=CheckEnum.get_state(article.visible)))
+        f.add_content(CheckBox(text="Visible: ", name="visible", checked=CheckEnum.get_state(b=article.visible)))
         f.add_content(PlainText("Price: "))
         f.add_content(TextField(name="price", do_cr_after_input=False, button_text=article.price))
         f.add_content(PlainText(" €ct<br/>Number of articles left: "))
@@ -66,6 +66,9 @@ def render_edit_page(http_request: HttpRequest):
     a += f.render_html()
     a += "<br />"
     if article:
+        a += '<h3>Change Image:</h3><a href="/admin/media/select?payload=' + \
+            str(article.pk) + '&action_url=/admin/actions/change-article-splash-image">' \
+            '<img src="/staticfiles/frontpage/change-image.png" class="button" /></a>'
         a += render_image_table(article)
     else:
         a += '</div>'

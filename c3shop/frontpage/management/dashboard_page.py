@@ -12,7 +12,7 @@ def render_features_bar():
     a += '<a href="/admin/users">Users</a><br />'
     a += '<a href="/admin/articles">Articles</a><br />'
     a += '<a href="/admin/media">Media</a><br />'
-    a += '<a href="/admin/orders">reservations</a><br />'
+    a += '<a href="/admin/reservations">Reservations</a><br />'
     a += 'Global settings<br />'
     a += '<br/><a href="/logout/"> Logout </a><br/>'
     a += '</div>'

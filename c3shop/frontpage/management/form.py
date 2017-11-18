@@ -95,7 +95,7 @@ class Select(FormObject):
     selected: int = 0
     cr_at_end: bool = True
     
-    def __init__(self, name: str = "", text: str = "", content = [], preselected: int = 0, do_cr_after_input: bool = True):
+    def __init__(self, name: str = "", text: str = "", content=[], preselected: int = 0, do_cr_after_input: bool = True):
         """
         This constructor initializes the select object. Please keep in mind that content should be an
         iteratable object containing tupels of the following format:
@@ -116,7 +116,7 @@ class Select(FormObject):
             p = ""
             if self.selected == i:
                 p = ' selected'
-            a += '<option value="' + str(o[0]) + '"' + p + '>' + str(o[1]) + "</option>"
+            a += '<option value="' + str(o[0]) + '"' + str(p) + '>' + str(o[1]) + "</option>"
         a += "</select>"
         if self.cr_at_end:
             a += "<br/>"
@@ -323,3 +323,12 @@ class FileUpload(InputField):
         if self.do_cr_after_input:
             a += '<br />'
         return a
+
+
+class Date(InputField):
+    
+    def __init__(self, date: str = "", name: str = "", do_cr_after_input: bool = True):
+        super(Date, self).__init__(button_text=date, name=name, do_cr_after_input=do_cr_after_input, field_type="date")
+        pass
+
+
