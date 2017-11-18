@@ -70,7 +70,7 @@ def render_order_list(request: HttpRequest):
     for order in objects:
         a += '<a href="' + generate_edit_link(order) + '"><tr><td>' + str(order.pk) + "</td><td> " \
              + generate_order_open_status_image(order.open) + " </td><td> " \
-             + generate_order_ready_status_image(order.ready) + " </td><td>" + order.pickupDate + "</td><td>" + \
+             + generate_order_ready_status_image(order.ready) + " </td><td>" + str(order.pickupDate) + "</td><td>" + \
              str(order.createdByUser.displayName) + "</td></tr></a>"
     a += '</table>'
     if page > 1:

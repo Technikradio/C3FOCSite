@@ -33,8 +33,8 @@ def render_edit_page(request: HttpRequest):
          'article.png" class="button"/></a>'
     a += "<table><tr><th> Headline </th><th> Amount </th><th> Notes </th></tr>"
     for art in current_reservation["articles"]:
-        art: Article = Article.objects.get(int(art["id"]))
-        a += "<tr><td>" + art.description + "</td><td>" + str(art["quantity"]) + "</td>"
+        r_art: Article = Article.objects.get(pk=int(art["id"]))
+        a += "<tr><td>" + r_art.description + "</td><td>" + str(art["quantity"]) + "</td>"
         a += "<td>" + str(art["notes"]) + "</td></tr>"
     a += "</table>"
     if current_reservation.get("notes") and current_reservation.get("pickup_date"):

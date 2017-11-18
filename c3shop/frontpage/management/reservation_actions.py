@@ -46,7 +46,7 @@ def write_db_reservation_action(request: HttpRequest):
         fresh = True
     else:
         r = GroupReservation.objects.get(pk=int(request.GET["id"]))
-    r.createdByUser = get_current_user()
+    r.createdByUser = get_current_user(request)
     r.open = True
     r.notes = current_reservation.get("notes")
     r.pickupDate = current_reservation.get("pickup_date")  # TODO parse to date

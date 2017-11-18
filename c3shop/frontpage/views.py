@@ -141,7 +141,7 @@ def action_alter_current_reservation(request: HttpRequest):
 
 @csrf_exempt
 def action_save_reservation(request: HttpRequest):
-    return reservation_actions.write_db_reservation_action(request, "/admin/reservations")
+    return reservation_actions.write_db_reservation_action(request)
 
 
 @csrf_exempt
