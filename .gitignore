@@ -95,3 +95,4 @@ db.sqlite3
 
 #do not upload test uploads
 uploads/
+c3shop/uploads

@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from ..models import Article
 from .page_skeleton import render_headbar, render_footer
 from .form import Form, NumberField, TextArea, SubmitButton, PlainText
+from .magic import get_article_pcs_free
 
 
 def render_article_selection_page(request: HttpRequest):
@@ -56,7 +57,7 @@ def render_detail_selection(request: HttpRequest):
         f.action_url = "/admin/actions/add-article-to-reservation?article_id=" + str(a.pk) + \
                        "&redirect=/admin/reservations/edit"
         f.add_content(PlainText("Specify amount: "))
-        f.add_content(NumberField(name="quantity", minimum=1, maximum=a.quantity))
+        f.add_content(NumberField(name="quantity", minimum=1, maximum=get_article_pcs_free(a)))
         # TODO change to total available amount
         f.add_content(PlainText("Maybe add some optional notes:"))
         f.add_content(TextArea(name="notes", label_text="Notes:", text=""))

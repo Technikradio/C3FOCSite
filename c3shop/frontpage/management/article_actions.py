@@ -76,3 +76,23 @@ def action_change_splash_image(request: HttpRequest):
         pass
     except Exception as e:
         return redirect("/admin?error=" + str(e))
+
+
+def action_add_media_to_article(request):
+    """
+    This action adds the media specified by GET media_id to the article specified by GET payload
+    :param request: The HttpRequest
+    :return: The crafted response
+    """
+    try:
+        article: Article = Article.objects.get(pk=int(request.GET["payload"]))
+        img: Media = Media.objects.get(pk=int(request.GET["media_id"]))
+        a: ArticleMedia = ArticleMedia()
+        a.MID = img
+        a.AID = article
+        a.save()
+        return redirect("/admin/articles/edit?article_id=" + str(article.pk))
+        pass
+    except Exception as e:
+        return redirect("/admin/?error=" + str(e))
+

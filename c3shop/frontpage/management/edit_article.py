@@ -1,11 +1,22 @@
 from django.http import HttpRequest
-from django.shortcuts import redirect
-from django.contrib.auth.models import User
 from . import page_skeleton, magic
-from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, PasswordField, CheckBox, CheckEnum, Select
-from ..models import Article
+from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, CheckBox, CheckEnum, Select
+from ..models import Article, ArticleMedia
 from ..uitools.dataforge import get_csrf_form_element
-from .magic import get_current_user
+
+
+def render_image_table(art: Article):
+    imgs = ArticleMedia.objects.all().filter(AID=art)
+    a = "<h3> Manage article images </h3>"
+    a += '<a href="/admin/media/select?action_url=/admin/actions/add-image-to-article&payload=' + str(art.pk) + \
+        '" ><img class="button" src="/staticfiles/frontpage/add-image.png"/></a>'
+    a += '<table><tr><th> Preview </th><th> Headline </th></tr>'
+    for img in imgs:
+        media = img.MID
+        a += '<tr><td><img src="' + media.lowResFile + '" /></td><td>' + media.headline + '</td>'
+        a += "</tr>"
+    a += '</table></div>'
+    return a
 
 
 def render_edit_page(http_request: HttpRequest):
@@ -53,9 +64,12 @@ def render_edit_page(http_request: HttpRequest):
     f.add_content(SubmitButton())
     a = '<div class="admin-popup">'
     a += f.render_html()
+    a += "<br />"
     if article:
         a += '<h3>Change Image:</h3><a href="/admin/media/select?payload=' + \
-             str(article.pk) + '&action_url=/admin/actions/change-article-splash-image">' \
-             '<img src="/staticfiles/frontpage/change-image.png" class="button" /></a>'
-    a += "</div>"
+            str(article.pk) + '&action_url=/admin/actions/change-article-splash-image">' \
+            '<img src="/staticfiles/frontpage/change-image.png" class="button" /></a>'
+        a += render_image_table(article)
+    else:
+        a += '</div>'
     return a

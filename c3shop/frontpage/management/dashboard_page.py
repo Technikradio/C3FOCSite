@@ -52,10 +52,18 @@ def render_quick_store_panel():
     return a
 
 
+def render_error_panel(request: HttpRequest):
+    if request.GET.get("error"):
+        return '<div class="error-panel">Something produced an error: ' + request.GET["error"] + '</div>'
+    else:
+        return ""
+
+
 def render_dashboard(request: HttpRequest):
     u: Profile = magic.get_current_user(request)
     a = render_headbar(request)
     a += render_features_bar()
+    a += render_error_panel(request)
     a += '<div class="panel_board">'
     a += render_statistics_panel(request)
     a += render_order_panel(u)
