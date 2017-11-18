@@ -285,3 +285,10 @@ def admin_select_article_detail(request: HttpRequest):
     if response:
         return response
     return article_select.render_detail_selection(request)
+
+
+def admin_select_article_flash_image(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    return article_actions.action_change_splash_image(request)

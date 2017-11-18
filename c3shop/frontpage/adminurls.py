@@ -20,6 +20,8 @@ urlpatterns = [
     url(r'^actions/change-user-avatar', views.action_change_avatar, name="action_change_avatar"),
     url(r'^actions/change-open-status', views.action_change_open_status, name="action_change_open_status"),
     url(r'^actions/save-article', views.action_save_article, name="action_save_article"),
+    url(r'^actions/change-article-splash-image', views.admin_select_article_flash_image,
+        name="action_change_article_flash_image"),
     url(r'^articles/edit', views.admin_edit_article, name="article_edit"),
     url(r'^articles$', views.admin_show_articles, name="list_articles"),
     url(r'^media/select', views.admin_select_media, name="wizard_select_media"),

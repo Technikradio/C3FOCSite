@@ -36,21 +36,26 @@ def render_edit_page(http_request: HttpRequest):
                                placeholder="Write the large description here"))
         f.add_content(PlainText("<br />"))
     else:
-        f.add_content(PlainText("<h3>Edit article #" + article.pk + "</h3>Short Description / Name: "))
+        f.add_content(PlainText("<h3>Edit article #" + str(article.pk) + "</h3>Short Description / Name: "))
         f.add_content(TextField(name="description", button_text=article.description))
-        f.add_content(CheckBox(text="Visible: ", name="visible", checked=CheckEnum.get_state(article.visible)))
+        f.add_content(CheckBox(text="Visible: ", name="visible", checked=CheckEnum.get_state(b=article.visible)))
         f.add_content(PlainText("Price: "))
         f.add_content(TextField(name="price", do_cr_after_input=False, button_text=article.price))
         f.add_content(PlainText(" €ct<br/>Number of articles left: "))
         f.add_content(NumberField(name="quantity", minimum=0, button_text=article.quantity))
         f.add_content(PlainText("Size: "))
         f.add_content(TextField(name="size", button_text=article.size))
-        f.add_content(Select(name="type", text="type", content=[(0, "Unisex"), (1, "Female"), (2, "Male"), (3, "Kids")], preselected=article.type))
+        f.add_content(Select(name="type", text="type", content=[(0, "Unisex"), (1, "Female"), (2, "Male"), (3, "Kids")],
+                             preselected=article.type))
         f.add_content(TextArea(name="largetext", label_text="Description",
                                text=article.largeText))
         f.add_content(PlainText("<br />"))
     f.add_content(SubmitButton())
     a = '<div class="admin-popup">'
     a += f.render_html()
+    if article:
+        a += '<h3>Change Image:</h3><a href="/admin/media/select?payload=' + \
+             str(article.pk) + '&action_url=/admin/actions/change-article-splash-image">' \
+             '<img src="/staticfiles/frontpage/change-image.png" class="button" /></a>'
     a += "</div>"
     return a
