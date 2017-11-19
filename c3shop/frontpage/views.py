@@ -325,3 +325,10 @@ def admin_process_reservation(request: HttpRequest):
     a += reservation_processing.render_process_wizard(request)
     a += render_footer(request)
     return HttpResponse(a)
+
+
+def action_finish_reservation_processing(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return HttpResponseForbidden()
+    return reservation_processing.action_finish_reservation_processing(request)
