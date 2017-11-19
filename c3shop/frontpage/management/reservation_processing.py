@@ -49,3 +49,16 @@ def action_finish_reservation_processing(request: HttpRequest):
         return redirect("/admin/reservations")
     except Exception as e:
         return redirect("/admin/?error=" + str(e))
+
+
+def action_close_reservation(request: HttpRequest):
+    try:
+        if "payload" not in request.GET:
+            return redirect("/admin?error=No%20reservation%20provided")
+        rid = request.GET["payload"]
+        r: GroupReservation = GroupReservation.objects.get(pk=rid)
+        r.open = False
+        r.save()
+        return redirect("/admin/reservations")
+    except Exception as e:
+        return redirect("/admin/?error=" + str(e))

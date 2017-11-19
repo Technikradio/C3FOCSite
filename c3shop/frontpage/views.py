@@ -332,3 +332,11 @@ def action_finish_reservation_processing(request: HttpRequest):
     if response:
         return HttpResponseForbidden()
     return reservation_processing.action_finish_reservation_processing(request)
+
+
+def action_close_reservation(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return HttpResponseForbidden()
+    return reservation_processing.action_close_reservation(request)
+

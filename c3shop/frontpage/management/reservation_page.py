@@ -68,13 +68,23 @@ def render_order_list(request: HttpRequest):
         start_range = 0
     end_range = (page + 1) * items_per_page
     a = '<h3>Orders:</h3>' \
-        '<table><tr><th> ID </th><th> Open </th><th> Ready </th><th> Pickup date </th><th> Issuer </th></tr>'
+        '<table><tr><th> ID </th><th> Open </th><th> Ready </th><th> Pickup date </th><th> Issuer </th>' \
+        '<th>Close after pickup</th></tr>'
     objects = GroupReservation.objects.filter(pk__range=(start_range, end_range))
     for order in objects:
         a += '<a href="' + generate_edit_link(order) + '"><tr><td>' + str(order.pk) + "</td><td> " \
              + generate_order_open_status_image(order.open) + " </td><td> " \
              + generate_order_ready_status_image(order.ready) + " </td><td>" + str(order.pickupDate) + "</td><td>" + \
-             str(order.createdByUser.displayName) + "</td></tr></a>"
+             str(order.createdByUser.displayName) + "</td><td>"
+        if order.ready and order.open:
+            a += '<a href="/admin/confirm?back_url=' + request.path + '&payload=' + str(order.pk) + \
+                 '&forward_url=/admin/actions/close-reservation"><img src="/staticfiles/frontpage/done.png" ' \
+                 'class="button" /></a>'
+        elif not order.ready:
+            a += "This reservation isn't ready yet."
+        else:
+            a += "Already closed."
+        a += "</td></tr></a>"
     a += '</table>'
     if page > 1:
         a += '<a href="' + request.path + '?page=' + str(page - 1) + '&objects=' + str(objects) + '" class="button">' \

@@ -24,6 +24,7 @@ urlpatterns = [
         name="action_change_article_flash_image"),
     url(r'^actions/delete-post', views.admin_delete_post_action, name="action_delete_post"),
     url(r'^actions/add-image-to-article', views.admin_add_media_to_article_action, name="add_img_to_article"),
+    url(r'^actions/close-reservation', views.action_close_reservation, name="action_close_reservation"),
     url(r'^articles/edit', views.admin_edit_article, name="article_edit"),
     url(r'^articles$', views.admin_show_articles, name="list_articles"),
     url(r'^media/select', views.admin_select_media, name="wizard_select_media"),
