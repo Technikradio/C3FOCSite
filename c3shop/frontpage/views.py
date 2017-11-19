@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
-from .management import edit_post, edit_user, post_page, dashboard_page, order_page, reservation_actions, media_select
+from .management import edit_post, edit_user, post_page, dashboard_page, reservation_page, reservation_actions, media_select
 from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
 from .management import edit_article, edit_reservation, article_select
 from .uitools import ulog, searching
@@ -174,7 +174,7 @@ def admin_display_orders(request: HttpRequest):
     if response:
         return response
     a = render_content_header(request, admin_popup=True)
-    a += order_page.render_order_page(request)
+    a += reservation_page.render_order_page(request)
     a += render_footer(request)
     return HttpResponse(a)
 

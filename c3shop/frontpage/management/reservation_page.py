@@ -11,7 +11,7 @@ def render_open_order_table(u: Profile):
         if u.rights < 1:
             p = p.filter(createdByUser=u)
         if p.count() > 0:
-            m = GroupReservation.objects.get(open=True).filter(ready=False)
+            m = GroupReservation.objects.filter(open=True).filter(ready=False)
             if u.rights < 1:
                 m = m.filter(createdByUser=u)
             for o in m:
@@ -64,7 +64,7 @@ def render_order_list(request: HttpRequest):
     if start_range > total_items:
         start_range = 0
     end_range = (page + 1) * items_per_page
-    a = '<h3>Orders:</h3><a href="/admin/posts/edit">Add a new Order</a>' \
+    a = '<h3>Orders:</h3>' \
         '<table><tr><th> ID </th><th> Open </th><th> Ready </th><th> Pickup date </th><th> Issuer </th></tr>'
     objects = GroupReservation.objects.filter(pk__range=(start_range, end_range))
     for order in objects:
