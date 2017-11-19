@@ -104,6 +104,8 @@ class Select(FormObject):
         super(Select, self).__init__(name=name)
         self.text = text
         self.cr_at_end = do_cr_after_input
+        self.selected = []
+        self.options = []
         self.selected = preselected
         for p in content:
             self.options.append(p)
