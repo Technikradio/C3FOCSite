@@ -24,6 +24,7 @@ urlpatterns = [
         name="action_change_article_flash_image"),
     url(r'^actions/delete-post', views.admin_delete_post_action, name="action_delete_post"),
     url(r'^actions/add-image-to-article', views.admin_add_media_to_article_action, name="add_img_to_article"),
+    url(r'^actions/close-reservation', views.action_close_reservation, name="action_close_reservation"),
     url(r'^articles/edit', views.admin_edit_article, name="article_edit"),
     url(r'^articles$', views.admin_show_articles, name="list_articles"),
     url(r'^media/select', views.admin_select_media, name="wizard_select_media"),
@@ -34,5 +35,7 @@ urlpatterns = [
     url(r'^reservations/edit', views.admin_edit_reservation, name='edit_reservation'),
     url(r'^reservations/select-article', views.admin_select_article, name="wizard_select_article"),
     url(r'^reservations/article-detail-select', views.admin_select_article_detail, name="wizard_select_article_p2"),
+    url(r'^reservations/process', views.admin_process_reservation, name="wizard_process_reservation"),
+    url(r'^reservations/finish', views.action_finish_reservation_processing, name="wizard_process_reservation_finish"),
     url(r'^confirm', views.admin_confirm_action, name="admin_confirm"),
 ]

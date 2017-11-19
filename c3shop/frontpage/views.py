@@ -5,7 +5,7 @@ from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page, reservation_page, reservation_actions, media_select
 from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
-from .management import edit_article, edit_reservation, article_select
+from .management import edit_article, edit_reservation, article_select, reservation_processing
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -315,3 +315,28 @@ def admin_add_media_to_article_action(request: HttpRequest):
     if response:
         return HttpResponseForbidden()
     return article_actions.action_add_media_to_article(request)
+
+
+def admin_process_reservation(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += reservation_processing.render_process_wizard(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def action_finish_reservation_processing(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return HttpResponseForbidden()
+    return reservation_processing.action_finish_reservation_processing(request)
+
+
+def action_close_reservation(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return HttpResponseForbidden()
+    return reservation_processing.action_close_reservation(request)
+
