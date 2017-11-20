@@ -1,6 +1,6 @@
 from .page_skeleton import render_footer, render_headbar
 from .reservation_page import render_open_order_table
-from ..models import GroupReservation, Profile, Settings, Articles
+from ..models import GroupReservation, Profile, Settings, Article
 from . import magic
 from django.http import HttpRequest
 
@@ -59,7 +59,7 @@ def render_quick_article_panel():
         size: int = int(s.property)
         a += "<br />Quick decrease:<br />"
         a += '<table><tr><th>Article</th><th>Quantity</th><th>Lower by ' + str(size) + ' Items</th></tr>'
-        for article in Articles.objects.exclude(quantity=0).order_by('quantity'):
+        for article in Article.objects.exclude(quantity=0).order_by('quantity'):
             a += '<tr><td>' + article.description + '</td><td>' + str(article.quantity) + '</td>'
             a += '<td><a href="/admin/actions/reduce?article_id=' + str(article.pk) + '" class="button">'
             a += 'Reduce amount</a></td></tr>'
