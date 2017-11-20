@@ -20,7 +20,7 @@ def add_article_action(request: HttpRequest, default_foreward_url: str):
     if request.GET.get("redirect"):
         forward_url = request.GET["redirect"]
     current_reservation = json.loads(request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY))
-    aid: int = int(request.POST.get("article_id"))
+    aid: int = int(request.GET.get("article_id"))
     quantity : int = int(request.POST["quantity"])
     notes: str = request.POST["notes"]
     current_reservation.get("articles").append({"id": aid, "quantity": quantity, "notes": notes})
@@ -46,7 +46,7 @@ def write_db_reservation_action(request: HttpRequest):
         fresh = True
     else:
         r = GroupReservation.objects.get(pk=int(request.GET["id"]))
-    r.createdByUser = get_current_user()
+    r.createdByUser = get_current_user(request)
     r.open = True
     r.notes = current_reservation.get("notes")
     r.pickupDate = current_reservation.get("pickup_date")  # TODO parse to date

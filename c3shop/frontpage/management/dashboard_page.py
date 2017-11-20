@@ -1,5 +1,5 @@
 from .page_skeleton import render_footer, render_headbar
-from .order_page import render_open_order_table
+from .reservation_page import render_open_order_table
 from ..models import GroupReservation, Profile, Settings, Articles
 from . import magic
 from django.http import HttpRequest
@@ -23,13 +23,13 @@ def render_statistics_panel(request: HttpRequest):
     a = '<div class="statistics">'
     # TODO implement order and other statistics here
     # Use user access level in order to determine which info is allowed to be rendered
-    open_res: int = GroupReservation.objects.all().filter(open=True).count()
+    open_res: int = GroupReservation.objects.filter(open=True).count()
     if open_res == 0:
         a += "There are 0 open reservations! YAY!<br />"
     else:
-        non_done_res = GroupReservation.objects.all().filter(open=True).filter(ready=False).count()
+        non_done_res = GroupReservation.objects.filter(open=True).filter(ready=False).count()
         a += "There are " + str(open_res) + " open reservations of which " + str(non_done_res) + \
-             " still require some work.<br />"
+             " still require some work.<br /><br />"
     a += '</div>'
     return a
 
@@ -70,10 +70,18 @@ def render_quick_article_panel():
     return a
 
 
+def render_error_panel(request: HttpRequest):
+    if request.GET.get("error"):
+        return '<div class="error-panel">Something produced an error: ' + request.GET["error"] + '</div>'
+    else:
+        return ""
+
+
 def render_dashboard(request: HttpRequest):
     u: Profile = magic.get_current_user(request)
     a = render_headbar(request)
     a += render_features_bar()
+    a += render_error_panel(request)
     a += '<div class="panel_board">'
     a += render_statistics_panel(request)
     a += render_quick_article_panel()

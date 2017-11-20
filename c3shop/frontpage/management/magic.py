@@ -1,7 +1,7 @@
 import markdown
 from pyembed.markdown import PyEmbedMarkdown
 from django.http import HttpRequest
-from ..models import Profile
+from ..models import Profile, Article, ArticleRequested
 
 
 def compile_markdown(markdown_sources: str):
@@ -28,3 +28,10 @@ def get_current_user(request: HttpRequest):
 
 def parse_bool(s: str):
     return s in ("yes", "true", "t", "1")
+
+
+def get_article_pcs_free(a: Article):
+    i: int = a.quantity
+    for request in ArticleRequested.objects.all().filter(AID=a):
+        i -= request.amount
+    return i

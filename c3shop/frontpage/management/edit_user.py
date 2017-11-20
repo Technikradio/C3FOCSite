@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from . import page_skeleton, magic
 from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, PasswordField, CheckBox, CheckEnum
-from ..models import Profile
+from ..models import Profile, Media
 from ..uitools.dataforge import get_csrf_form_element
 from .magic import get_current_user
 import logging
@@ -21,7 +21,7 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
     f.action_url = action_url
     if profile:
         f.add_content(PlainText('<h3>Edit user "' + profile.authuser.username + '"</h3>'))
-        f.add_content(PlainText('<a href="/admin/media/select?action_url=actions/change-user-avatar'
+        f.add_content(PlainText('<a href="/admin/media/select?action_url=/admin/actions/change-user-avatar'
                                 '&payload=' + str(user_id) + '"><img class="button" alt="Change avatar" '
                                 'src="/staticfiles/frontpage/change-avatar.png"/></a><br />'))
     else:

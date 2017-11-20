@@ -1,12 +1,11 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
-from .management import edit_post, edit_user, post_page, dashboard_page, order_page, reservation_actions, media_select
+from .management import edit_post, edit_user, post_page, dashboard_page, reservation_page, reservation_actions, media_select
 from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
-from .management import edit_article, edit_reservation
+from .management import edit_article, edit_reservation, article_select, reservation_processing
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -62,11 +61,11 @@ def admin_edit_post(request):
     a = render_content_header(request, admin_popup=True, title="Edit post")
     post_id_string = ""
     if request.GET.get("post_id"):
-        post_id_string = 'post_id="' + str(request.GET["post_id"]) + '"'
+        post_id_string = 'post_id=' + str(request.GET["post_id"]) + ''
     redirect_string = ""
     if post_id_string != "":
-        redirect_string += "+"
-    redirect_string += 'redirect="' + str(request.path) + '"'
+        redirect_string += "&"
+    redirect_string += 'redirect=' + str(request.path) + ''
     a += edit_post.render_edit_page(request, '/admin/actions/save-post?' + post_id_string + redirect_string)
     a += render_footer(request)
     return HttpResponse(a)
@@ -141,7 +140,7 @@ def action_alter_current_reservation(request: HttpRequest):
 
 @csrf_exempt
 def action_save_reservation(request: HttpRequest):
-    return reservation_actions.write_db_reservation_action(request, "/admin/reservations")
+    return reservation_actions.write_db_reservation_action(request)
 
 
 @csrf_exempt
@@ -175,13 +174,13 @@ def admin_display_orders(request: HttpRequest):
     if response:
         return response
     a = render_content_header(request, admin_popup=True)
-    a += order_page.render_order_page(request)
+    a += reservation_page.render_order_page(request)
     a += render_footer(request)
     return HttpResponse(a)
 
 
 def action_change_avatar(request: HttpRequest):
-    response = require_login(request, min_required_user_rights=1)
+    response = require_login(request)
     if response:
         return response
     return media_actions.action_change_user_avatar(request)
@@ -271,4 +270,73 @@ def admin_edit_reservation(request: HttpRequest):
     a += edit_reservation.render_edit_page(request)
     a += render_footer(request)
     return HttpResponse(a)
+
+
+def admin_confirm_action(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += random_actions.render_confirm_popup(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def admin_select_article(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    return article_select.render_article_selection_page(request)
+
+
+def admin_select_article_detail(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    return article_select.render_detail_selection(request)
+
+
+def admin_select_article_flash_image(request: HttpRequest):
+    response = require_login(request)
+    if response:
+        return response
+    return article_actions.action_change_splash_image(request)
+
+
+def admin_delete_post_action(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    return edit_post.do_delete_action(request)
+
+
+def admin_add_media_to_article_action(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=2)
+    if response:
+        return HttpResponseForbidden()
+    return article_actions.action_add_media_to_article(request)
+
+
+def admin_process_reservation(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += reservation_processing.render_process_wizard(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def action_finish_reservation_processing(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return HttpResponseForbidden()
+    return reservation_processing.action_finish_reservation_processing(request)
+
+
+def action_close_reservation(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return HttpResponseForbidden()
+    return reservation_processing.action_close_reservation(request)
 
