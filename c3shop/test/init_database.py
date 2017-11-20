@@ -51,6 +51,13 @@ def init_db():
     ms.changeReason = "Initial setup"
     ms.changedByUser = p
     ms.save()
+    cs = Settings()
+    cs.SName = "frontpage.chestsize"
+    cs.property = "50"
+    cs.requiredLevel = 1
+    cs.changeReason = "Initial setup"
+    cs.changedByUser = p
+    cs.save()
     print('created default user \'admin\' with password \'password\' and an random mail address.')
     print('Make sure to change both the password and the mail address.')
     pass

@@ -79,5 +79,3 @@ def logout(request: HttpRequest, default_redirect="/"):
         forward = request.GET["next"]
     return redirect(forward)
 
-
-# TODO write registration utility for admins

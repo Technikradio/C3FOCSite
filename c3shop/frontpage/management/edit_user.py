@@ -6,6 +6,7 @@ from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberFiel
 from ..models import Profile
 from ..uitools.dataforge import get_csrf_form_element
 from .magic import get_current_user
+import logging
 
 
 def render_edit_page(http_request: HttpRequest, action_url: str):
@@ -131,6 +132,7 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
                 user.active = magic.parse_bool(request.POST["active"])
             au: User = user.authuser
             if check_password_conformity(pw1, pw2):
+                logging.log(logging.DEBUG, "Set password for user: " + user.displayName)
                 au.set_password(pw1)
             au.email = mail
             au.save()
