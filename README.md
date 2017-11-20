@@ -95,6 +95,11 @@ deploy this website.
 The <code>frontpage.store.open</code> setting manages the store icon
 on the index page. When it contains a <code>true</code> it will render
 the store as open, or otherwise (<code>false</code>) as closed.
+#### Chestsize
+The <code>frontpage.chestsize</code> setting contains a positive integer
+defining the amount that should be subtracted from the quantity of an
+article after the 'quick-substract' button was presses. It defaults to
+50.
 #### Nav Bar and Footer
 The settings for the navigation bar located in the header contains the
 following setting keys:
