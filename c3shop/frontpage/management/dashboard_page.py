@@ -1,6 +1,6 @@
 from .page_skeleton import render_footer, render_headbar
 from .order_page import render_open_order_table
-from ..models import GroupReservation, Profile, Settings
+from ..models import GroupReservation, Profile, Settings, Articles
 from . import magic
 from django.http import HttpRequest
 
@@ -52,12 +52,31 @@ def render_quick_store_panel():
     return a
 
 
+def render_quick_article_panel():
+    a = '<div class="statistics">'
+    try:
+        s: Settings = Settings.objects.get(SName="frontpage.chestsize")
+        size: int = int(s.property)
+        a += "<br />Quick decrease:<br />"
+        a += '<table><tr><th>Article</th><th>Quantity</th><th>Lower by ' + str(size) + ' Items</th></tr>'
+        for article in Articles.objects.exclude(quantity=0).order_by('quantity'):
+            a += '<tr><td>' + article.description + '</td><td>' + str(article.quantity) + '</td>'
+            a += '<td><a href="/admin/actions/reduce?article_id=' + str(article.pk) + '" class="button">'
+            a += 'Reduce amount</a></td></tr>'
+        a += '</table>'
+    except Exception as e:
+        a += "Error: " + str(e)
+    a += '</div>'
+    return a
+
+
 def render_dashboard(request: HttpRequest):
     u: Profile = magic.get_current_user(request)
     a = render_headbar(request)
     a += render_features_bar()
     a += '<div class="panel_board">'
     a += render_statistics_panel(request)
+    a += render_quick_article_panel()
     a += render_order_panel(u)
     if u.rights > 1:
         a += render_quick_store_panel()
