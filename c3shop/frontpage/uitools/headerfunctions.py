@@ -5,7 +5,12 @@ from .searching import render_search_bar
 def render_content_header(http_request, title="C3FOC", admin_popup=False):
     # only while rendering isn't a thing
     a = '<html lang="en-US"><head>'
-    a += '<link rel="stylesheet" href="/staticfiles/frontpage/style.css">'
+    a += '''<meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="/staticfiles/frontpage/w3.css" />
+            <link rel="stylesheet" href="/staticfiles/frontpage/w3-theme-black.css" />
+            <link rel="stylesheet" href="/staticfiles/frontpage/roboto.woff" />
+            <!--<link rel="stylesheet" href="/staticfiles/frontpage/style.css">-->
+            '''
     a += '<meta charset="UTF-8"><title>' + title + '</title></head>'
     a += '<body><header class="header">'
     if not admin_popup:
