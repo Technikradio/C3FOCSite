@@ -24,9 +24,9 @@ def render_nav_bar(request: HttpRequest):
             if str(item.get('type')) == "link":
                 a += process_link(pos, item) + " "
         if request.user.is_authenticated():
-            a += '<a href="/admin/">Admin area</a>'
+            a += '<a href="/admin/" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Admin area</a>'
         else:
-            a += '<a href="/login/?next=' + request.path + '">Login</a>'
+            a += '<a href="/login/?next=' + request.path + '" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Login</a>'
         a += '</div></div>'
         return a
     except Exception as e:
