@@ -250,9 +250,9 @@ def render_404_page(request):
 def render_index_page(request):
     a = ""
     if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
-        a += '<div><img src="/staticfiles/frontpage/store-open.png"/>The store is currently open</div>'
+        a += '<div class="w3-third w3-container"><img src="/staticfiles/frontpage/store-open.png"/>The store is currently open</div>'
     else:
-        a += '<div><img src="/staticfiles/frontpage/store-closed.png"/>The store is currently closed.</div>'
+        a += '<div class="w3-third w3-container"><img src="/staticfiles/frontpage/store-closed.png"/>The store is currently closed.</div>'
     a += render_article_list()
     # Render last 5 posts
     post_ids = []
@@ -265,3 +265,4 @@ def render_index_page(request):
     for pid in post_ids:
         a += render_post(pid, request)
     return a
+

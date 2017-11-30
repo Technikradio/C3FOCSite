@@ -13,7 +13,7 @@ def process_link(position: int, item):
 
 
 def render_footer(http_request: HttpRequest):
-    a = '<br/><footer class="w3-container w3-theme-l1">'
+    a = '<br/></div><footer class="w3-container w3-theme-l1">'
     try:
         feature_line: str = Settings.objects.get(SName=FOOTER_SETTINGS_KEY).property
         parts = json.loads(feature_line)
