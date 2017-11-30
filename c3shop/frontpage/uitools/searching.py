@@ -10,10 +10,11 @@ def render_search_bar(small: bool = True):
     f.add_content(SearchBar(name="search", do_cr_after_input=False))
     f.add_content(SubmitButton(do_cr_after_input=False))
     # TODO implement placeholder
-    a = "small_search_bar"
+    a = 'style="display: inline;" class="w3-bar-item w3-button'
+    a += ' w3-hide-small w3-hover-white"'
     if not small:
-        a = "large_search_bar"
-    return '<span class="' + a + '">' + f.render_html() + "</span>"
+        a = 'class="large_search_bar"'
+    return '<span ' + a + '>' + f.render_html() + "</span>"
 
 
 """
