@@ -10,7 +10,7 @@ import logging
 
 SERVER_ROOT = "localhost:8000"
 DETAILED_PAGE = SERVER_ROOT + "/article/"  # For example /article/550/
-NO_MEDIA_IMAGE = SERVER_ROOT + "/staticfiles/frontpage/no-image.png"  # TODO change to static file
+NO_MEDIA_IMAGE = "/staticfiles/frontpage/no-image.png"  # TODO change to static file
 
 
 def render_article_list():
