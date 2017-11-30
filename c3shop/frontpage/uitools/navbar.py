@@ -20,11 +20,11 @@ def render_nav_bar(request: HttpRequest):
         parts = json.loads(feature_line)
         a = '<div class="w3-top"><div class="w3-bar w3-theme w3-top w3-left-align w3-large">'
         pos: int = 0
-        a = a.join(process_link(0, {"href": "/", "text": "C3FOC"}))
+        a += process_link(0, {"href": "/", "text": "C3FOC"})
         for item in parts:
             pos += 1
             if str(item.get('type')) == "link":
-                a = a.join(process_link(pos, item)).join(" ")
+                a += process_link(pos, item) + " "
         if request.user.is_authenticated():
             a += '<a href="/admin/" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Admin area</a>'
         else:
