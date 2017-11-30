@@ -22,5 +22,5 @@ def render_content_header(http_request, title="C3FOC", admin_popup=False):
         a += '<a href="/logout"> logout </a>'
         a += '</span>'
     a += '</header>'
-    a += '<div class="w3-main">'
+    a += '<div class="w3-main w3-padding-64">'
     return a

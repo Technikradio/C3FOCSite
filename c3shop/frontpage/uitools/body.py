@@ -34,7 +34,7 @@ def render_article_overview(target):
                                'class="article_list_image" alt="For some weired reason the image is missing" src="'
     art += flash_image_link + '"></td><td>'
     art += '<h3 class="w3-text-teal">' + escape_text(target.description) 
-    art += '</h3><div class="article_list_detail">' + get_type_string(int(target.type)) + " "
+    art += '</h3><div class="w3-row">' + get_type_string(int(target.type)) + " "
     art += escape_text(target.size) + " "
     if target.quantity > 0:
         art += escape_text(target.price) + "<br/>" + str(target.quantity) + " left"
