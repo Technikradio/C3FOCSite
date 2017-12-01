@@ -26,21 +26,21 @@ def render_article_overview(target):
     link = DETAILED_PAGE + str(target.id)
     flash_image_link = NO_MEDIA_IMAGE
     try:
-        flash_image_link = str(simage.highResFile)
+        flash_image_link = str(simage.lowResFile)
     except:
         logging.debug("using default image to present article list item")
         pass
-    art = '<a href="' + link + '"><article><table><tr><td><img ' \
-                               'class="article_list_image" alt="For some weired reason the image is missing" src="'
+    art = '<div class="w3-row"><a href="' + link + '"><article><table><tr><td><img ' \
+          'class="article_list_image" alt="For some weired reason the image is missing" src="'
     art += flash_image_link + '"></td><td>'
     art += '<h3 class="w3-text-teal">' + escape_text(target.description) 
-    art += '</h3><div class="w3-row">' + get_type_string(int(target.type)) + " "
+    art += '</h3>' + get_type_string(int(target.type)) + " "
     art += escape_text(target.size) + " "
     if target.quantity > 0:
         art += escape_text(target.price) + "<br/>" + str(target.quantity) + " left"
     else:
         art += "<br/>sold out"
-    art += "</div></td></tr></table></article></a>"
+    art += "</td></tr></table></article></a></div>"
     return art
 
 
@@ -71,7 +71,8 @@ def get_right_string(rights):
 def render_article_detail(article_id):
     try:
         art = Article.objects.get(pk=int(article_id))
-        text = "<br/><h2>" + escape_text(art.description) + "</h2><br/>"
+        text = '<br/><div class="w3-row w3-padding-64 w3-twothird w3-container"><h2 class="w3-text-teal">'
+        text += escape_text(art.description) + "</h2><br/>"
         text += render_article_properties_division(art)
         text += render_image(art.flashImage) + "<br />"
         text += '<div class="article_detailed_text_division">' + art.cachedText + "</div><br />"
@@ -79,9 +80,11 @@ def render_article_detail(article_id):
         text += render_article_image_list(art)
         logging.debug("Passed image list")
         text += render_user_link(art.addedByUser)
+        text += '</div>'
         return text
     except Exception as e:
-        return "<br />failed to retrieve article " + str(article_id) + ":<br/>" + str(e)
+        return '<div class="error-panel"><br />failed to retrieve article ' + str(article_id) + \
+               ":<br/></div>" + str(e)
 
 
 def render_article_properties_division(art):
@@ -164,7 +167,8 @@ def render_post(post_id, request: HttpRequest):
     except Exception as e:
         logging.debug("While reading the timestamp for the article " + str(post_id) + " an error occurred:")
         logging.debug(str(e))
-    text = "<br /><h2>" + escape_text(post.title) + "</h2>"
+    text = '<br /><div class="w3-row w3-padding-64 w3-twothird w3-container"><h2 class="w3-text-teal">' 
+    text += escape_text(post.title) + "</h2>"
     text += post.cacheText
     text += "<p>This article was created on " + time + " by:</p>"
     text += render_user_link(post.createdByUser)
@@ -173,11 +177,12 @@ def render_post(post_id, request: HttpRequest):
 
 def render_user_detail(user_id):
     user = Profile.objects.get(pk=int(user_id))
-    text = "<h2>" + escape_text(user.displayName) + "</h2>"
+    text = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
+    text += "<h2>" + escape_text(user.displayName) + "</h2>"
     text += render_image(user.avatarMedia)
     text += '<p class="user_meta">Registered since: ' + str(user.creationTimestamp) + "<br />Active: " + \
             str(user.active) + "<br />DECT number: " + str(user.dect) + "</p>"
-    text += '<p class="user_notes">' + escape_text(user.notes) + "</p>"
+    text += '<p class="user_notes">' + escape_text(user.notes) + "</p></div>"
     return text
 
 
@@ -243,14 +248,17 @@ def render_image_detail(request, medium_id):
 
 
 def render_404_page(request):
-    return '<h2>This is not the site you\'re looking for</h2><br>You tried to open the following path:<br/><br/>"' + \
-           request.path + '"<br/><br />...but it doesn\'t seam to exist.'
+    return '<div class="w3-row w3-padding-64 w3-twothird w3-container"><h2>' \
+            'This is not the site you\'re looking for</h2><br>' \
+            'You tried to open the following path:<br/><br/>"' + \
+           request.path + '"<br /><br />...but it doesn\'t seam to exist.</div>'
 
 
 def render_index_page(request):
     a = ""
     if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
-        a += '<div class="w3-third w3-container"><img src="/staticfiles/frontpage/store-open.png"/>The store is currently open</div>'
+        a += '<div class="w3-third w3-container"><img src="/staticfiles/frontpage/store-open.png"/>' \
+             'The store is currently open</div>'
     else:
         a += '<div class="w3-third w3-container"><img src="/staticfiles/frontpage/store-closed.png"/>The store is currently closed.</div>'
     a += render_article_list()

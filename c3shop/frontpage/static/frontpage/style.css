@@ -12,16 +12,13 @@ image {
     border: 10px inset;
 }
 
-article_list_detail {
-
-}
-
 code {
     font-family: monospace;
     background: #eeeeee;
     color: #0e0e0e;
 }
 
+/*
 a:visited {
     color: #fefefe;
 }
@@ -48,7 +45,7 @@ body {
 
 header {
     background: #282626;
-}
+} */
 
 footer {
     position: fixed;
@@ -58,7 +55,7 @@ footer {
 }
 
 table, th, td {
-    border: 2px solid #fefefe;
+    border: 2px solid;
     border-collapse: collapse;
     padding: 15px;
 }
@@ -90,11 +87,11 @@ tr:hover {
 .search_preview {
     margin: 25px;
 }
-
+/*
 form {
     display: inline;
     padding: 15px;
-}
+}*/
 
 .panel_board {
     position: fixed;
@@ -116,7 +113,7 @@ form {
     display: block;
     /*width: 115px;*/
     height: 20px;
-    background: #fd9b26;
+    background: #009688;
     padding: 10px;
     text-align: center;
     border-radius: 5px;
@@ -125,11 +122,12 @@ form {
     display: inline;
 }
 
+/*
 .button:img {
     width: 20px;
     height: 20px;
     background: #fefefe;
-}
+}*/
 
 .icon {
     width: 24px;
