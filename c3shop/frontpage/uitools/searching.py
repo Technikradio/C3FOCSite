@@ -1,4 +1,5 @@
 from django.http import HttpRequest
+from django.core.exceptions import ObjectDoesNotExist
 from ..management.form import Form, SearchBar, SubmitButton
 from ..models import *
 
@@ -32,27 +33,48 @@ def perform_query(request: HttpRequest):
     if request.GET.get('includeso'):
         include_sold_out_articles = bool(request.GET["includeso"])
     if term is not "":
-        for o in Article.objects.get(description__contains=term):
-            if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
-                results.append(o)
-        for o in Article.objects.get(cachedText__contains=term):
-            if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
-                results.append(o)
-        for o in Article.objects.get(size__contains=term):
-            if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
-                results.append(o)
-        for o in Post.objects.get(title__contains=term):
-            if o not in results:
-                results.append(o)
-        for o in Post.orbjects.get(cacheText__contains=term):
-            if o not in results:
-                results.append(o)
-        for o in Media.objects.get(cachedText__contains=term):
-            if o not in results:
-                results.append(o)
-        for o in Media.objects.get(headline__contains=term):
-            if o not in results:
-                results.append(o) 
+        try:
+            for o in Article.objects.get(description__contains=term):
+                if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
+                    results.append(o)
+        except ObjectDoesNotExist as e:
+            pass  # It's not bad to drop this exception since no results simply means no data
+        try:
+            for o in Article.objects.get(cachedText__contains=term):
+                if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
+                    results.append(o)
+        except ObjectDoesNotExist as e:
+            pass
+        try:
+            for o in Article.objects.get(size__contains=term):
+                if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
+                    results.append(o)
+        except ObjectDoesNotExist as e:
+            pass
+        try:
+            for o in Post.objects.get(title__contains=term):
+                if o not in results:
+                    results.append(o)
+        except ObjectDoesNotExist as e:
+            pass
+        try:
+            for o in Post.orbjects.get(cacheText__contains=term):
+                if o not in results:
+                    results.append(o)
+        except ObjectDoesNotExist as e:
+            pass
+        try:
+            for o in Media.objects.get(cachedText__contains=term):
+                if o not in results:
+                    results.append(o)
+        except ObjectDoesNotExist as e:
+            pass
+        try:
+            for o in Media.objects.get(headline__contains=term):
+                if o not in results:
+                    results.append(o)
+        except ObjectDoesNotExist as e:
+            pass
     return results
 
 
@@ -83,7 +105,7 @@ def render_result_page(request: HttpRequest):
     a = render_search_bar(small=False)
     results = perform_query(request)
     if len(results) < 1:
-        a += "No results"
+        a += '<div class="w3-text-teal w3-row w3-padding-64">No results matching query found.</div>'
     else:
         for r in results:
             a += generate_preview(r)
