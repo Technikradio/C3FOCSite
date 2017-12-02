@@ -86,11 +86,11 @@ def generate_preview(c: []):
         link = ""
         if isinstance(o, Article):
             headline = o.description
-            body = "Size: " + int(o.size) + " Pieces left: " + int(o.quantity) 
+            body = "Size: " + str(o.size) + " Pieces left: " + str(o.quantity) 
             body += "<br/>" + o.cachedText[:-50] + "..."
             link = "/article/" + str(o.pk)
         elif isinstance(o, Post):
-            headline = int(o.title)
+            headline = str(o.title)
             body = o.cacheText[:-50] + "..."
             link = "/post/" + str(o.pk)
         elif isinstance(o, Media):
