@@ -58,7 +58,7 @@ def perform_query(request: HttpRequest):
         except ObjectDoesNotExist as e:
             pass
         try:
-            for o in Post.orbjects.filter(cacheText__contains=term):
+            for o in Post.objects.filter(cacheText__contains=term):
                 if o not in results:
                     results.append(o)
         except ObjectDoesNotExist as e:
