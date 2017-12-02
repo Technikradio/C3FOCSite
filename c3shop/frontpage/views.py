@@ -29,7 +29,7 @@ def detailed_article(request, article_id):
 
 def detailed_post(request, post_id):
     a = render_content_header(request)
-    a += render_post(post_id)
+    a += render_post(post_id, request)
     a += render_footer(request)
     return HttpResponse(a)
 
