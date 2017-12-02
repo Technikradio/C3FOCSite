@@ -34,43 +34,43 @@ def perform_query(request: HttpRequest):
         include_sold_out_articles = bool(request.GET["includeso"])
     if term is not "":
         try:
-            for o in Article.objects.get(description__contains=term):
+            for o in Article.objects.filter(description__contains=term):
                 if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
                     results.append(o)
         except ObjectDoesNotExist as e:
             pass  # It's not bad to drop this exception since no results simply means no data
         try:
-            for o in Article.objects.get(cachedText__contains=term):
+            for o in Article.objects.filter(cachedText__contains=term):
                 if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
                     results.append(o)
         except ObjectDoesNotExist as e:
             pass
         try:
-            for o in Article.objects.get(size__contains=term):
+            for o in Article.objects.filter(size__contains=term):
                 if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
                     results.append(o)
         except ObjectDoesNotExist as e:
             pass
         try:
-            for o in Post.objects.get(title__contains=term):
+            for o in Post.objects.filter(title__contains=term):
                 if o not in results:
                     results.append(o)
         except ObjectDoesNotExist as e:
             pass
         try:
-            for o in Post.orbjects.get(cacheText__contains=term):
+            for o in Post.orbjects.filter(cacheText__contains=term):
                 if o not in results:
                     results.append(o)
         except ObjectDoesNotExist as e:
             pass
         try:
-            for o in Media.objects.get(cachedText__contains=term):
+            for o in Media.objects.filter(cachedText__contains=term):
                 if o not in results:
                     results.append(o)
         except ObjectDoesNotExist as e:
             pass
         try:
-            for o in Media.objects.get(headline__contains=term):
+            for o in Media.objects.filter(headline__contains=term):
                 if o not in results:
                     results.append(o)
         except ObjectDoesNotExist as e:
