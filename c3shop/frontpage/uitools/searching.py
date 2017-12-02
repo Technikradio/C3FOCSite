@@ -106,7 +106,6 @@ def render_result_page(request: HttpRequest):
     results = perform_query(request)
     if len(results) < 1:
         a += '<div class="w3-text-teal w3-row w3-padding-64">No results matching query found.</div>'
-    else:
-        for r in results:
-            a += generate_preview(r)
+    else: 
+        a += generate_preview(results)
     return a
