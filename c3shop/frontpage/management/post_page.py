@@ -37,7 +37,7 @@ def render_post_list(request: HttpRequest):
              "</td><td>" + str(post.visibleLevel) + "</td><td>" + str(post.createdByUser.authuser.username) + \
              '</td><td><a href="/admin/confirm?back_url=' + request.path + '&forward_url=/admin/actions/' \
              'delete-post&payload=' + str(post.pk) + '"><img src="/staticfiles/frontpage/delete.png" ' \
-                                                     'class="button" /></a></td></tr>'
+                                                     'class="button-img" /></a></td></tr>'
     a += '</table>'
     if page > 1:
         a += '<a href="' + request.path + '?page=' + str(page - 1) + '&objects=' + str(objects) + '" class="button">' \

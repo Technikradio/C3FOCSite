@@ -79,7 +79,7 @@ def render_order_list(request: HttpRequest):
         if order.ready and order.open:
             a += '<a href="/admin/confirm?back_url=' + request.path + '&payload=' + str(order.pk) + \
                  '&forward_url=/admin/actions/close-reservation"><img src="/staticfiles/frontpage/done.png" ' \
-                 'class="button" /></a>'
+                 'class="button-img" /></a>'
         elif not order.ready:
             a += "This reservation isn't ready yet."
         else:

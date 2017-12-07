@@ -221,7 +221,7 @@ def render_user_list(request, objects_per_site=50):
     start = page * objects_per_site
     end = ((page + 1) * objects_per_site) - 1
     a = '<div class="user_list">'
-    a += '<a href="/admin/users/edit"><img class="button" src= "/staticfiles/frontpage/add-user.png" alt="Add user" />'\
+    a += '<a href="/admin/users/edit"><img class="button-img" src= "/staticfiles/frontpage/add-user.png" alt="Add user" />'\
          '</a><br />Displaying page ' + str(page) + ' with ' + str(objects_per_site) + ' entries per each.' \
          '<br /><table><tr><th>Edit</th><th>Avatar</th><th>Username</th><th>Display name</th>' \
          '<th>Rights</th></tr>'
