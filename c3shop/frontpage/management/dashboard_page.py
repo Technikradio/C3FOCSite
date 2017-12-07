@@ -84,14 +84,15 @@ def render_error_panel(request: HttpRequest):
 def render_dashboard(request: HttpRequest):
     u: Profile = magic.get_current_user(request)
     a = render_headbar(request)
-    a += render_features_bar()
+    #a += render_features_bar()
     a += render_error_panel(request)
-    a += '<div>'
+    #a += '<div>'
     a += render_statistics_panel(request)
+    a += render_features_bar()
     a += render_quick_article_panel()
     a += render_order_panel(u)
     if u.rights > 1:
         a += render_quick_store_panel()
-    a += '</div>'
+    #a += '</div>'
     a += render_footer(request)
     return a
