@@ -19,7 +19,7 @@ def render_open_order_table(u: Profile):
                 a += '<tr><td>' + generate_order_ready_status_image(o.ready) + '</td><td>' + str(o.pickupDate) + \
                      '</td><td>' + escape_text(o.createdByUser.displayName) + '</td><td><a href="/admin/reservations' \
                      '/process?reservation_id=' + str(o.pk) + '">' \
-                     '<img src="/staticfiles/frontpage/process-reservation.png" class="button" /></a></td></tr>'
+                     '<img src="/staticfiles/frontpage/process-reservation.png" class="button-img" /></a></td></tr>'
             a += '</table>'
         else:
             a += "</table><h5>You don't have any open reservations at the moment :-)</h5>"

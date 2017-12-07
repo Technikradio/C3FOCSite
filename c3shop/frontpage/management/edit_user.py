@@ -22,7 +22,7 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
     if profile:
         f.add_content(PlainText('<h3>Edit user "' + profile.authuser.username + '"</h3>'))
         f.add_content(PlainText('<a href="/admin/media/select?action_url=/admin/actions/change-user-avatar'
-                                '&payload=' + str(user_id) + '"><img class="button" alt="Change avatar" '
+                                '&payload=' + str(user_id) + '"><img class="button-img" alt="Change avatar" '
                                 'src="/staticfiles/frontpage/change-avatar.png"/></a><br />'))
     else:
         f.add_content(PlainText('<h3>Add new user</h3>'))

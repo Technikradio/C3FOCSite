@@ -34,7 +34,7 @@ def render_article_list(request: HttpRequest):
     objects = Article.objects.filter(pk__range=(start_range, end_range))
     for article in objects:
         a += '<tr><td><a href="' + generate_edit_link(article) + '">' \
-                '<img src="/staticfiles/frontpage/edit.png" class="button"/></a></td><td>' + str(article.pk) + \
+                '<img src="/staticfiles/frontpage/edit.png" class="button-img"/></a></td><td>' + str(article.pk) + \
              "</td><td>" + article.description + "</td><td>" + article.size + "</td><td>" + article.price + "</td><td>"\
              + str(get_article_pcs_free(article)) + "</td><td>" + str(article.visible) + "</td></tr>"
     a += '</table>'
