@@ -6,7 +6,7 @@ from django.http import HttpRequest
 
 
 def render_features_bar():
-    a = '<div class="featurebar">'
+    a = '<div class="w3-third w3-container w3-padding-64">'
     a += '<a href="/admin">Dashboard</a><br />'
     a += '<a href="/admin/posts">Posts</a><br />'
     a += '<a href="/admin/users">Users</a><br />'
@@ -20,7 +20,8 @@ def render_features_bar():
 
 
 def render_statistics_panel(request: HttpRequest):
-    a = '<div class="statistics">'
+    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
+    a += '<h3 class="w3-text-teal">Statistics</h3>h3>'
     # TODO implement order and other statistics here
     # Use user access level in order to determine which info is allowed to be rendered
     open_res: int = GroupReservation.objects.filter(open=True).count()
@@ -35,14 +36,16 @@ def render_statistics_panel(request: HttpRequest):
 
 
 def render_order_panel(u: Profile):
-    a = '<div class="statistics">'
+    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
+    a += '<h3 class="w3-text-teal">Open orders</h3>h3>'
     a += render_open_order_table(u)
     a += '</div>'
     return a
 
 
 def render_quick_store_panel():
-    a = '<div class="statistics">'
+    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
+    a += '<h3 class="w3-text-teal">Store status</h3>'
     if magic.parse_bool(Settings.objects.get(SName="frontpage.store.open").property.lower()):
         a += "The store is currently open<br/>"
     else:
@@ -53,7 +56,8 @@ def render_quick_store_panel():
 
 
 def render_quick_article_panel():
-    a = '<div class="statistics">'
+    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
+    a += '<h3 class="w3-text-teal">QAP</h3>'
     try:
         s: Settings = Settings.objects.get(SName="frontpage.chestsize")
         size: int = int(s.property)
@@ -82,7 +86,7 @@ def render_dashboard(request: HttpRequest):
     a = render_headbar(request)
     a += render_features_bar()
     a += render_error_panel(request)
-    a += '<div class="panel_board">'
+    a += '<div>'
     a += render_statistics_panel(request)
     a += render_quick_article_panel()
     a += render_order_panel(u)
