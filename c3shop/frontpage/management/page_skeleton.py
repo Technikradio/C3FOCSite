@@ -20,6 +20,7 @@ def render_headbar(httprequest: HttpRequest, title="c3foc - admin"):
     <body>
     """
     a = a.replace("%title%", title)
+    a += '<header><div class="w3-bar w3-theme w3-top w3-left-align w3-large>Administration & Statistics</div></header>'
     return a
 
 

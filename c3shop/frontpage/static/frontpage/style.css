@@ -64,15 +64,16 @@ tr:hover {
     background-color: #eeeeee
 }
 
+/*
 .featurebar {
     position: fixed;
     padding: 15px;
     width: 9%;
     top: 50px;
-    /*use darker background color from template*/
     background: #282626;
     line-height: 25px;
 }
+*/
 
 .small_search_bar {
     position: fixed;
@@ -103,17 +104,18 @@ form {
     /*background: #696767;*/
 }
 
+/*
 .statistics {
     /*padding: 15px;*/
     background: #282626;
     width: 20%;
 }
+*/
 
 .button {
     display: block;
     /*width: 115px;*/
     height: 20px;
-    background: #009688;
     padding: 10px;
     text-align: center;
     border-radius: 5px;

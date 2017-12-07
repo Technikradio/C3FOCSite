@@ -17,10 +17,12 @@ def render_content_header(http_request, title="C3FOC", admin_popup=False):
         a += render_nav_bar(http_request)
         # a += render_search_bar()
     else:
+        a += '<div class="w3-bar w3-theme w3-top w3-left-align w3-large">'
         a += title
         a += ' | <a href="/admin">Back to dashboard</a><span class="user-menu">'
         a += '<a href="/logout"> logout </a>'
         a += '</span>'
+        a += '</div>'
     a += '</header>'
     a += '<div class="w3-main w3-padding-64">'
     return a
