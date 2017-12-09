@@ -125,9 +125,9 @@ form {
 }
 
 .button-img {
-    width: auto;
-    height: 20px;
-    border-radius: 5px;
+    width: 20px;
+    height: auto;
+    border-radius: 1px;
     display: inline;
 }
 
