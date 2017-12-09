@@ -118,11 +118,11 @@ def render_user_link(user):
 def render_image(media, width=0, height=0, high_res=True, include_link=True, replace: str = ""):
     width_str = ""
     height_str = ""
-    if width != 0:
+    if width > 0:
         width_str = "width={0}".format(str(width))
-        if height != 0:
+        if height > 0:
             height_str = " height={0}".format(str(height))
-    elif height != 0:
+    elif height > 0:
         height_str = "height={0}".format(str(height))
     alt_img = NO_MEDIA_IMAGE
     if not replace == "":
@@ -228,7 +228,7 @@ def render_user_list(request, objects_per_site=50):
     for p in Profile.objects.filter(pk__range=(start, end)):
         # TODO generate link to detailed user view
         a += '<tr><td><a href="/admin/users/edit?user_id=' + str(p.pk) + \
-             '"><img class="button" src="/staticfiles/frontpage/edit.png" />' \
+             '"><img class="button-img" src="/staticfiles/frontpage/edit.png" />' \
             '</a></td><td>' + render_image(p.avatarMedia, width=24, height=24,
                                            replace="/staticfiles/frontpage/no-avatar.png") + '</td><td>' + \
              escape_text(p.authuser.username) + '</td><td>' + escape_text(p.displayName) + '</td><td>' + \
