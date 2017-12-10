@@ -19,7 +19,7 @@ def render_open_order_table(u: Profile):
                 a += '<tr><td>' + generate_order_ready_status_image(o.ready) + '</td><td>' + str(o.pickupDate) + \
                      '</td><td>' + escape_text(o.createdByUser.displayName) + '</td><td><a href="/admin/reservations' \
                      '/process?reservation_id=' + str(o.pk) + '">' \
-                     '<img src="/staticfiles/frontpage/process-reservation.png" class="button" /></a></td></tr>'
+                     '<img src="/staticfiles/frontpage/process-reservation.png" class="button-img" /></a></td></tr>'
             a += '</table>'
         else:
             a += "</table><h5>You don't have any open reservations at the moment :-)</h5>"
@@ -79,7 +79,7 @@ def render_order_list(request: HttpRequest):
         if order.ready and order.open:
             a += '<a href="/admin/confirm?back_url=' + request.path + '&payload=' + str(order.pk) + \
                  '&forward_url=/admin/actions/close-reservation"><img src="/staticfiles/frontpage/done.png" ' \
-                 'class="button" /></a>'
+                 'class="button-img" /></a>'
         elif not order.ready:
             a += "This reservation isn't ready yet."
         else:

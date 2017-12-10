@@ -30,7 +30,7 @@ def render_edit_page(request: HttpRequest):
     f.add_content(SubmitButton())
     a = f.render_html()
     a += '<br />Add article: <a href="/admin/reservations/select-article"><img src="/staticfiles/frontpage/order-' \
-         'article.png" class="button"/></a>'
+         'article.png" class="button-img"/></a>'
     a += "<table><tr><th> Headline </th><th> Amount </th><th> Notes </th></tr>"
     for art in current_reservation["articles"]:
         r_art: Article = Article.objects.get(pk=int(art["id"]))

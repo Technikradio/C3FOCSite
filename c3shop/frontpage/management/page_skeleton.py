@@ -11,12 +11,16 @@ def render_headbar(httprequest: HttpRequest, title="c3foc - admin"):
     <html lang="en">
     <head>
         <link rel="stylesheet" href="/staticfiles/frontpage/style.css" />
+        <link rel="stylesheet" href="/staticfiles/frontpage/w3.css" />
+        <link rel="stylesheet" href="/staticfiles/frontpage/w3-theme-black.css" />
+        <link rel="stylesheet" href="/staticfiles/frontpage/roboto.woff" />
         <meta charset="UTF-8" />
         <title>%title%</title>
     </head>
     <body>
     """
     a = a.replace("%title%", title)
+    a += '<header><div class="w3-bar w3-theme w3-top w3-left-align w3-large w3-padding-16"><span class="w3-padding-16">Administration & Statistics</span></div></header>'
     return a
 
 
