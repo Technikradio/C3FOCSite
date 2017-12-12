@@ -72,8 +72,10 @@ tr:hover {
     width: 48px;
     height: auto;
     display: inline;
-    border-radius: 1px;
+    border-radius: 5px;
     border-style: none;
+    background: #009688!important;
+    margin: 1%;
 }
 
 .icon {
