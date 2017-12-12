@@ -26,7 +26,7 @@ def render_article_selection_page(request: HttpRequest):
         start_range = 0
     end_range = (page + 1) * items_per_page
     a = render_headbar(request, title="Select article")
-    a += '<div class="admin-popup">'
+    a += '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
     a += '<h3>Please select your desired article</h3><table><tr><th>Select</th><th>Preview</th><th>Title</th></tr>'
     objects = Article.objects.filter(pk__range=(start_range, end_range))
     for article in objects:
@@ -37,7 +37,7 @@ def render_article_selection_page(request: HttpRequest):
         else:
             s = "/staticfiles/frontpage/no-image.png"
         a += '<tr><td><a href="/admin/reservations/article-detail-select?article_id=' + str(article.pk)
-        a += '"><img src="/staticfiles/frontpage/order-article.png" class="button"/></a></td><td><img src="'
+        a += '"><img src="/staticfiles/frontpage/order-article.png" class="button-img"/></a></td><td><img src="'
         a += s + '" /></td><td>' + article.description + '</td></tr>'
     a += '</table>'
     if page > 1:
@@ -63,9 +63,9 @@ def render_detail_selection(request: HttpRequest):
         f.add_content(TextArea(name="notes", label_text="Notes:", text=""))
         f.add_content(SubmitButton())
         a = render_headbar(request, title="Specify article details")
-        a += '<div class="admin-popup"><h3>Please specify further details:</h3>'
+        a += '<div class=""><div class="w3-row w3-padding-64 w3-twothird w3-container"><h3>Please specify further details:</h3>'
         a += f.render_html()
-        a += '</div>' + render_footer(request)
+        a += '</div></div>' + render_footer(request)
         return HttpResponse(a)
     except Exception as e:
         return redirect("/admin/?error=" + str(e))
