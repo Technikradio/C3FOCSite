@@ -27,7 +27,7 @@ def render_article_list(request: HttpRequest):
         start_range = 0
     end_range = (page + 1) * items_per_page
 
-    a = '<div class="admin-popup">'
+    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
     a += '<h3>Articles:</h3><a href="/admin/articles/edit" class="button">Add a new Article</a><br/>' \
          '<br /><table><tr><th>Edit</th><th> Article ID </th><th> Description </th><th> Size </th>' \
          '<th> Price </th><th> Pcs free </th><th> Visibility </th></tr>'

@@ -75,7 +75,7 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
     f.add_content(PlainText(get_csrf_form_element(http_request)))
     f.add_content(SubmitButton())
     # a = page_skeleton.render_headbar(http_request, "Edit User")
-    a = '<div class="admin-popup">'
+    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
     a += f.render_html()
     # a += page_skeleton.render_footer(http_request)
     a += "</div>"
