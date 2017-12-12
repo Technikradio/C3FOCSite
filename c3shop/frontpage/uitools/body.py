@@ -108,8 +108,8 @@ def render_article_image_list(art):
 
 def render_user_link(user):
     text = '<div class="user_link_division">'
-    text += '<a href="' + SERVER_ROOT + "/user/display/" + str(user.pk) + '">'
-    text += render_image(user.avatarMedia, high_res=False)
+    text += '<a href="' + SERVER_ROOT + "/user/display/" + str(user.pk) + '"><div class="user_avatar">'
+    text += render_image(user.avatarMedia, high_res=False) + "</div>"
     text += escape_text(user.displayName)
     text += "</a></div><br/>"
     return text
