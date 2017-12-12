@@ -21,7 +21,6 @@ def index(request):
 
 def detailed_article(request, article_id):
     a = render_content_header(request)
-    a += "<h1>article: Not yet implemented</h1>"
     a += render_article_detail(article_id)
     a += render_footer(request)
     return HttpResponse(a)

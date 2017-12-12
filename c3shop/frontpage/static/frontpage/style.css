@@ -115,3 +115,8 @@ tr:hover {
      width: auto;
      border: none;
 }
+
+img.large-flash-image {
+    width: inherit;
+    height: auto;
+}

@@ -72,9 +72,9 @@ def render_article_detail(article_id):
     try:
         art = Article.objects.get(pk=int(article_id))
         text = '<br/><div class="w3-row w3-padding-64 w3-twothird w3-container"><h2 class="w3-text-teal">'
-        text += escape_text(art.description) + "</h2><br/>"
+        text += escape_text(art.description) + "</h2>"
+        text += render_image(art.flashImage, cssclass="large-flash-image") + "<br />"
         text += render_article_properties_division(art)
-        text += render_image(art.flashImage) + "<br />"
         text += '<div class="article_detailed_text_division">' + art.cachedText + "</div><br />"
         logging.debug("Passed introduction list")
         text += render_article_image_list(art)
@@ -260,10 +260,10 @@ def render_404_page(request):
 def render_index_page(request):
     a = ""
     if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
-        a += '<div class="w3-row w3-padding-64 w3-third w3-container"><img src="/staticfiles/frontpage/store-open.png"/>' \
+        a += '<div class="w3-row w3-padding-64 w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-open.png"/>' \
              '<br />The store is currently open</div>'
     else:
-        a += '<div class="w3-third w3-container"><img src="/staticfiles/frontpage/store-closed.png"/>The store is currently closed.</div>'
+        a += '<div class="w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-closed.png"/><br/>The store is currently closed.</div>'
     a += render_article_list()
     # Render last 5 posts
     post_ids = []
