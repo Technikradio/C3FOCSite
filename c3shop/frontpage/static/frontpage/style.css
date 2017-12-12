@@ -63,7 +63,7 @@ tr:hover {
     padding: 10px;
     text-align: center;
     border-radius: 5px;
-    color: white;
+    background: #009688!important;
     font-weight: bold;
     display: inline;
 }

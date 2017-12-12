@@ -29,7 +29,7 @@ def render_confirm_popup(request: HttpRequest):
         payload = "?payload=" + payload
     else:
         payload = ""
-    a = '<div class="admin-popup">'
+    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
     a += "<h3>The action you've requested may be a bit destructive...</h3>"
     a += "Do you really want to do this?<br/><br/>"
     a += '<a href="' + back + '" class="button">Go back</a> <a href="' + forward + payload

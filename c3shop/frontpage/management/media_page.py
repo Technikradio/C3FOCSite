@@ -9,7 +9,7 @@ def render_media_list(request: HttpRequest, u: Profile):
     if u.rights < 1:
         #Maybe implement filtering on own media
         pass
-    a = "<table><tr><th> Preview </th><th> Headline </th><th> Upluaded by User</th></tr>"
+    a = "<table><tr><th> Preview </th><th> Headline </th><th> Uploaded by User</th></tr>"
     for r in m:
         mu: MediaUpload = MediaUpload.objects.get(MID=m)
         a += "<tr>"
