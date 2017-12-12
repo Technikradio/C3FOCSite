@@ -108,16 +108,19 @@ def render_article_image_list(art):
 
 def render_user_link(user):
     text = '<div class="user_link_division">'
-    text += '<a href="' + SERVER_ROOT + "/user/display/" + str(user.pk) + '"><div class="user_avatar">'
-    text += render_image(user.avatarMedia, high_res=False) + "</div>"
+    text += '<a href="' + SERVER_ROOT + "/user/display/" + str(user.pk) + '">'
+    text += render_image(user.avatarMedia, high_res=False, cssclass="user_avatar")
     text += escape_text(user.displayName)
     text += "</a></div><br/>"
     return text
 
 
-def render_image(media, width=0, height=0, high_res=True, include_link=True, replace: str = ""):
+def render_image(media, width=0, height=0, high_res=True, include_link=True, replace: str = "", cssclass: str = ""):
     width_str = ""
     height_str = ""
+    cssstring = ""
+    if len(cssclass) > 0:
+        cssstring = ' class="' + cssclass + '"'
     if width > 0:
         width_str = "width={0}".format(str(width))
         if height > 0:
@@ -128,7 +131,7 @@ def render_image(media, width=0, height=0, high_res=True, include_link=True, rep
     if not replace == "":
         alt_img = replace
     if media is None:
-        return '<img src="' + alt_img + '" alt="No suitable image was submitted"/>'
+        return '<img src="' + alt_img + '" alt="No suitable image was submitted"' + cssstring + '/>'
     lb = ""
     a = ""
     if include_link:
@@ -137,12 +140,12 @@ def render_image(media, width=0, height=0, high_res=True, include_link=True, rep
     try:
         if high_res:
             return lb + '<img src="' + media.highResFile + '" alt="This should display an HQ image but' \
-                                                      ' something went wrong" ' + width_str + height_str + '/>' + a
+                                                      ' something went wrong" ' + width_str + height_str + cssstring + '/>' + a
         else:
             return lb + '<img src="' + media.lowResFile + '" alt="This should display an LQ image but' \
-                                                     ' something went wrong" ' + width_str + height_str + '/>' + a
+                                                     ' something went wrong" ' + width_str + height_str + cssstring + '/>' + a
     except Exception as link_exception:
-        return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was located: ' + str(link_exception) + '"/>'
+        return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was located: ' + str(link_exception) + '"' + cssstring + '/>'
 
 
 # TODO implement visibility level
