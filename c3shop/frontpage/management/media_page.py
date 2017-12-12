@@ -11,7 +11,7 @@ def render_media_list(request: HttpRequest, u: Profile):
     a = "<table><tr><th> Preview </th><tr> Headline </tr></tr>"
     for r in m:
         a += "<tr>"
-        a += '<td><img src="' + str(r.lowResFile) + '" /></td>'
+        a += '<td><img class="icon" src="' + str(r.lowResFile) + '" /></td>'
         a += '<td>' + str(r.headline) + '</td>'
         a += "</tr>"
     a += "</table>"
