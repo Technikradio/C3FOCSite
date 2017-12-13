@@ -40,7 +40,6 @@ def display_user(request, user_id):
     return HttpResponse(a)
 
 
-@csrf_exempt
 def login(request):
     return ulog.login(request)
 
@@ -117,32 +116,26 @@ def admin_list_users(request):
     return HttpResponse(a)
 
 
-#@csrf_exempt
 def action_save_post(request):
     return edit_post.do_edit_action(request, "/admin/posts")
 
 
-@csrf_exempt
 def action_save_user(request):
     return edit_user.action_save_user(request, "/admin/users")
 
 
-@csrf_exempt
 def action_add_article_to_reservation(request: HttpRequest):
     return reservation_actions.add_article_action(request, "/admin/reservations")
 
 
-@csrf_exempt
 def action_alter_current_reservation(request: HttpRequest):
     return reservation_actions.manipulate_reservation_action(request, "/admin/reservations")
 
 
-@csrf_exempt
 def action_save_reservation(request: HttpRequest):
     return reservation_actions.write_db_reservation_action(request)
 
 
-@csrf_exempt
 def action_save_article(request: HttpRequest):
     response = require_login(request, min_required_user_rights=2)
     if response:
@@ -218,7 +211,6 @@ def admin_add_media(request: HttpRequest):
     return HttpResponse(a)
 
 
-@csrf_exempt
 def action_add_single_media(request: HttpRequest):
     response = require_login(request, min_required_user_rights=0)
     if response:
@@ -226,7 +218,6 @@ def action_add_single_media(request: HttpRequest):
     return media_actions.action_add_single_media(request)
 
 
-@csrf_exempt
 def action_add_bulk_media(request: HttpRequest):
     response = require_login(request, min_required_user_rights=1)
     if response:

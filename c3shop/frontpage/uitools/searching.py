@@ -15,7 +15,7 @@ def render_search_bar(small: bool = True):
     a += ' w3-hide-small w3-hover-white"'
     if not small:
         a = 'class="large_search_bar"'
-    return '<span ' + a + '>' + f.render_html() + "</span>"
+    return '<span ' + a + '>' + f.render_html(None) + "</span>"  # Should be fine due to GET method
 
 
 """

@@ -1,5 +1,7 @@
 import sys
 from enum import Enum
+from ..uitools.dataforge import get_csrf_form_element
+from django.http import HttpRequest
 
 
 class FormObject:
@@ -32,7 +34,7 @@ class Form:
     def add_content(self, f_object: FormObject):
         self.content.append(f_object)
 
-    def render_html(self):
+    def render_html(self, request: HttpRequest):
         a = '<form method="%method%"'.replace("%method%", self.method)
         if self.is_file_handler:
             a += ' enctype="multipart/form-data"'
@@ -42,6 +44,8 @@ class Form:
             a += '>'
         for c in self.content:
             a += c.generate_html_code(self)
+        if self.method == "post":
+            a += get_csrf_form_element(request)
         a += "</form>"
         return a
 
