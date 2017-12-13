@@ -106,6 +106,7 @@ def action_quick_quantity_decrease(request: HttpRequest):
         a: Article = Article.objects.get(pk=int(request.GET["article_id"]))
         a.quantity -= size
         a.save()
+        return redirect("/admin")
     except Exception as e:
         return redirect("/admin/?error=" + str(e))
 
