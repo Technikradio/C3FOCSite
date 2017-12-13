@@ -117,7 +117,7 @@ def admin_list_users(request):
     return HttpResponse(a)
 
 
-@csrf_exempt
+#@csrf_exempt
 def action_save_post(request):
     return edit_post.do_edit_action(request, "/admin/posts")
 
