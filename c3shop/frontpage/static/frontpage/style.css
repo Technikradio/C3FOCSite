@@ -31,6 +31,11 @@ table, th, td {
     padding: 15px;
 }
 
+textarea {
+    width: 100%;
+    height: 70%;
+}
+
 tr:hover {
     background-color: #eeeeee
 }
@@ -104,6 +109,10 @@ tr:hover {
     padding: 25px;
     background: #e74c3c;
     border-radius: 10px;
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 48px;
+    text-align: center;
 }
 
 .user_link_division {
