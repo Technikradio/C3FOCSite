@@ -26,7 +26,7 @@ def render_post_list(request: HttpRequest):
         start_range = 0
     end_range = (page + 1) * items_per_page
     a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
-    a += '<h3>Posts:</h3><a href="/admin/posts/edit"><img class="button-img" alt="Add a new Post" ' \
+    a += '<h3>Posts:</h3>Add Post: <a href="/admin/posts/edit"><img class="button-img" alt="Add a new Post" ' \
          'src="/staticfiles/frontpage/add-post.png"/></a><br />' \
         '<table><tr><th> Edit </th><th> Post ID </th><th>Post title</th><th> visibility level</th>' \
         '<th> Author </th><th> Delete </th></tr>'

@@ -233,7 +233,7 @@ def render_user_list(request, objects_per_site=50):
         a += '<tr><td><a href="/admin/users/edit?user_id=' + str(p.pk) + \
              '"><img class="button-img" src="/staticfiles/frontpage/edit.png" />' \
             '</a></td><td>' + render_image(p.avatarMedia, width=24, height=24,
-                                           replace="/staticfiles/frontpage/no-avatar.png") + '</td><td>' + \
+                                           replace="/staticfiles/frontpage/no-avatar.png", cssclass="icon") + '</td><td>' + \
              escape_text(p.authuser.username) + '</td><td>' + escape_text(p.displayName) + '</td><td>' + \
              str(get_right_string(p.rights)) + '</td></tr>'
     a += '</table></div>'
