@@ -103,7 +103,7 @@ def action_quick_quantity_decrease(request: HttpRequest):
     if not request.GET.get('article_id'):
         return redirect("/admin/?error=BAD_GET_REQUEST")
     try:
-        a: Article = request.GET["article_id"]
+        a: Article = Article.objects.get(pk=int(request.GET["article_id"]))
         a.quantity -= size
         a.save()
     except Exception as e:
