@@ -59,6 +59,10 @@ def action_close_reservation(request: HttpRequest):
         r: GroupReservation = GroupReservation.objects.get(pk=rid)
         r.open = False
         r.save()
+        for article_requested in ArticleRequested.objects.all().filter(RID=r):
+            a: Article = article_requested.AID
+            a.quantity -= article_requested.amount
+            a.save()
         return redirect("/admin/reservations")
     except Exception as e:
         return redirect("/admin/?error=" + str(e))
