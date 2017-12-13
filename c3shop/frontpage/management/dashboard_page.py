@@ -76,7 +76,7 @@ def render_quick_article_panel():
 
 def render_error_panel(request: HttpRequest):
     if request.GET.get("error"):
-        return '<div class="error-panel">Something produced an error: ' + request.GET["error"] + '</div>'
+        return '<div class="error-panel w3-row w3-container">Something produced an error: ' + request.GET["error"] + '</div>'
     else:
         return ""
 
@@ -84,6 +84,7 @@ def render_error_panel(request: HttpRequest):
 def render_dashboard(request: HttpRequest):
     u: Profile = magic.get_current_user(request)
     a = render_headbar(request)
+    a += '<div class="w3-main w3-padding-64">'
     #a += render_features_bar()
     a += render_error_panel(request)
     #a += '<div>'
@@ -93,6 +94,6 @@ def render_dashboard(request: HttpRequest):
     a += render_order_panel(u)
     if u.rights > 1:
         a += render_quick_store_panel()
-    #a += '</div>'
+    a += '</div>'
     a += render_footer(request)
     return a
