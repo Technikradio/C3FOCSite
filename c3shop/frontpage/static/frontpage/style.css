@@ -106,7 +106,7 @@ tr:hover {
 }
 
 .error-panel {
-    padding: 25px;
+    /*padding: 25px;*/
     background: #e74c3c;
     border-radius: 10px;
     width: 80%;
