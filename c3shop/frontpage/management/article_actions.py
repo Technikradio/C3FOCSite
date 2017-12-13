@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from django.http import HttpRequest
-from ..models import Article, ArticleMedia, Profile, Media
+from ..models import Article, ArticleMedia, Profile, Media, Settings
 from .magic import get_current_user, parse_bool
 from .magic import compile_markdown
 import logging
@@ -95,4 +95,19 @@ def action_add_media_to_article(request):
         pass
     except Exception as e:
         return redirect("/admin/?error=" + str(e))
+
+
+def action_quick_quantity_decrease(request: HttpRequest):
+    s: Settings = Settings.objects.get(SName="frontpage.chestsize")
+    size: int = int(s.property)
+    if not request.GET.get('article_id'):
+        return redirect("/admin/?error=BAD_GET_REQUEST")
+    try:
+        a: Article = Article.objects.get(pk=int(request.GET["article_id"]))
+        a.quantity -= size
+        a.save()
+        return redirect("/admin")
+    except Exception as e:
+        return redirect("/admin/?error=" + str(e))
+
 

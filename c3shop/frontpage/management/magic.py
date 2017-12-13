@@ -33,5 +33,8 @@ def parse_bool(s: str):
 def get_article_pcs_free(a: Article):
     i: int = a.quantity
     for request in ArticleRequested.objects.all().filter(AID=a):
-        i -= request.amount
+        # The following isn't ideal du to its heavy db access overhead but I
+        # havn't figured something clever out (yet)
+        if request.RID.open:
+            i -= request.amount
     return i

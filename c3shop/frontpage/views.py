@@ -339,3 +339,10 @@ def action_close_reservation(request: HttpRequest):
         return HttpResponseForbidden()
     return reservation_processing.action_close_reservation(request)
 
+
+def action_quick_quantity_decrease(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=1)
+    if response:
+        return HttpResponseForbidden()
+    return article_actions.action_quick_quantity_decrease(request)
+
