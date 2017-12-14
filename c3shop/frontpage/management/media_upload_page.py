@@ -17,7 +17,7 @@ def render_single_form(request: HttpRequest):
     f.add_content(FileUpload(name="file", multiple=False))
     f.add_content(SubmitButton())
     f.add_content(PlainText('</div>'))
-    return f.render_html()
+    return f.render_html(request)
 
 
 def render_multiple_form(request: HttpRequest):
@@ -29,7 +29,7 @@ def render_multiple_form(request: HttpRequest):
     f.add_content(PlainText("Select your files: "))
     f.add_content(FileUpload(name="files", multiple=True))
     f.add_content(SubmitButton())
-    return f.render_html()
+    return f.render_html(request)
 
 
 def render_upload_page(request: HttpRequest):

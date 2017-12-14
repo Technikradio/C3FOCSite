@@ -63,7 +63,7 @@ def render_edit_page(http_request: HttpRequest):
         f.add_content(PlainText("<br />"))
     f.add_content(SubmitButton())
     a = '<div class="admin-popup">'
-    a += f.render_html()
+    a += f.render_html(http_request)
     a += "<br />"
     if article:
         a += '<h3>Change Image:</h3><a href="/admin/media/select?payload=' + \

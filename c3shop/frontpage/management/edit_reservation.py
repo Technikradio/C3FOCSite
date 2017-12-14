@@ -28,7 +28,7 @@ def render_edit_page(request: HttpRequest):
     f.add_content(TextArea(name="notes", placeholder="Write additional notes here.", text=current_reservation["notes"]))
     f.add_content(PlainText("<br/>"))
     f.add_content(SubmitButton())
-    a = f.render_html()
+    a = f.render_html(request)
     if(current_reservation.get("pickup_date")):
         a += '<br />Add article: <a href="/admin/reservations/select-article"><img src="/staticfiles/frontpage/order-' \
              'article.png" class="button-img"/></a>'
