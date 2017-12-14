@@ -14,6 +14,7 @@ security) the software only works with python >= 3.6
  * MarkdownSubscript
  * pyembed-markdown
  * django_extensions
+ * pillow
 
 ## Database engine to use
 While it is fine to test the software using sqlite the intendet engine
