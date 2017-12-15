@@ -80,7 +80,7 @@ def action_add_single_media(request: HttpRequest):
 def action_add_multiple_media(request: HttpRequest):
     try:
         category: str = request.POST["category"]
-        files = request.FILES.getlist('file_field')
+        files = request.FILES.getlist('files')
         user: Profile = get_current_user(request)
         for f in files:
             handle_file(user, str(f.name), category, "### There is no media description", f)
