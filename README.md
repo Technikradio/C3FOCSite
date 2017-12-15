@@ -7,7 +7,9 @@ Due to the ussage of pythons new type safety system (a good idea for
 security) the software only works with python >= 3.6
 
 ## required python packages
-
+On FreeBSD it might be required to run the following comman before
+installing the packages listed below using pip3:
+<code>[sudo] pkg install jpeg tiff webp lcms2 freetype2</code>
  * django
  * markdown
  * MarkdownSuperscript

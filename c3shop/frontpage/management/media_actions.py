@@ -6,10 +6,12 @@ from .magic import compile_markdown, get_current_user
 
 import logging
 import os
+import math
+from PIL import Image
 
 
 PATH_TO_UPLOAD_FOLDER_ON_DISK: str = "./"
-
+IMAGE_SCALE = 64
 
 def action_change_user_avatar(request: HttpRequest):
     try:
@@ -38,6 +40,15 @@ def handle_file(u: Profile, headline: str, category: str, text: str, file):
         for chunk in file.chunks():
             destination.write(chunk)
     # TODO crop image
+    original = Image.open(high_res_file_name)
+    width, height = original.size
+    diameter = math.sqrt(math.pow(width, 2) + math.pow(height, 2))
+    width /= diameter
+    height /= diameter
+    width *= IMAGE_SCALE
+    height *= IMAGE_SCALE
+    cropped = original.resize(width, height, Image.LANCZOS)
+    cropped.save(low_res_file_name)
     m.text = text
     m.cachedText = compile_markdown(text)
     m.category = category
