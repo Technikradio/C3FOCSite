@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import CASCADE
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -22,7 +23,7 @@ class Media(models.Model):
 class Profile(models.Model):
     # changes: username -> authuser; secretkey -> deleted; passphrase -> deleted
     # UID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the user")
-    authuser = models.OneToOneField(User)
+    authuser = models.OneToOneField(User, on_delete=CASCADE)
     avatarMedia = models.ForeignKey(Media, null=True)
     creationTimestamp = models.DateTimeField(auto_now=True)
     notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact ' +
