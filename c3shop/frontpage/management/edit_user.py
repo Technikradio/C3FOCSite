@@ -83,7 +83,7 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
 
 
 def check_password_conformity(pw1: str, pw2: str):
-    if not pw1 == pw2:
+    if not (pw1 == pw2):
         return False
     if len(pw1) < 6:
         return False
@@ -132,8 +132,10 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
                 user.active = magic.parse_bool(request.POST["active"])
             au: User = user.authuser
             if check_password_conformity(pw1, pw2):
-                logging.log(logging.DEBUG, "Set password for user: " + user.displayName)
+                logging.log(logging.INFO, "Set password for user: " + user.displayName)
                 au.set_password(pw1)
+            else:
+                logging.log(logging.INFO, "Failed to set password for: " + user.displayName)
             au.email = mail
             au.save()
             user.save()
