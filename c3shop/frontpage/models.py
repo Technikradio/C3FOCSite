@@ -76,7 +76,7 @@ class Settings(models.Model):
     requiredLevel = models.SmallIntegerField()
     changeTimestamp = models.DateTimeField(auto_now=True)
     changeReason = models.CharField(max_length=15000, null=True)
-    changedByUser = models.ForeignKey(Profile, on_delete=CASCADE)
+    changedByUser = models.ForeignKey(Profile, on_delete=None)
 
     def __str__(self):
         return str(self.SName) + ": " + str(self.property)
@@ -108,5 +108,5 @@ class ArticleMedia(models.Model):
 # The reason why we split this from the media table is due to tree conflicts while creating the database
 # This table is to identify which user uploaded which image
 class MediaUpload(models.Model):
-    MID = models.ForeignKey(Media, on_delete=CASCADE)
-    UID = models.ForeignKey(Profile, on_delete=CASCADE)
+    MID = models.ForeignKey(Media, on_delete=None)
+    UID = models.ForeignKey(Profile, on_delete=None)
