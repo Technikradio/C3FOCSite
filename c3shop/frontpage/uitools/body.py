@@ -149,7 +149,7 @@ def render_image(media, width=0, height=0, high_res=True, include_link=True, rep
 
 
 # TODO implement visibility level
-def render_post(post_id, request: HttpRequest):
+def render_post(post_id, request: HttpRequest, preview: bool = False):
     # post: Post = None
     try:
         post = Post.objects.get(pk=int(post_id))
@@ -171,10 +171,15 @@ def render_post(post_id, request: HttpRequest):
         logging.debug("While reading the timestamp for the article " + str(post_id) + " an error occurred:")
         logging.debug(str(e))
     text = '<br /><div class="w3-row w3-padding-64 w3-twothird w3-container"><h2 class="w3-text-teal">' 
-    text += escape_text(post.title) + "</h2>"
+    if preview:
+        text += '<a href="/post/' + str(post.pk) + '">'
+    text += escape_text(post.title) 
+    if preview:
+        text += '</a>'
+    text += "</h2>"
     text += post.cacheText
     text += "<p>This article was created on " + time + " by:</p>"
-    text += render_user_link(post.createdByUser)
+    text += render_user_link(post.createdByUser) + "</div>"
     return text
 
 
@@ -274,6 +279,6 @@ def render_index_page(request):
     for i in range(0, post_count):
         post_ids.append(size - i)
     for pid in post_ids:
-        a += render_post(pid, request)
+        a += render_post(pid, request, True)
     return a
 
