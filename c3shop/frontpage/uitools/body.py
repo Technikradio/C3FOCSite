@@ -14,10 +14,10 @@ NO_MEDIA_IMAGE = "/staticfiles/frontpage/no-image.png"  # TODO change to static 
 
 
 def render_article_list():
-    a = ""
-    for art in Article.objects.all():
-        if art.visible:
-            a += render_article_overview(art)
+    a = '<div class="w3-padding-64 w3-twothird w3-container">'
+    for art in Article.objects.all().filter(visible=True):
+        a += render_article_overview(art)
+    a += '</div>'
     return a
 
 
@@ -263,13 +263,12 @@ def render_404_page(request):
 
 
 def render_index_page(request):
-    a = ""
+    a = render_article_list()
     if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
         a += '<div class="w3-row w3-padding-64 w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-open.png"/>' \
              '<br />The store is currently open</div>'
     else:
         a += '<div class="w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-closed.png"/><br/>The store is currently closed.</div>'
-    a += render_article_list()
     # Render last 5 posts
     post_ids = []
     size = Post.objects.all().count()
