@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import CASCADE
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -22,8 +23,8 @@ class Media(models.Model):
 class Profile(models.Model):
     # changes: username -> authuser; secretkey -> deleted; passphrase -> deleted
     # UID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the user")
-    authuser = models.OneToOneField(User)
-    avatarMedia = models.ForeignKey(Media, null=True)
+    authuser = models.OneToOneField(User, on_delete=CASCADE)
+    avatarMedia = models.ForeignKey(Media, null=True, on_delete=CASCADE)
     creationTimestamp = models.DateTimeField(auto_now=True)
     notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact ' +
                                                          'channels)')
@@ -46,8 +47,9 @@ class Article(models.Model):
     quantity = models.IntegerField(help_text="How many articles of this kind are left?")
     size = models.CharField(max_length=10, help_text="The size of the article")
     cachedText = models.CharField(max_length=15000, help_text="The compiled markdown long text")
-    addedByUser = models.ForeignKey(Profile)
-    flashImage = models.ForeignKey(Media, on_delete=None, null=True)  # The image visible in the list view
+    addedByUser = models.ForeignKey(Profile, on_delete=CASCADE)
+    flashImage = models.ForeignKey(Media, on_delete=None, null=True)
+    # The image visible in the list view
 
     def __str__(self):
         return self.description + ": " + str(self.visible) + "(size: " + str(self.size) + ", type: " + str(self.type)\
@@ -57,7 +59,7 @@ class Article(models.Model):
 class Post(models.Model):
     # PID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the post")
     title = models.CharField(max_length=100)
-    createdByUser = models.ForeignKey(Profile)
+    createdByUser = models.ForeignKey(Profile, on_delete=None)
     cacheText = models.CharField(max_length=15000, help_text="The compiled version of the markdown >text<")
     visibleLevel = models.SmallIntegerField(help_text="What access level does the viewer need to have a look at this")
     # putting -1 in the above means that it will be disabled.
@@ -74,7 +76,7 @@ class Settings(models.Model):
     requiredLevel = models.SmallIntegerField()
     changeTimestamp = models.DateTimeField(auto_now=True)
     changeReason = models.CharField(max_length=15000, null=True)
-    changedByUser = models.ForeignKey(Profile)
+    changedByUser = models.ForeignKey(Profile, on_delete=None)
 
     def __str__(self):
         return str(self.SName) + ": " + str(self.property)
@@ -84,27 +86,27 @@ class GroupReservation(models.Model):
     # RID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the reservation")
     timestamp = models.DateTimeField(auto_now=True)
     ready = models.BooleanField()
-    createdByUser = models.ForeignKey(Profile)
+    createdByUser = models.ForeignKey(Profile, on_delete=CASCADE)
     open = models.BooleanField()
     notes = models.CharField(max_length=15000)
     pickupDate = models.DateTimeField()
 
 
 class ArticleRequested(models.Model):
-    RID = models.ForeignKey(GroupReservation)
-    AID = models.ForeignKey(Article)
+    RID = models.ForeignKey(GroupReservation, on_delete=CASCADE)
+    AID = models.ForeignKey(Article, on_delete=CASCADE)
     amount = models.SmallIntegerField()
     notes = models.CharField(max_length=15000)
 
 
 # further media related to the article only visible in the detailed page
 class ArticleMedia(models.Model):
-    AID = models.ForeignKey(Article)
-    MID = models.ForeignKey(Media)
+    AID = models.ForeignKey(Article, on_delete=CASCADE)
+    MID = models.ForeignKey(Media, on_delete=CASCADE)
 
 
 # The reason why we split this from the media table is due to tree conflicts while creating the database
 # This table is to identify which user uploaded which image
 class MediaUpload(models.Model):
-    MID = models.ForeignKey(Media)
-    UID = models.ForeignKey(Profile)
+    MID = models.ForeignKey(Media, on_delete=None)
+    UID = models.ForeignKey(Profile, on_delete=None)
