@@ -62,7 +62,7 @@ def render_edit_page(http_request: HttpRequest):
                                text=article.largeText))
         f.add_content(PlainText("<br />"))
     f.add_content(SubmitButton())
-    a = '<div class="admin-popup">'
+    a = '<div class="admin-popup w3-row w3-container">'
     a += f.render_html(http_request)
     a += "<br />"
     if article:
