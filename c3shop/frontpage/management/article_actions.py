@@ -55,15 +55,15 @@ def action_save_article(request: HttpRequest):
         a.save()
         if aid < 0:
             logging.info("User '" + userp.displayName + "' created a new article (UID: "
-                         + userp.pk + ")")
+                         + str(userp.pk) + ")")
             return redirect("/admin/media/select")  # TODO fix to correct one (Create handler view in media actions,
             # provide a URL and use it here)
         else:
             logging.info("User '" + userp.displayName + "' modified an article (UID: "
-                         + userp.pk + " AID: " + str(aid) + ")")
+                         + str(userp.pk) + " AID: " + str(aid) + ")")
             return redirect("/admin/articles")
     except Exception as e:
-        return redirect('/admin/articles/edit?vault=' + str(e))
+        return redirect('/admin/?error=' + str(e))
 
 
 def action_change_splash_image(request: HttpRequest):

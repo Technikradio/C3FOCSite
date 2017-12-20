@@ -27,7 +27,7 @@ def get_current_user(request: HttpRequest):
 
 
 def parse_bool(s: str):
-    return s in ("yes", "true", "t", "1")
+    return s in ("yes", "true", "t", "1", "visible")
 
 
 def get_article_pcs_free(a: Article):
