@@ -43,7 +43,7 @@ def render_article_overview(target):
     except:
         logging.debug("using default image to present article list item")
         pass
-    art = '<div class="w3-row"><a href="' + link + '"><article><table><tr><td><img ' \
+    art = '<div class="w3-row w3-padding-64 w3-container"><a href="' + link + '"><article><table><tr><td><img ' \
           'class="article_list_image" alt="For some weired reason the image is missing" src="'
     art += flash_image_link + '"></td><td>'
     art += '<h3 class="w3-text-teal">' + escape_text(target.description) 

@@ -39,7 +39,7 @@ def action_save_article(request: HttpRequest):
         aid = -1  # This means that it's a new article
         a: Article = None
         if request.GET.get("id"):
-            aid = str(request.GET["id"])
+            aid = int(request.GET["id"])
             a = Article.objects.get(pk=aid)
         else:
             a = Article()
