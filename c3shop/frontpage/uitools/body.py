@@ -21,6 +21,14 @@ def render_article_list():
     return a
 
 
+def render_price(a: str):
+    try:
+        p: int = int(a)
+        return str(p / 100) + '€'
+    except Exception as e:
+        return a
+
+
 def render_article_overview(target):
     simage = target.flashImage
     link = DETAILED_PAGE + str(target.id)
@@ -37,7 +45,7 @@ def render_article_overview(target):
     art += '</h3>' + get_type_string(int(target.type)) + " "
     art += escape_text(target.size) + " "
     if target.quantity > 0:
-        art += escape_text(target.price) + "<br/>" + str(target.quantity) + " left"
+        art += escape_text(render_price(target.price)) + "<br/>" + str(target.quantity) + " left"
     else:
         art += "<br/>sold out"
     art += "</td></tr></table></article></a></div>"
@@ -89,7 +97,7 @@ def render_article_detail(article_id):
 
 def render_article_properties_division(art):
     text = '<div class="article_properties_division"><br />Size: '
-    text += escape_text(art.size) + "<br />Type: " + get_type_string(int(art.type)) + "<br />Price: " + escape_text(art.price) + "<br />"
+    text += escape_text(art.size) + "<br />Type: " + get_type_string(int(art.type)) + "<br />Price: " + escape_text(render_price(art.price)) + "<br />"
     text += "Pieces left (app.): " + str(art.quantity) + "<br /></div><br />"
     return text
 
