@@ -68,7 +68,7 @@ def render_edit_page(http_request: HttpRequest):
     if article:
         a += '<h3>Change Image:</h3><a href="/admin/media/select?payload=' + \
             str(article.pk) + '&action_url=/admin/actions/change-article-splash-image">' \
-            '<img src="/staticfiles/frontpage/change-image.png" class="button" /></a>'
+            '<img src="/staticfiles/frontpage/change-image.png" class="button-img" /></a>'
         a += render_image_table(article)
     else:
         a += '</div>'
