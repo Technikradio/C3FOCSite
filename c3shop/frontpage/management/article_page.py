@@ -7,6 +7,13 @@ def generate_edit_link(a: Article):
     return "/admin/articles/edit?article_id=" + str(a.pk)
 
 
+def render_vs_status(b: bool):
+    if b:
+        return 'Visible'
+    else:
+        return '<img class="icon" src="/staticfiles/frontpage/error.png" alt="Invisible"/>'
+
+
 def render_article_list(request: HttpRequest):
     # TODO add method to select how many posts to display
     # TODO make layout more fancy
@@ -36,7 +43,7 @@ def render_article_list(request: HttpRequest):
         a += '<tr><td><a href="' + generate_edit_link(article) + '">' \
                 '<img src="/staticfiles/frontpage/edit.png" class="button-img"/></a></td><td>' + str(article.pk) + \
              "</td><td>" + article.description + "</td><td>" + article.size + "</td><td>" + article.price + "</td><td>"\
-             + str(get_article_pcs_free(article)) + "</td><td>" + str(article.visible) + "</td></tr>"
+             + str(get_article_pcs_free(article)) + "</td><td>" + render_vs_status(article.visible) + "</td></tr>"
     a += '</table>'
     if page > 1:
         a += '<a href="' + request.path + '?page=' + str(page - 1) + '&objects=' + str(objects) + '" class="button">' \
