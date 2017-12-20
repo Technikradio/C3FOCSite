@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.http.response import Http404
 from django.http import HttpRequest
 import logging
+import math
 
 SERVER_ROOT = "localhost:8000"
 DETAILED_PAGE = SERVER_ROOT + "/article/"  # For example /article/550/
@@ -24,7 +25,11 @@ def render_article_list():
 def render_price(a: str):
     try:
         p: int = int(a)
-        return str(p / 100) + '€'
+        z = p / 100
+        m = ''
+        if math.floor(z) == z:
+            m = '0'
+        return str(z) + m + ' €'
     except Exception as e:
         return a
 

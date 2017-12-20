@@ -70,6 +70,7 @@ def render_edit_page(http_request: HttpRequest):
             str(article.pk) + '&action_url=/admin/actions/change-article-splash-image">' \
             '<img src="/staticfiles/frontpage/change-image.png" class="button-img" /></a>'
         a += render_image_table(article)
+        a += '</div>'
     else:
         a += '</div>'
     return a
