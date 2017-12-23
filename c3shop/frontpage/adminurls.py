@@ -38,5 +38,7 @@ urlpatterns = [
     url(r'^reservations/article-detail-select', views.admin_select_article_detail, name="wizard_select_article_p2"),
     url(r'^reservations/process', views.admin_process_reservation, name="wizard_process_reservation"),
     url(r'^reservations/finish', views.action_finish_reservation_processing, name="wizard_process_reservation_finish"),
+    url(r'^settings/', views.admin_settings_page, name="settings_page"),
+    url(r'^settings', views.admin_settings_page, name="settings_page"),
     url(r'^confirm', views.admin_confirm_action, name="admin_confirm"),
 ]
