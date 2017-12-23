@@ -365,3 +365,20 @@ def action_save_header_setting(request: HttpRequest):
         return HttpResponseForbidden()
     return random_actions.action_set_header_content(request)
 
+
+def action_save_footer_setting(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return HttpResponseForbidden()
+    return random_actions.action_set_footer_content(request)
+
+
+def admin_settings_footer(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += edit_settings.render_footer_edit_panel(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+

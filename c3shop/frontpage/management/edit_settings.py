@@ -3,8 +3,8 @@ from ..models import Settings
 from .form import PlainText, TextArea, SubmitButton, Form, TextField
 
 
-def render_header_edit_panel(request: HttpRequest):
-    s: Settings = Settings.objects.get(SName='frontpage.ui.navbar.content')
+def render_text_based_panel(request: HttpRequest, setting: str):
+    s: Settings = Settings.objects.get(SName=setting)
     f: Form = Form()
     f.action_url = "/admin/actions/set-header"
     f.add_content(PlainText('<h3 class="w3-text-teal">Edit header content:</h3>'))
@@ -18,3 +18,10 @@ def render_header_edit_panel(request: HttpRequest):
     a += '</div>'
     return a
 
+
+def render_header_edit_panel(request: HttpRequest):
+    return render_text_based_panel(request, 'frontpage.ui.navbar.content')
+
+
+def render_footer_edit_panel(request: HttpRequest):
+    return render_text_based_panel(request, 'frontpage.ui.footer.content')

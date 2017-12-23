@@ -52,3 +52,18 @@ def action_set_header_content(request: HttpRequest):
         return redirect("/admin/?error=" + str(e))
     return redirect(redirect_url)
 
+
+def action_set_footer_content(request: HttpRequest):
+    redirect_url = "/admin/settings"
+    if request.GET.get("redirect"):
+        redirect_url = request.GET["redirect"]
+    s: Settings = Settings.objects.get(SName="frontpage.ui.footer.content")
+    try:
+        s.property = request.POST["property"]
+        s.changeReason = request.POST["reason"]
+        s.changedByUser = get_current_user(request)
+        s.save()
+    except Exception as e:
+        return redirect("/admin/?error=" + str(e))
+    return redirect(redirect_url)
+
