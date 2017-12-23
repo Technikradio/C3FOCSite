@@ -3,12 +3,12 @@ from ..models import Settings
 from .form import PlainText, TextArea, SubmitButton, Form, TextField
 
 
-def render_text_based_panel(request: HttpRequest, setting: str):
+def render_text_based_panel(request: HttpRequest, setting: str, a1: str, a2: str):
     s: Settings = Settings.objects.get(SName=setting)
     f: Form = Form()
     f.action_url = "/admin/actions/set-header"
-    f.add_content(PlainText('<h3 class="w3-text-teal">Edit header content:</h3>'))
-    f.add_content(TextArea(name="property", label_text="Edit the content of the nav bar:",
+    f.add_content(PlainText('<h3 class="w3-text-teal">' + a1 + '</h3>'))
+    f.add_content(TextArea(name="property", label_text=a2,
         text=s.property, placeholder="Please define the content of the header using JSON"))
     f.add_content(PlainText("Please specify the reason you change this setting: "))
     f.add_content(TextField(name="reason"))
@@ -20,8 +20,11 @@ def render_text_based_panel(request: HttpRequest, setting: str):
 
 
 def render_header_edit_panel(request: HttpRequest):
-    return render_text_based_panel(request, 'frontpage.ui.navbar.content')
+    return render_text_based_panel(request, 'frontpage.ui.navbar.content', 'Edit header content:',
+            'Edit the content of the nav bar:')
 
 
 def render_footer_edit_panel(request: HttpRequest):
-    return render_text_based_panel(request, 'frontpage.ui.footer.content')
+    return render_text_based_panel(request, 'frontpage.ui.footer.content', 'Edit footer content:',
+            'Edit the content of the footer:')
+
