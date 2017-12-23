@@ -8,7 +8,8 @@ def render_header_edit_panel(request: HttpRequest):
     f: Form = Form()
     f.action_url = "/admin/actions/set-header"
     f.add_content(PlainText('<h3 class="w3-text-teal">Edit header content:</h3>'))
-    f.action_url(TextArea(name="property", label_text="Edit the content of the nav bar:", text=s.property, placeholder="Please define the content of the header using JSON"))
+    f.add_content(TextArea(name="property", label_text="Edit the content of the nav bar:",
+        text=s.property, placeholder="Please define the content of the header using JSON"))
     f.add_content(PlainText("Please specify the reason you change this setting: "))
     f.add_content(TextField(name="reason"))
     f.add_content(SubmitButton())
