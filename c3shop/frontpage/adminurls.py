@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^actions/add-image-to-article', views.admin_add_media_to_article_action, name="add_img_to_article"),
     url(r'^actions/close-reservation', views.action_close_reservation, name="action_close_reservation"),
     url(r'^actions/reduce', views.action_quick_quantity_decrease, name="action_quick_decrease_articles"),
+    url(r'^actions/set-header', views.action_save_header_setting, name="action_save_header"),
     url(r'^articles/edit', views.admin_edit_article, name="article_edit"),
     url(r'^articles$', views.admin_show_articles, name="list_articles"),
     url(r'^media/select', views.admin_select_media, name="wizard_select_media"),
@@ -40,5 +41,6 @@ urlpatterns = [
     url(r'^reservations/finish', views.action_finish_reservation_processing, name="wizard_process_reservation_finish"),
     url(r'^settings/', views.admin_settings_page, name="settings_page"),
     url(r'^settings', views.admin_settings_page, name="settings_page"),
+    url(r'^settings/edit-header', views.admin_settings_header, name="settings_edit_header"),
     url(r'^confirm', views.admin_confirm_action, name="admin_confirm"),
 ]

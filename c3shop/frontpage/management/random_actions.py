@@ -1,6 +1,7 @@
 from ..models import Settings
 from django.http import HttpRequest
 from django.shortcuts import redirect
+from .magic import get_current_user
 
 
 def action_change_store_open_status(request: HttpRequest):
@@ -35,3 +36,19 @@ def render_confirm_popup(request: HttpRequest):
     a += '<a href="' + back + '" class="button">Go back</a> <a href="' + forward + payload
     a += '" class="button">Continue</a></div>'
     return a
+
+
+def action_set_header_content(request: HttpRequest):
+    redirect_url = "/admin/settings"
+    if request.GET.get("redirect"):
+        redirect_url = request.GET["redirect"]
+    s: Settings = Settings.objects.get(SName="frontpage.ui.navbar.content")
+    try:
+        s.property = request.POST["property"]
+        s.changeReason = request.POST["reason"]
+        s.changedByUser = get_current_user(request)
+        s.save()
+    except Exception as e:
+        return redirect("/admin/?error=" + str(e))
+    return redirect(redirect_url)
+
