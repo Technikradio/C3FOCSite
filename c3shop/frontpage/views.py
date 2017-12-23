@@ -5,7 +5,8 @@ from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page, reservation_page, reservation_actions, media_select
 from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
-from .management import edit_article, edit_reservation, article_select, reservation_processing
+from .management import edit_article, edit_reservation, article_select, reservation_processing, settings_page
+from .management import edit_settings
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -336,4 +337,48 @@ def action_quick_quantity_decrease(request: HttpRequest):
     if response:
         return HttpResponseForbidden()
     return article_actions.action_quick_quantity_decrease(request)
+
+
+def admin_settings_page(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += settings_page.render_settings_page(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def admin_settings_header(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += edit_settings.render_header_edit_panel(request)
+    a += render_footer(request)
+    return HttpResponse(a)
+
+
+def action_save_header_setting(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return HttpResponseForbidden()
+    return random_actions.action_set_header_content(request)
+
+
+def action_save_footer_setting(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return HttpResponseForbidden()
+    return random_actions.action_set_footer_content(request)
+
+
+def admin_settings_footer(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += edit_settings.render_footer_edit_panel(request)
+    a += render_footer(request)
+    return HttpResponse(a)
 
