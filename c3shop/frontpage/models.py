@@ -49,8 +49,8 @@ class Article(models.Model):
     cachedText = models.CharField(max_length=15000, help_text="The compiled markdown long text")
     addedByUser = models.ForeignKey(Profile, on_delete=CASCADE)
     flashImage = models.ForeignKey(Media, on_delete=None, null=True)
-    chestsize = models.IntegerField(help_text="This field defines the unique chest size of the article. If it's 0 it will
-            default to the chest size defined in the settings.")
+    chestsize = models.IntegerField(help_text="This field defines the unique chest size of the article. If it's 0 it will" \
+            "default to the chest size defined in the settings.")
     # The image visible in the list view
 
     def __str__(self):
