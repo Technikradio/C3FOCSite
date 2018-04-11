@@ -17,6 +17,7 @@ installing the packages listed below using pip3:
  * pyembed-markdown
  * django_extensions
  * pillow
+ * markdown-checklist
 
 ## Database engine to use
 While it is fine to test the software using sqlite the intendet engine

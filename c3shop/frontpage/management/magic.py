@@ -15,6 +15,7 @@ def compile_markdown(markdown_sources: str):
         "markdown.extensions.admonition",
         "markdown.extensions.toc",
         "markdown.extensions.wikilinks",
+        "markdown_checklist.extension",
         "superscript",
         "subscript",
         PyEmbedMarkdown(),
