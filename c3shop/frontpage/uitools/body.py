@@ -172,7 +172,7 @@ def render_post(post_id, request: HttpRequest, preview: bool = False):
                + str(post_id) + ": " + str(e) + "</div>"
     if post.visibleLevel > 0:
         # Check if user is allowed to see this post
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return ""
         else:
             if get_current_user(request).rights < post.visibleLevel:
@@ -277,11 +277,15 @@ def render_404_page(request):
 
 def render_index_page(request):
     a = render_article_list()
-    if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
-        a += '<div class="w3-row w3-padding-64 w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-open.png"/>' \
-             '<br />The store is currently open</div>'
-    else:
-        a += '<div class="w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-closed.png"/><br/>The store is currently closed.</div>'
+    try:
+        if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
+            a += '<div class="w3-row w3-padding-64 w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-open.png"/>' \
+                '<br />The store is currently open</div>'
+        else:
+            a += '<div class="w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-closed.png"/>' \
+                '<br/>The store is currently closed.</div>'
+    except Exception as e:
+        a += '<div class="w3-third w3-container">Something terrible has happend:<br />' + str(e) + '</div>'
     # Render last 5 posts
     post_ids = []
     size = Post.objects.all().count()

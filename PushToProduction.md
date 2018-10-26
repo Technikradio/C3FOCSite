@@ -3,6 +3,7 @@
  * change the secret key inside every settings.py file to a randomly generated one
  * disable debug mode for every settings.py file
  * change database engine in settings.py file
+ * set CSRF_COOKIE_SECURE to True in settings.py file
  * have a look at the deploying how-to guide
  * have a look at the deploying static files guide
  * change body.py SERVER_ROOT
