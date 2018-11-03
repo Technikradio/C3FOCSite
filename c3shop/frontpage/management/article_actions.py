@@ -5,6 +5,8 @@ from .magic import get_current_user, parse_bool
 from .magic import compile_markdown
 import logging
 
+logger: logging.Logger = logging.getLogger(__name__)
+
 
 def action_save_article(request: HttpRequest):
     """
@@ -56,15 +58,16 @@ def action_save_article(request: HttpRequest):
         a.addedByUser = userp
         a.save()
         if aid < 0:
-            logging.info("User '" + userp.displayName + "' created a new article (UID: "
+            logger.info("User '" + userp.displayName + "' created a new article (UID: "
                          + str(userp.pk) + ")")
             return redirect("/admin/media/select")  # TODO fix to correct one (Create handler view in media actions,
             # provide a URL and use it here)
         else:
-            logging.info("User '" + userp.displayName + "' modified an article (UID: "
+            logger.info("User '" + userp.displayName + "' modified an article (UID: "
                          + str(userp.pk) + " AID: " + str(aid) + ")")
             return redirect("/admin/articles")
     except Exception as e:
+        logger.exception(e)
         return redirect('/admin/?error=' + str(e))
 
 

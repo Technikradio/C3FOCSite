@@ -62,11 +62,12 @@ def render_quick_article_panel():
         s: Settings = Settings.objects.get(SName="frontpage.chestsize")
         size: int = int(s.property)
         a += "<br />Quick decrease:<br />"
-        a += '<table><tr><th>Article</th><th>Quantity</th><th>Lower by ' + str(size) + ' Items</th></tr>'
+        a += '<table><tr><th>Article</th><th>Quantity</th><th>Lower by Items (typically ' + str(size) + ' items)</th>' \
+        '<th> Article chest size </th></tr>'
         for article in Article.objects.exclude(quantity=0).order_by('quantity'):
             a += '<tr><td>' + article.description + '</td><td>' + str(article.quantity) + '</td>'
             a += '<td><a href="/admin/actions/reduce?article_id=' + str(article.pk) + '" class="button">'
-            a += 'Reduce amount</a></td></tr>'
+            a += 'Reduce amount</a></td><td>' + str(article.chestsize) + '</td></tr>'
         a += '</table>'
     except Exception as e:
         a += "Error: " + str(e)
