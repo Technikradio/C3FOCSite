@@ -222,7 +222,7 @@ def require_login(request, min_required_user_rights=0):
     :type request: http_request
     :type min_required_user_rights: int
     """
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return redirect('%s?next="%s"' % (settings.LOGIN_URL, request.path))
 
     profile = Profile.objects.get(authuser=request.user)
