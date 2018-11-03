@@ -45,6 +45,8 @@ def render_edit_page(http_request: HttpRequest):
         # f.add_content(NumberField(button_text=0, name="type", minimum=0, maximum=3))
         f.add_content(TextArea(name="largetext", label_text="Description",
                                placeholder="Write the large description here"))
+        f.add_content(PlainText("Chest size: "))
+        f.add_content(NumberField(button_text="0", name="chestsize", minimum=0))
         f.add_content(PlainText("<br />"))
     else:
         f.add_content(PlainText("<h3>Edit article #" + str(article.pk) + "</h3>Short Description / Name: "))
@@ -60,6 +62,8 @@ def render_edit_page(http_request: HttpRequest):
                              preselected=article.type))
         f.add_content(TextArea(name="largetext", label_text="Description",
                                text=article.largeText))
+        f.add_content(PlainText("Chest size: "))
+        f.add_content(NumberField(button_text=article.chestsize, name="chestsize", minimum=0))
         f.add_content(PlainText("<br />"))
     f.add_content(SubmitButton())
     a = '<div class="admin-popup w3-row w3-container">'

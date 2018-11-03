@@ -24,5 +24,5 @@ def render_footer(http_request: HttpRequest):
                 a += process_link(pos, item)
     except Exception as e:
         a += "<h3>An error was thrown resulting in the incapability to display this footer:</h3>" + str(e)
-    a += "<br /><center>Copyright (c) 2017 Doralitze</center></footer></body></html>"
+    a += "<br /><center>Copyright (c) 2017 - 2018 Doralitze</center></footer></body></html>"
     return a

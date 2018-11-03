@@ -17,6 +17,8 @@ installing the packages listed below using pip3:
  * pyembed-markdown
  * django_extensions
  * pillow
+ * markdown-checklist
+ * reportlab
 
 ## Database engine to use
 While it is fine to test the software using sqlite the intendet engine
@@ -102,7 +104,8 @@ the store as open, or otherwise (<code>false</code>) as closed.
 The <code>frontpage.chestsize</code> setting contains a positive integer
 defining the amount that should be subtracted from the quantity of an
 article after the 'quick-substract' button was presses. It defaults to
-50.
+50 and is the default if there is no individual chest size defined inside
+the article entity.
 #### Nav Bar and Footer
 The settings for the navigation bar located in the header contains the
 following setting keys:

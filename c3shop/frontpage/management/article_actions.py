@@ -5,6 +5,8 @@ from .magic import get_current_user, parse_bool
 from .magic import compile_markdown
 import logging
 
+logger: logging.Logger = logging.getLogger(__name__)
+
 
 def action_save_article(request: HttpRequest):
     """
@@ -35,6 +37,7 @@ def action_save_article(request: HttpRequest):
         visible = parse_bool(request.POST["visible"])
         quantity = int(request.POST["quantity"])
         size = request.POST["size"]
+        chestsize: int = request.POST["chestsize"]
         userp: Profile = get_current_user(request)
         aid = -1  # This means that it's a new article
         a: Article = None
@@ -51,18 +54,20 @@ def action_save_article(request: HttpRequest):
         a.visible = visible
         a.quantity = int(quantity)
         a.size = str(size)
+        a.chestsize = chestsize
         a.addedByUser = userp
         a.save()
         if aid < 0:
-            logging.info("User '" + userp.displayName + "' created a new article (UID: "
+            logger.info("User '" + userp.displayName + "' created a new article (UID: "
                          + str(userp.pk) + ")")
             return redirect("/admin/media/select")  # TODO fix to correct one (Create handler view in media actions,
             # provide a URL and use it here)
         else:
-            logging.info("User '" + userp.displayName + "' modified an article (UID: "
+            logger.info("User '" + userp.displayName + "' modified an article (UID: "
                          + str(userp.pk) + " AID: " + str(aid) + ")")
             return redirect("/admin/articles")
     except Exception as e:
+        logger.exception(e)
         return redirect('/admin/?error=' + str(e))
 
 
@@ -98,13 +103,21 @@ def action_add_media_to_article(request):
 
 
 def action_quick_quantity_decrease(request: HttpRequest):
+    """
+    This method fetches the desired article using the GET request and decreses its quantity.
+    :param request: The HttpRequest
+    :return: The redirect response
+    """
     s: Settings = Settings.objects.get(SName="frontpage.chestsize")
     size: int = int(s.property)
     if not request.GET.get('article_id'):
         return redirect("/admin/?error=BAD_GET_REQUEST")
     try:
         a: Article = Article.objects.get(pk=int(request.GET["article_id"]))
-        a.quantity -= size
+        if a.chestsize == 0:
+            a.quantity -= size
+        else:
+            a.quantity -= a.chestsize
         a.save()
         return redirect("/admin")
     except Exception as e:

@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from . import dataforge
 import logging
 
+logger = logging.getLogger(__name__)
 
 def redirect(url):
     """
@@ -12,6 +13,14 @@ def redirect(url):
     :return: The HTTP_Response
     """
     return HttpResponseRedirect(url)
+
+
+def get_ip(request: HttpRequest):
+    x_forward = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forward:
+        return x_forward.split(',')[0]
+    else:
+        return request.META.get('REMOTE_ADDR')
 
 
 def render_login_form(request: HttpRequest, was_password_wrong):
@@ -41,25 +50,25 @@ def login(request: HttpRequest, default_redirect="/"):
     if request.GET.get("next"):
         forward = request.GET["next"]
     wrong = False
-    logging.debug("Starting authentication (forward: " + forward)
+    logger.debug("Starting authentication (forward: " + forward)
     if request.POST.get("username") and request.POST.get("password"):
         try:
             username = request.POST["username"]
             password = request.POST["password"]
-            logging.debug("retrieved credentials trying to login. Please wait...")
+            logger.debug("Retrieved credentials trying to login. Remote: " + get_ip(request) + " Please wait...")
             user = auth.authenticate(request, username=username, password=password)
             if user is not None:
                 # User successfully authenticated himself. Log him in
                 auth.login(request, user)
-                logging.info("Successfully logged user '" + user.username + "' in...")
+                logger.info("Successfully logged user '" + user.username + "' in...")
                 return redirect(forward)
             else:
                 wrong = True
-                logging.debug("wrong credentials, displaying again")
+                logger.debug("wrong credentials, displaying again")
         except Exception as e:
             logging.warning(str(e))
             wrong = True
-    logging.debug("There was no correct credential transmit yet")
+    logger.debug("There was no correct credential transmit yet")
     a = headerfunctions.render_content_header(request, admin_popup=True, title="C3FOC - Login")
     a += render_login_form(request, wrong)
     a += footerfunctions.render_footer(request)
@@ -77,5 +86,6 @@ def logout(request: HttpRequest, default_redirect="/"):
     forward = default_redirect
     if request.GET.get("next"):
         forward = request.GET["next"]
+    logger.info("User " + get_ip(request) + " logged out.")
     return redirect(forward)
 

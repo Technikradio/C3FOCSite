@@ -10,16 +10,17 @@ def compile_markdown(markdown_sources: str):
     :param markdown_sources: The markdown source code
     :return: The HTML code
     """
-    extensions = [
+    loaded_extensions = [
         "markdown.extensions.extra",
         "markdown.extensions.admonition",
         "markdown.extensions.toc",
         "markdown.extensions.wikilinks",
+        "markdown_checklist.extension",
         "superscript",
         "subscript",
         PyEmbedMarkdown(),
     ]
-    return markdown.markdown(markdown_sources, extensions)
+    return markdown.markdown(markdown_sources, extensions=loaded_extensions)
 
 
 def get_current_user(request: HttpRequest):

@@ -70,7 +70,7 @@ def do_edit_action(request: HttpRequest, default_forward_url: str = ".."):
     forward_url = default_forward_url
     if request.GET.get("redirect"):
         forward_url = request.GET["redirect"]
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return HttpResponseForbidden()
     profile = Profile.objects.get(authuser=request.user)
     if profile.rights < 2:
