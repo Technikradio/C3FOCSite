@@ -102,7 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 SECURE_BROWSER_XSS_FILTER = True
-SESSION_COOKIE_SECURE = True
+#SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 X_FRAME_OPTIONS = 'DENY'
 
@@ -126,3 +127,33 @@ STATIC_URL = "/staticfiles/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 
 LOGIN_URL = "/login/"
+
+# Logging settings
+LOGGING = {
+        'version' : 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'mail_admins': {
+                    'level': 'ERROR',
+                    'class': 'django.utils.log.AdminEmailHandler'
+                },
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                #'formatter': 'simple'
+                }
+            },
+        'loggers': {
+            'django': {
+                    'handlers': ['console'],
+                    'propagate': True,
+                    'level': 'INFO'
+                },
+            'frontpage': {
+                    'handlers': ['console'],
+                    'propagate': True,
+                    'level': 'DEBUG'
+                }
+            }
+        }
+
