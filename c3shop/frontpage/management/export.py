@@ -1,11 +1,21 @@
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
 from ..models import GroupReservation
+import logging
 
-def exportOrderToPDF(request: HttpRequest, reservations):
+logger = logging.getLogger(__name__)
+
+def exportOrderToPDF(request: HttpRequest, res):
     # Setup the canvas
+    reservations = []
+    try:
+        for r in res:
+            reservations.append(GroupReservation.objects.get(id=int(r)))
+    except Exception as e:
+        logger.exception(e)
+        return HttpResponseForbidden("The requested reservation(s) do not seam to exist.<br />" + str(e))
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
     buffer = BytesIO()

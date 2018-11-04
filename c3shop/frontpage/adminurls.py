@@ -44,4 +44,5 @@ urlpatterns = [
     url(r'^settings/edit-footer', views.admin_settings_footer, name="settings_edit_footer"),
     url(r'^settings$', views.admin_settings_page, name="settings_page"),
     url(r'^confirm', views.admin_confirm_action, name="admin_confirm"),
+    url(r'^export', views.admin_export, name="admin_export"),
 ]
