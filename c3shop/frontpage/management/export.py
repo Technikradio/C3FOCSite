@@ -12,6 +12,7 @@ def exportOrderToPDF(request: HttpRequest, res):
     reservations = []
     try:
         for r in res:
+            logger.info("Exporting reservation: " + str(r))
             reservations.append(GroupReservation.objects.get(id=int(r)))
     except Exception as e:
         logger.exception(e)

@@ -12,6 +12,15 @@ def generate_export_link(u: Profile):
     p = None
     if u.rights > 0:
         p = GroupReservation.objects.filter(open=True).filter(ready=False)
+    else:
+        return l, p
+    m = ""
+    for r in p:
+        # Iterate through each reservation and add it
+        if not m == "":
+            m += ','
+        m += str(r.id)
+    l = '<a href="/admin/export?method=pdf&reservations=' + m + '" class="button">Generate reservations PDF</a><br/>'
     return l, p
 
 
