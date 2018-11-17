@@ -2,17 +2,39 @@ from django.http import HttpRequest
 from ..models import GroupReservation, Profile
 from ..uitools.body import escape_text
 from .magic import get_current_user
+import logging
+
+logger = logging.getLogger(__name__)
+
+def generate_export_link(u: Profile):
+    # Check for user rights, collect open reservation id's and generate link
+    l = ""
+    p = None
+    if u.rights > 0:
+        p = GroupReservation.objects.filter(open=True).filter(ready=False)
+    else:
+        return l, p
+    m = ""
+    for r in p:
+        # Iterate through each reservation and add it
+        if not m == "":
+            m += ','
+        m += str(r.id)
+    l = '<a href="/admin/export?method=pdf&reservations=' + m + '" class="button">Generate reservations PDF</a><br/><br/><br/>'
+    return l, p
 
 
 def render_open_order_table(u: Profile):
+    # We don't have to deal with performance here since it won't get hit that much
     try:
-        a = '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th>' \
+        a, m = generate_export_link(u)
+        a += '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th>' \
             '<th>Process</th></tr>'
         p = GroupReservation.objects.all().filter(open=True)
         if u.rights < 1:
             p = p.filter(createdByUser=u)
         if p.count() > 0:
-            m = GroupReservation.objects.filter(open=True).filter(ready=False)
+            # m = GroupReservation.objects.filter(open=True).filter(ready=False)
             if u.rights < 1:
                 m = m.filter(createdByUser=u)
             for o in m:
@@ -25,6 +47,7 @@ def render_open_order_table(u: Profile):
             a += "</table><h5>You don't have any open reservations at the moment :-)</h5>"
         return a
     except Exception as e:
+        logger.exception(e)
         return "Unable to retrieve order data: " + str(e)
 
 
@@ -114,5 +137,5 @@ def render_order_page(request: HttpRequest):
     if u.rights > 0:
         a += "<h2>Below is a list of all orders:</h2>"
         a += render_order_list(request)
-    a += "</div>"
+    a += "<br /></div><br />"
     return a

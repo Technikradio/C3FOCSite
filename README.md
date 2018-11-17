@@ -19,6 +19,7 @@ installing the packages listed below using pip3:
  * pillow
  * markdown-checklist
  * reportlab
+ * qrcode
 
 ## Database engine to use
 While it is fine to test the software using sqlite the intendet engine

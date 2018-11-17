@@ -1,7 +1,13 @@
 import markdown
+import time
+import datetime
 from pyembed.markdown import PyEmbedMarkdown
 from django.http import HttpRequest
 from ..models import Profile, Article, ArticleRequested
+
+
+def timestamp():
+    return datetime.datetime.fromtimestamp(time.time()).strftime('%d_%m_%Y__%H_%M_Uhr')
 
 
 def compile_markdown(markdown_sources: str):
