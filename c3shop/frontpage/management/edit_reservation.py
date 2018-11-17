@@ -39,5 +39,6 @@ def render_edit_page(request: HttpRequest):
             a += "<td>" + str(art["notes"]) + "</td></tr>"
         a += "</table>"
     if current_reservation.get("notes") and current_reservation.get("pickup_date"):
-        a += '<br /><a href="/admin/actions/save-current-reservation" class="button">Submit Reservation</a>'
+        a += '<br /><a href="/admin/confirm?back_url=' + str(request.get_full_path()) + '&forward_url=/admin/actions/' \
+                'save-current-reservation" class="button">Submit Reservation</a>'
     return a
