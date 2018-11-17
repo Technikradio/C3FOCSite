@@ -44,13 +44,15 @@ def renderTableHeader(p: canvas.Canvas, y: int):
     return y - 25
 
 
-def renderArticleRequest(p: canvas.Canvas, arequested: ArticleRequested, y: int):
+def renderArticleRequest(p: canvas.Canvas, arequested: ArticleRequested, y: int, retry=False):
     a: Article = arequested.AID
+    text = Paragraph(str(arequested.notes).replace("\n", "<br />"), style=ARTICLE_NOTES_STYLE)
+    textwidth, textheight = text.wrapOn(p, A4[0] - 300, A4[1] - 100)
+    if textheight > (y - 50) and not retry:
+        return y, arequested
     p.line(50, y, A4[0] - 50, y)
     p.drawString(55, y - 15, str(a.description))
     p.drawString(155, y - 15, str(arequested.amount))
-    text = Paragraph(str(arequested.notes).replace("\n", "<br />"), style=ARTICLE_NOTES_STYLE)
-    textwidth, textheight = text.wrapOn(p, A4[0] - 300, A4[1] - 100)
     text.drawOn(p, 235, y - 5 - textheight)
     r = y - 15 - textheight
     # render table lines
@@ -65,7 +67,7 @@ def renderArticleRequest(p: canvas.Canvas, arequested: ArticleRequested, y: int)
     p.line(A4[0] - 62, y - 12, A4[0] - 53, y - 12)
     p.line(A4[0] - 62, y - 3, A4[0] - 62, y - 12)
     p.line(A4[0] - 53, y - 3, A4[0] - 53, y - 12)
-    return r
+    return r, None
 
 
 def exportOrderToPDF(request: HttpRequest, res):
@@ -112,7 +114,8 @@ def exportOrderToPDF(request: HttpRequest, res):
                 cy = h - 200
             cy = renderTableHeader(p, cy)
             for arequest in ArticleRequested.objects.filter(RID=r):
-                if cy < 75:
+                cy, retryObject = renderArticleRequest(p, arequest, cy)
+                if cy < 75 or (retryObject != None):
                     cy = h - 55
                     if page == 1:
                         p.drawString(35, 35, "Page " + str(page))
@@ -125,7 +128,8 @@ def exportOrderToPDF(request: HttpRequest, res):
                     p.drawString(25, h - 35, "Reservation by: " + str(r.createdByUser.displayName))
                     p.line(25, h - 45, w - 25, h - 45)
                     p.setFont("Helvetica", 11)
-                cy = renderArticleRequest(p, arequest, cy)
+                    if retryObject != None:
+                        cy, retryObject = renderArticleRequest(p, arequest, cy, retry=True)
             p.showPage() # End page here (one per request)
     #Close the canvas
     p.save()
