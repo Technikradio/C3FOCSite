@@ -9,7 +9,7 @@ def render_image_table(art: Article):
     imgs = ArticleMedia.objects.all().filter(AID=art)
     a = "<h3> Manage article images </h3>"
     a += '<a href="/admin/media/select?action_url=/admin/actions/add-image-to-article&payload=' + str(art.pk) + \
-        '" ><img class="button" src="/staticfiles/frontpage/add-image.png"/></a>'
+        '" ><img class="button-img" src="/staticfiles/frontpage/add-image.png"/></a>'
     a += '<table><tr><th> Preview </th><th> Headline </th></tr>'
     for img in imgs:
         media = img.MID
@@ -66,7 +66,7 @@ def render_edit_page(http_request: HttpRequest):
         f.add_content(NumberField(button_text=article.chestsize, name="chestsize", minimum=0))
         f.add_content(PlainText("<br />"))
     f.add_content(SubmitButton())
-    a = '<div class="admin-popup w3-row w3-container">'
+    a = '<div class="admin-popup w3-twothird w3-padding-64 w3-row w3-container">'
     a += f.render_html(http_request)
     a += "<br />"
     if article:

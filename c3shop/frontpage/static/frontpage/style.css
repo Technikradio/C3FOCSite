@@ -100,7 +100,7 @@ tr:hover {
 .admin-popup {
     padding: 15px;
     width: 80%;
-    position: fixed;
+    position: absolute;
     left: 10%;
     height: auto;
 }

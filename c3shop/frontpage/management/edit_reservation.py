@@ -13,6 +13,7 @@ def render_edit_page(request: HttpRequest):
     settings. The table below will list all selected articles including
     the amount and notes. If no cookie is present but the GET-Value [id] it will load it.
     """
+    a = '<div class="admin-popup w3-twothird w3-padding-64 w3-row w3-container">'
     current_reservation = None
     if RESERVATION_CONSTRUCTION_COOKIE_KEY in request.COOKIES:
         current_reservation = json.loads(request.COOKIES[RESERVATION_CONSTRUCTION_COOKIE_KEY])
@@ -27,7 +28,7 @@ def render_edit_page(request: HttpRequest):
     f.add_content(TextArea(name="notes", placeholder="Write additional notes here.", text=current_reservation["notes"]))
     f.add_content(PlainText("<br/>"))
     f.add_content(SubmitButton())
-    a = f.render_html(request)
+    a += f.render_html(request)
     if(current_reservation.get("pickup_date")):
         a += '<br />Add article: <a href="/admin/reservations/select-article"><img src="/staticfiles/frontpage/order-' \
              'article.png" class="button-img"/></a>'
@@ -42,5 +43,5 @@ def render_edit_page(request: HttpRequest):
         a += "</table>"
     if current_reservation.get("notes") and current_reservation.get("pickup_date"):
         a += '<br /><a href="/admin/confirm?back_url=' + str(request.get_full_path()) + '&forward_url=/admin/actions/' \
-                'save-current-reservation" class="button">Submit Reservation</a>'
+                'save-current-reservation" class="button">Submit Reservation</a></div>'
     return a

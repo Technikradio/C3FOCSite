@@ -29,12 +29,12 @@ def render_media_selection_page(request: HttpRequest):
         start_range = 0
     end_range = (page + 1) * items_per_page
     a = render_headbar(request, title="Select media")
-    a += '<div class="admin-popup">'
+    a += '<div class="admin-popup w3-twothird w3-container w3-padding-64">'
     a += '<h3>Please select your desired image</h3><table><tr><th>Select</th><th>Preview</th><th>Title</th></tr>'
     objects = Media.objects.filter(pk__range=(start_range, end_range))
     for img in objects:
         a += '<tr><td><a href="' + action + str(img.pk)
-        a += '"><img src="/staticfiles/frontpage/add-image.png" class="button"/></a></td><td><img src="'
+        a += '"><img src="/staticfiles/frontpage/add-image.png" class="button-img"/></a></td><td><img src="'
         a += img.lowResFile + '" /></td><td>' + img.headline + '</td></tr>'
     a += '</table>'
     if page > 1:

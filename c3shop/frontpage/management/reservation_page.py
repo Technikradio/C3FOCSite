@@ -138,7 +138,7 @@ def render_personal_req_management(request: HttpRequest):
 
 def render_order_page(request: HttpRequest):
     u: Profile = get_current_user(request)
-    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
+    a = '<div class="admin-popup w3-row w3-padding-64 w3-twothird w3-container">'
     a += render_personal_req_management(request)
     a += "<h2>The following orders are still open:</h2>"
     a += render_open_order_table(u)

@@ -13,18 +13,17 @@ def render_text_based_panel(request: HttpRequest, setting: str, a1: str, a2: str
     f.add_content(PlainText("Please specify the reason you change this setting: "))
     f.add_content(TextField(name="reason"))
     f.add_content(SubmitButton())
-    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
-    a += f.render_html(request)
-    a += '</div>'
-    return a
+    return f.render_html(request)
+    
 
 
 def render_header_edit_panel(request: HttpRequest):
-    return render_text_based_panel(request, 'frontpage.ui.navbar.content', 'Edit header content:',
+    return '<div class="admin-popup w3-row w3-padding-64 w3-twothird w3-container">' + render_text_based_panel(request, 
+            'frontpage.ui.navbar.content', 'Edit header content:',
             'Edit the content of the nav bar:', "/admin/actions/set-header")
 
 
 def render_footer_edit_panel(request: HttpRequest):
     return render_text_based_panel(request, 'frontpage.ui.footer.content', 'Edit footer content:',
-            'Edit the content of the footer:', "/admin/actions/set-footer")
+            'Edit the content of the footer:', "/admin/actions/set-footer", begin=False) + '</div>'
 

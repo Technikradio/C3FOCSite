@@ -60,8 +60,7 @@ def action_save_article(request: HttpRequest):
         if aid < 0:
             logger.info("User '" + userp.displayName + "' created a new article (UID: "
                          + str(userp.pk) + ")")
-            return redirect("/admin/media/select")  # TODO fix to correct one (Create handler view in media actions,
-            # provide a URL and use it here)
+            return redirect("/admin/media/select?action_url=/admin/actions/add-image-to-article&payload=" + str(a.id))
         else:
             logger.info("User '" + userp.displayName + "' modified an article (UID: "
                          + str(userp.pk) + " AID: " + str(aid) + ")")

@@ -13,7 +13,7 @@ def render_headbar(httprequest: HttpRequest, title="c3foc - admin"):
         <link rel="stylesheet" href="/staticfiles/frontpage/style.css" />
         <link rel="stylesheet" href="/staticfiles/frontpage/w3.css" />
         <link rel="stylesheet" href="/staticfiles/frontpage/w3-theme-black.css" />
-        <link rel="stylesheet" href="/staticfiles/frontpage/roboto.woff" />
+        <link rel="stylesheet" href="/staticfiles/frontpage/roboto.ttf" />
         <meta charset="UTF-8" />
         <title>%title%</title>
     </head>
