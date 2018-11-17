@@ -28,8 +28,12 @@ def render_open_order_table(u: Profile):
     # We don't have to deal with performance here since it won't get hit that much
     try:
         a, m = generate_export_link(u)
-        a += '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th>' \
-            '<th>Process</th></tr>'
+        if not u.rights > 1:
+            a = ""
+        a += '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th>'
+        if u.rights > 1:
+            a += '<th>Process</th><th>Download</th>'
+        a += '</tr>'
         p = GroupReservation.objects.all().filter(open=True)
         if u.rights < 1:
             p = p.filter(createdByUser=u)
@@ -39,9 +43,13 @@ def render_open_order_table(u: Profile):
                 m = m.filter(createdByUser=u)
             for o in m:
                 a += '<tr><td>' + generate_order_ready_status_image(o.ready) + '</td><td>' + str(o.pickupDate) + \
-                     '</td><td>' + escape_text(o.createdByUser.displayName) + '</td><td><a href="/admin/reservations' \
-                     '/process?reservation_id=' + str(o.pk) + '">' \
-                     '<img src="/staticfiles/frontpage/process-reservation.png" class="button-img" /></a></td></tr>'
+                     '</td><td>' + escape_text(o.createdByUser.displayName) + '</td>'
+                if u.rights > 1:
+                    a += '<td><a href="/admin/reservations/process?reservation_id=' + str(o.pk) + '">' \
+                         '<img src="/staticfiles/frontpage/process-reservation.png" class="button-img" /></a></td>' \
+                         '<td><a href="/admin/export?method=pdf&reservations=' + str(o.id) +  '"' \
+                         '><img src="/staticfiles/frontpage/download.png" class="button-img" /></a></td>'
+                a += '</tr>'
             a += '</table>'
         else:
             a += "</table><h5>You don't have any open reservations at the moment :-)</h5>"

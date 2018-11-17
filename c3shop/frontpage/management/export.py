@@ -81,7 +81,10 @@ def exportOrderToPDF(request: HttpRequest, res):
         logger.exception(e)
         return HttpResponseForbidden("The requested reservation(s) do not seam to exist.<br />" + str(e))
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="FOC-Orders_' + timestamp() + '.pdf"'
+    if len(reservations) == 1:
+        response['Content-Disposition'] = 'attachment; filename="FOC-Order_N°' + str(res[0]) + '.pdf"'
+    else:
+        response['Content-Disposition'] = 'attachment; filename="FOC-Orders_' + timestamp() + '.pdf"'
     buffer = BytesIO()
     p : canvas = canvas.Canvas(buffer, pagesize=A4, pageCompression=0)
     # Render PDF
