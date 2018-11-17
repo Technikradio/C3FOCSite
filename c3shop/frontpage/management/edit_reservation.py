@@ -21,7 +21,6 @@ def render_edit_page(request: HttpRequest):
     f: Form = Form()
     f.action_url = "/admin/actions/alter-current-reservation?redirect=/admin/reservations/edit"
     f.add_content(PlainText("<h3>Edit reservation: </h3>"))
-    # TODO implement global settings form here
     f.add_content(PlainText("Enter date: "))
     f.add_content(Date(name="pickup_date", date=current_reservation["pickup_date"]))
     f.add_content(PlainText("Notes:<br/>"))
@@ -32,11 +31,14 @@ def render_edit_page(request: HttpRequest):
     if(current_reservation.get("pickup_date")):
         a += '<br />Add article: <a href="/admin/reservations/select-article"><img src="/staticfiles/frontpage/order-' \
              'article.png" class="button-img"/></a>'
-        a += "<table><tr><th> Headline </th><th> Amount </th><th> Notes </th></tr>"
+        a += "<table><tr><th> Headline </th><th> Amount </th><th> Notes </th><th> Delete </th></tr>"
+        i = 0
         for art in current_reservation["articles"]:
             r_art: Article = Article.objects.get(pk=int(art["id"]))
             a += "<tr><td>" + r_art.description + "</td><td>" + str(art["quantity"]) + "</td>"
-            a += "<td>" + str(art["notes"]) + "</td></tr>"
+            a += "<td>" + str(art["notes"]) + '</td><td><a href="/admin/actions/delete-article?id=' + str(i) + '">' \
+                    '<img src="/staticfiles/frontpage/delete.png" class="button-img"/></a></td></tr>'
+            i += 1
         a += "</table>"
     if current_reservation.get("notes") and current_reservation.get("pickup_date"):
         a += '<br /><a href="/admin/confirm?back_url=' + str(request.get_full_path()) + '&forward_url=/admin/actions/' \

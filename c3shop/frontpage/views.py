@@ -125,6 +125,13 @@ def action_save_user(request):
     return edit_user.action_save_user(request, "/admin/users")
 
 
+def admin_delete_article_from_pending_reservation(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    return reservation_actions.action_delete_article(request)
+
+
 def action_add_article_to_reservation(request: HttpRequest):
     return reservation_actions.add_article_action(request, "/admin/reservations")
 

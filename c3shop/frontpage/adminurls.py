@@ -24,6 +24,7 @@ urlpatterns = [
         name="action_change_article_flash_image"),
     url(r'^actions/delete-post', views.admin_delete_post_action, name="action_delete_post"),
     url(r'^actions/add-image-to-article', views.admin_add_media_to_article_action, name="add_img_to_article"),
+    url(r'^actions/delete-article', views.admin_delete_article_from_pending_reservation, name="delete_article_from_reservation"),
     url(r'^actions/close-reservation', views.action_close_reservation, name="action_close_reservation"),
     url(r'^actions/reduce', views.action_quick_quantity_decrease, name="action_quick_decrease_articles"),
     url(r'^actions/set-header', views.action_save_header_setting, name="action_save_header"),

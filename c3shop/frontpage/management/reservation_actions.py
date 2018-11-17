@@ -98,3 +98,21 @@ def manipulate_reservation_action(request: HttpRequest, default_foreward_url: st
     response.set_cookie(RESERVATION_CONSTRUCTION_COOKIE_KEY, json.dumps(current_reservation, indent=4))
     return response
 
+
+def action_delete_article(request: HttpRequest):
+    """
+    This function removes an article from the reservation and returnes
+    the required resonse.
+    """
+    response =  HttpResponseRedirect("/admin/reservations/edit")
+    js_string: str = ""
+    if request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY):
+        js_string = request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY)
+    else:
+        js_string = EMPTY_COOKY_VALUE
+    current_reservation = json.loads(js_string)
+    if request.GET.get("id"):
+        aid: int = int(request.GET["id"])
+        del current_reservation.get("articles")[aid]
+    response.set_cookie(RESERVATION_CONSTRUCTION_COOKIE_KEY, json.dumps(current_reservation, indent=4))
+    return response
