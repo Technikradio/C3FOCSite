@@ -20,7 +20,7 @@ def generate_export_link(u: Profile):
         if not m == "":
             m += ','
         m += str(r.id)
-    l = '<a href="/admin/export?method=pdf&reservations=' + m + '" class="button">Generate reservations PDF</a><br/>'
+    l = '<a href="/admin/export?method=pdf&reservations=' + m + '" class="button">Generate reservations PDF</a><br/><br/><br/>'
     return l, p
 
 
@@ -137,5 +137,5 @@ def render_order_page(request: HttpRequest):
     if u.rights > 0:
         a += "<h2>Below is a list of all orders:</h2>"
         a += render_order_list(request)
-    a += "</div>"
+    a += "<br /></div><br />"
     return a
