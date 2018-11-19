@@ -32,6 +32,7 @@ class Profile(models.Model):
     dect = models.IntegerField()
     rights = models.SmallIntegerField()  # The higher the number the more rights a user will have, see README.md
     displayName = models.CharField(max_length=75)
+    pgp_keyfingerprint = models.CharField(max_length=16384)
 
     def __str__(self):
         return str(self.authuser.username) + ": {active: " + str(self.active) + "}"
@@ -92,6 +93,7 @@ class GroupReservation(models.Model):
     open = models.BooleanField()
     notes = models.CharField(max_length=15000)
     pickupDate = models.DateTimeField()
+    responsiblePerson = models.CharField(max_length=50)
 
 
 class ArticleRequested(models.Model):
