@@ -33,7 +33,7 @@ class Profile(models.Model):
     dect = models.IntegerField(help_text='This is the DECT number that will be displayed on the printed orders.')
     rights = models.SmallIntegerField()  # The higher the number the more rights a user will have, see README.md
     displayName = models.CharField(max_length=75)
-    pgp_keyfingerprint = models.CharField(max_length=16384)
+    pgp_keyfingerprint = models.CharField(max_length=16384, default="")
 
     def __str__(self):
         return str(self.authuser.username) + ": {active: " + str(self.active) + "}"
@@ -41,7 +41,7 @@ class Profile(models.Model):
 
 class ApiKey(models.Model):
     key = models.CharField(max_length=64, primary_key=True, help_text="The key sequence")
-    user = models.ForeignKey(Profile, null=False, help_text="The user who owns the key")
+    user = models.ForeignKey(Profile, null=False, help_text="The user who owns the key", on_delete=CASCADE)
 
 
 class Article(models.Model):
@@ -99,7 +99,7 @@ class GroupReservation(models.Model):
     open = models.BooleanField()
     notes = models.CharField(max_length=15000)
     pickupDate = models.DateTimeField()
-    responsiblePerson = models.CharField(max_length=50)
+    responsiblePerson = models.CharField(max_length=50, null=True, default=None)
 
 
 class ArticleRequested(models.Model):
