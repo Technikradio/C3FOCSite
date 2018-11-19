@@ -23,7 +23,7 @@ class Media(models.Model):
 class Profile(models.Model):
     # changes: username -> authuser; secretkey -> deleted; passphrase -> deleted
     # UID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the user")
-    authuser = models.OneToOneField(User, on_delete=CASCADE)
+    authuser = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     avatarMedia = models.ForeignKey(Media, null=True, on_delete=CASCADE)
     creationTimestamp = models.DateTimeField(auto_now=True)
     notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact ' +
@@ -36,6 +36,11 @@ class Profile(models.Model):
 
     def __str__(self):
         return str(self.authuser.username) + ": {active: " + str(self.active) + "}"
+
+
+class ApiKey(models.Model):
+    key = models.CharField(max_length=64, primary_key=True, help_text="The key sequence")
+    user = models.ForeignKey(Profile, null=False, help_text="The user who owns the key")
 
 
 class Article(models.Model):
