@@ -29,7 +29,8 @@ class Profile(models.Model):
     notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact ' +
                                                          'channels)')
     active = models.BooleanField(default=True)
-    dect = models.IntegerField()
+    mustChangePassword = models.BooleanField(default=False, help_text='If true the user is required to change the password on next login')
+    dect = models.IntegerField(help_text='This is the DECT number that will be displayed on the printed orders.')
     rights = models.SmallIntegerField()  # The higher the number the more rights a user will have, see README.md
     displayName = models.CharField(max_length=75)
     pgp_keyfingerprint = models.CharField(max_length=16384)
