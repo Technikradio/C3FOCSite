@@ -12,7 +12,14 @@ import qrcode
 logger = logging.getLogger(__name__)
 
 NOTES_STYLE = ParagraphStyle('notesstyle', fontSize=11)
-ARTICLE_NOTES_STYLE = ParagraphStyle('notesstyle', fontSize=11)
+ARTICLE_NOTES_STYLE = ParagraphStyle('articlestyle', fontSize=11)
+INFO_STYLE = ParagraphStyle(
+        'infostyle', fontSize=9,
+        border_color="#000000",
+        border_width=1,
+        border_padding=(7, 2, 20),
+        border_radius=None,
+        )
 
 
 def generateQRLink(link: str):
@@ -111,6 +118,23 @@ def exportOrderToPDF(request: HttpRequest, res):
             text = Paragraph(r.notes.replace("\n", "<br />"), style=NOTES_STYLE)
             textwidth, textheight = text.wrapOn(p, w - 200, h - 250)
             text.drawOn(p, 30, h - 75 - textheight)
+            # render the responsible person info field
+            contactinfo = "<b>Contact:</b> " + str(r.responsiblePerson) + " <b>Mail:</b> " + str(r.createdByUser.authuser.email)
+            if r.createdByUser.dect != 0:
+                contactinfo += " <b>DECT:</b> " + str(r.createdByUser.dect)
+            if textheight > 150:
+                # Render info box under the QR code
+                text = Paragraph(contactinfo.replace("<b>", "<br /><b>"), style=INFO_STYLE)
+                text.wrapOn(p, 125, 65)
+                text.drawOn(p, w - 142, h - 200)
+            else:
+                # Render info box unter the notes
+                text = Paragraph(contactinfo, style=INFO_STYLE)
+                text.wrapOn(p, w - 200, 20)
+                text.drawOn(p, 30, h - textheight - 100)
+                textheight += 25
+                pass
+            #begin rendering of reservations
             cy = h - 100 - textheight
             if cy > h - 200:
                 # Make sure to not draw over the qr code
