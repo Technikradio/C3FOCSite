@@ -140,7 +140,12 @@ def exportOrderToPDF(request: HttpRequest, res):
                 # Make sure to not draw over the qr code
                 cy = h - 200
             cy = renderTableHeader(p, cy)
+            summedRequest = {}
             for arequest in ArticleRequested.objects.filter(RID=r):
+                if arequest in summedRequest.keys():
+                    summedRequest[arequest.AID] += arequest.amount
+                else:
+                    summedRequest[arequest.AID] = arequest.amount
                 cy, retryObject = renderArticleRequest(p, arequest, cy)
                 if cy < 75 or (retryObject != None):
                     cy = h - 55
@@ -157,6 +162,28 @@ def exportOrderToPDF(request: HttpRequest, res):
                     p.setFont("Helvetica", 11)
                     if retryObject != None:
                         cy, retryObject = renderArticleRequest(p, arequest, cy, retry=True)
+            if cy < len(summedRequest) * 15 + 55:
+                # We need a new page in order to render the invoice
+                p.showPage()
+                renderSideStrip(p, r)
+                p.drawString(w - 75, h - 35, "Page " + str(page))
+                page += 1
+                p.setFont("Helvetica", 14)
+                p.drawString(25, h - 35, "Reservation by: " + str(r.createdByUser.displayName))
+                p.line(25, h - 45, w - 25, h - 45)
+                p.setFont("Helvetica", 11)
+                cy = h - 55
+            else:
+                cy -= 30
+            # Finally render the invoice box
+            for a in summedRequest.keys():
+                amount: int = summedRequest[a]
+                p.line(25, cy, 25, cy - 15)
+                p.line(w - 25, cy, w - 25, cy - 15)
+                p.drawString(100, cy - 8, a.description)
+                p.drawString(30, cy - 8, str(amount))
+                p.drawString(250, cy - 8, str(int(a.price) / 100) + ' €')
+                p.drawString(w - 75, cy - 8, str((int(a.price) * amount) / 100) + ' €')
             p.showPage() # End page here (one per request)
     #Close the canvas
     p.save()
