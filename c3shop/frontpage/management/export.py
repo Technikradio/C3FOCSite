@@ -77,6 +77,14 @@ def renderArticleRequest(p: canvas.Canvas, arequested: ArticleRequested, y: int,
     return r, None
 
 
+def getPriceString(p):
+    """
+    :param: p This takes the price in cents an renderes it to a string
+    :return: The price string as EUR
+    """
+    return '{:20,.2f}'.format(int(p) / 100) + ' €'
+
+
 def exportOrderToPDF(request: HttpRequest, res):
     # Setup the canvas
     reservations = []
@@ -142,10 +150,12 @@ def exportOrderToPDF(request: HttpRequest, res):
             cy = renderTableHeader(p, cy)
             summedRequest = {}
             for arequest in ArticleRequested.objects.filter(RID=r):
-                if arequest in summedRequest.keys():
-                    summedRequest[arequest.AID] += arequest.amount
+                if arequest.AID in summedRequest.keys():
+                    summedRequest[arequest.AID] = arequest.amount + summedRequest[arequest.AID]
+                    # print(str(arequest.AID) + " in dict. updating.")
                 else:
                     summedRequest[arequest.AID] = arequest.amount
+                    # print(str(arequest.AID) + " not in dictionary")
                 cy, retryObject = renderArticleRequest(p, arequest, cy)
                 if cy < 75 or (retryObject != None):
                     cy = h - 55
@@ -162,7 +172,7 @@ def exportOrderToPDF(request: HttpRequest, res):
                     p.setFont("Helvetica", 11)
                     if retryObject != None:
                         cy, retryObject = renderArticleRequest(p, arequest, cy, retry=True)
-            if cy < len(summedRequest) * 15 + 55:
+            if cy < len(summedRequest) * 15 + 70:
                 # We need a new page in order to render the invoice
                 p.showPage()
                 renderSideStrip(p, r)
@@ -176,14 +186,35 @@ def exportOrderToPDF(request: HttpRequest, res):
             else:
                 cy -= 30
             # Finally render the invoice box
+            # Render the table header
+            p.line(45, cy, 45, cy - 15)
+            p.line(w - 45, cy, w - 45, cy - 15)
+            p.line(45, cy, w - 45, cy)
+            p.line(45, cy - 15, w - 45, cy - 15)
+            p.drawString(50, cy - 10, "Amount")
+            p.drawString(100, cy - 10, "Article")
+            p.drawString(250, cy - 10, "Single Item price")
+            p.drawString(w - 175, cy - 10, "Sum")
+            cy -= 15
+            total: int = 0
             for a in summedRequest.keys():
                 amount: int = summedRequest[a]
-                p.line(25, cy, 25, cy - 15)
-                p.line(w - 25, cy, w - 25, cy - 15)
-                p.drawString(100, cy - 8, a.description)
-                p.drawString(30, cy - 8, str(amount))
-                p.drawString(250, cy - 8, str(int(a.price) / 100) + ' €')
-                p.drawString(w - 75, cy - 8, str((int(a.price) * amount) / 100) + ' €')
+                total += int(a.price) * amount
+                p.line(45, cy, 45, cy - 15)
+                p.line(w - 45, cy, w - 45, cy - 15)
+                p.drawString(100, cy - 10, a.description)
+                p.drawString(50, cy - 10, str(amount))
+                p.drawString(250, cy - 10, getPriceString(int(a.price)))
+                p.drawString(w - 175, cy - 10, getPriceString(int(a.price) * amount))
+                cy -= 15
+            p.line(45, cy, w - 45, cy)
+            p.line(45, cy, 45, cy - 15)
+            p.line(w - 45, cy, w - 45, cy - 15)
+            p.line(45, cy - 15, w - 45, cy - 15)
+            p.drawString(50, cy - 10, "TOTAL:")
+            p.drawString(100, cy - 10, "[EUR]")
+            p.drawString(w - 175, cy - 10, getPriceString(total))
+            # Signature of person who packed and person who checked
             p.showPage() # End page here (one per request)
     #Close the canvas
     p.save()
