@@ -172,7 +172,7 @@ def exportOrderToPDF(request: HttpRequest, res):
                     p.setFont("Helvetica", 11)
                     if retryObject != None:
                         cy, retryObject = renderArticleRequest(p, arequest, cy, retry=True)
-            if cy < len(summedRequest) * 15 + 70:
+            if cy < len(summedRequest) * 15 + 140:
                 # We need a new page in order to render the invoice
                 p.showPage()
                 renderSideStrip(p, r)
@@ -215,6 +215,11 @@ def exportOrderToPDF(request: HttpRequest, res):
             p.drawString(100, cy - 10, "[EUR]")
             p.drawString(w - 175, cy - 10, getPriceString(total))
             # Signature of person who packed and person who checked
+            cy -= 75
+            p.line(55, cy, 235, cy)
+            p.drawString(60, cy - 10, "Signature of person who packed")
+            p.line(255, cy, 435, cy)
+            p.drawString(260, cy - 10, "Signature of person who checked")
             p.showPage() # End page here (one per request)
     #Close the canvas
     p.save()
