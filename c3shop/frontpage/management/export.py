@@ -1,7 +1,7 @@
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle
 from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
 from ..models import GroupReservation, Article, ArticleRequested
@@ -106,7 +106,7 @@ def exportOrderToPDF(request: HttpRequest, res):
     w, h = A4
     p.setTitle("C3FOC - Reservations")
     p.setAuthor("The robots in slavery by " + request.user.username)
-    p.setSubject("This document, originally created at " + timestamp() + ", contains the requested reservations")
+    p.setSubject("This document, originally created at " + timestamp(filestr=False) + ", contains the requested reservations")
     for reservation in reservations:
         r: GroupReservation = reservation # Just for the sake of having a shourtcut
         if r.open and not r.ready:
@@ -234,9 +234,12 @@ def exportRejectstatistics(request: HttpRequest):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="FOC-RejectStatistics_' + timestamp() + '.pdf"'
     buffer = BytesIO()
-    h, w = A4 # Reversed return values in order to produce landscape orientation
-    p : canvas = canvas.Canvas(buffer, pagesize=A4, pageCompression=0)
-    p.rotate(180)
+    w, h = landscape(A4) # Reversed return values in order to produce landscape orientation
+    p : canvas = canvas.Canvas(buffer, pagesize=landscape(A4), pageCompression=0)
+    p.setTitle("C3FOC - Missing Merch statistics")
+    p.setAuthor("The robots in slavery by " + request.user.username)
+    p.setSubject("This document, originally created at " + timestamp(filestr=False) + ", is a template for the mssing merchandise" \
+            " statistics.")
     page = 1
     p.setFont("Helvetica", 11)
     # Render the Article list
@@ -255,8 +258,9 @@ def exportRejectstatistics(request: HttpRequest):
             page += 1
             cy = h - 50
     if page == 1:
-        p.drawString(50, 50, timestamp())
+        p.drawString(50, 50, timestamp(filestr=False))
     # Finish PDF
+    p.showPage()
     p.save()
     pdf = buffer.getvalue()
     buffer.close()

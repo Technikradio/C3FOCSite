@@ -6,8 +6,11 @@ from django.http import HttpRequest
 from ..models import Profile, Article, ArticleRequested
 
 
-def timestamp():
-    return datetime.datetime.fromtimestamp(time.time()).strftime('%d_%m_%Y__%H_%M_Uhr')
+def timestamp(filestr=True):
+    if filestr:
+        return datetime.datetime.fromtimestamp(time.time()).strftime('%d_%m_%Y__%H_%M_Uhr')
+    else:
+        return datetime.datetime.fromtimestamp(time.time()).strftime('%m/%d/%Y %H:%M:%S Uhr')
 
 
 def compile_markdown(markdown_sources: str):
