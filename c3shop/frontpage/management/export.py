@@ -228,3 +228,37 @@ def exportOrderToPDF(request: HttpRequest, res):
     response.write(pdf)
     return response
 
+
+def exportRejectstatistics(request: HttpRequest):
+    # Begin PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="FOC-RejectStatistics_' + timestamp() + '.pdf"'
+    buffer = BytesIO()
+    h, w = A4 # Reversed return values in order to produce landscape orientation
+    p : canvas = canvas.Canvas(buffer, pagesize=A4, pageCompression=0)
+    p.rotate(180)
+    page = 1
+    p.setFont("Helvetica", 11)
+    # Render the Article list
+    cy = h - 50
+    for a in Article.objects.all():
+        p.line(50, cy, w - 50, cy)
+        p.drawString(55, cy - 10, "[" + str(a.id) + "]: " + str(a.description))
+        p.line(50, cy - 50, w - 50, cy - 50)
+        p.line(50, cy, 50, cy - 50)
+        p.line(w - 50, cy, w - 50, cy - 50)
+        cy -= 50
+        if cy <= 65:
+            # Break page
+            p.drawString(50, 50, "Page " + str(page) + ", " + timestamp())
+            p.showPage()
+            page += 1
+            cy = h - 50
+    if page == 1:
+        p.drawString(50, 50, timestamp())
+    # Finish PDF
+    p.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
