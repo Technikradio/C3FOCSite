@@ -111,6 +111,8 @@ def exportOrderToPDF(request: HttpRequest, res):
         r: GroupReservation = reservation # Just for the sake of having a shourtcut
         if r.open and not r.ready:
             page = 1
+            p.addOutlineEntry("[" + str(r.id) + "]" + str(r.createdByUser.displayName), "r" + str(r.id))
+            p.bookmarkPage("r" + str(r.id))
             renderSideStrip(p, r)
             p.setFont("Helvetica", 14)
             # Render header
