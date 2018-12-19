@@ -9,7 +9,7 @@ from django.http import HttpRequest
 import logging
 import math
 
-SERVER_ROOT = "localhost:8000"
+SERVER_ROOT = "http://localhost:8000"
 DETAILED_PAGE = SERVER_ROOT + "/article/"  # For example /article/550/
 NO_MEDIA_IMAGE = "/staticfiles/frontpage/no-image.png"  # TODO change to static file
 
@@ -148,7 +148,7 @@ def render_image(media, width=0, height=0, high_res=True, include_link=True, rep
     lb = ""
     a = ""
     if include_link:
-        lb = '<a href="/media/' + str(media.pk) + '">'
+        lb = '<a href="/medium/' + str(media.pk) + '">'
         a = "</a>"
     try:
         if high_res:
