@@ -3,11 +3,13 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle
-from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
-from ..models import GroupReservation, Article, ArticleRequested
+from django.http import HttpResponse, HttpRequest, HttpResponseForbidden, StreamingHttpResponse
+from ..models import GroupReservation, Article, ArticleRequested, Media
 from .magic import timestamp
+from .media_actions import PATH_TO_UPLOAD_FOLDER_ON_DISK
 import logging
 import qrcode
+import base64
 
 logger = logging.getLogger(__name__)
 
@@ -267,4 +269,75 @@ def exportRejectstatistics(request: HttpRequest):
     pdf = buffer.getvalue()
     buffer.close()
     response.write(pdf)
+    return response
+
+
+"""
+========================================================================================================
+Begin Section of data export feature ===================================================================
+========================================================================================================
+There should be the consideration to put this into a separate file and use the print submodule for PDFs.
+"""
+
+
+class DataDumpIterator:
+
+    step: int = 8
+    payload = None
+
+    def __iter__(self):
+        self.step = 8
+        self.payload = None
+        return self
+
+    def __next__(self):
+        if self.step == 0:
+            raise StopIteration
+        elif self.step == 8:
+            # Return stored images
+            if self.payload == None:
+                self.payload = 1 # Look up first id
+            try:
+                img = Media.objects.get(id=int(self.payload))
+                a = '{"type" : "media", "data" : [ "category" : "'
+                a += str(base64.b64encode(bytes(str(img.category), 'utf-8'))) + '", "headline" : "'
+                a += str(base64.b64encode(bytes(str(img.headline), 'utf-8'))) + '", "text" : "'
+                a += str(base64.b64encode(bytes(str(img.text), 'utf-8'))) + '", "timestamp" : "'
+                # We'll not save the cached text here as it can be recreated
+                a += str(base64.b64encode(bytes(str(img.uploadTimestamp), 'utf-8'))) + '", "highfilepath" : "'
+                a += str(base64.b64encode(bytes(str(img.highResFile), 'utf-8'))) + '", "lowfilepath" : "'
+                a += str(base64.b64encode(bytes(str(img.lowResFile), 'utf-8'))) + '", "highresfile" : "'
+                f = open(PATH_TO_UPLOAD_FOLDER_ON_DISK + str(img.highResFile)[1:], "rb") # remove trailing /
+                a += str(base64.b64encode(f.read())) + '", "lowresfile" : "'
+                f.close()
+                f = open(PATH_TO_UPLOAD_FOLDER_ON_DISK + str(img.lowResFile)[1:], "rb")
+                a += str(base64.b64encode(f.read())) + '"'
+                f.close()
+                a += ']}\n'
+                self.payload = int(self.payload) + 1
+                return a
+            except Exception as e:
+                self.step -= 1
+                self.payload = None
+                return "# Hit an exception. Assuming that we reached the end of the media assets.\n" \
+                        "# Exception content: " + str(e).replace("\n", "")
+            return "Hier könnten ihre bilder stehen."
+            pass
+        else:
+            # something went wrong
+            if self.step < 0:
+                self.step = 0
+                return StopIteration
+            self.step -= 1
+            return self.__next__()
+
+
+def get_dump_iterator():
+    return iter(DataDumpIterator())
+
+
+def request_data_dump(request: HttpRequest):
+    response: StreamingHttpResponse = StreamingHttpResponse(get_dump_iterator())
+    response['Content-Type'] = 'application/focdump-demformat'
+    response['Content-Disposition'] = 'attachment; filename="c3foc-datadump-' + timestamp() + '.pxtz"'
     return response

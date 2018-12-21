@@ -160,6 +160,8 @@ def admin_export(request: HttpRequest):
             return export.exportOrderToPDF(request, request.GET["reservations"].split(','))
         if request.GET["method"] == "rejectstatistics":
             return export.exportRejectstatistics(request)
+        if request.GET["method"] == "datadump":
+            return export.request_data_dump(request)
     return HttpResponseForbidden()
 
 
