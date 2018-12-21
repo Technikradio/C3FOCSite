@@ -4,12 +4,14 @@ from reportlab.platypus import Paragraph
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle
 from django.http import HttpResponse, HttpRequest, HttpResponseForbidden, StreamingHttpResponse
+from django.core.exceptions import ObjectDoesNotExist
 from ..models import GroupReservation, Article, ArticleRequested, Media
 from .magic import timestamp
 from .media_actions import PATH_TO_UPLOAD_FOLDER_ON_DISK
 import logging
 import qrcode
 import base64
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -311,18 +313,57 @@ class DataDumpIterator:
                 a += str(base64.b64encode(f.read())) + '", "lowresfile" : "'
                 f.close()
                 f = open(PATH_TO_UPLOAD_FOLDER_ON_DISK + str(img.lowResFile)[1:], "rb")
-                a += str(base64.b64encode(f.read())) + '"'
+                a += str(base64.b64encode(f.read())) + '"]}\n'
                 f.close()
-                a += ']}\n'
                 self.payload = int(self.payload) + 1
                 return a
+            except ObjectDoesNotExist:
+                self.step -= 1
+                self.payload = None
+                return "#\n# We're finished with the media assets. Moving on...\n#\n"
             except Exception as e:
                 self.step -= 1
                 self.payload = None
                 return "# Hit an exception. Assuming that we reached the end of the media assets.\n" \
-                        "# Exception content: " + str(e).replace("\n", "")
-            return "Hier könnten ihre bilder stehen."
+                        "# Exception content: " + str(e).replace("\n", "") + "\n"  + traceback.format_exc().replace("\n", "\n# ")
+            return "Hier könnten ihre bilder stehen.\n"
             pass
+        elif self.step == 7:
+            # Return articles
+            if self.payload == None:
+                self.payload = 1 # Look up first id
+            try:
+                art = Article.objects.get(id=int(self.payload))
+                a = '{"type" : "article", "data" : [ "price" : "'
+                a += str(base64.b64encode(bytes(str(art.price), 'utf-8'))) + '", "largeText" : "'
+                a += str(base64.b64encode(bytes(str(art.largeText), 'utf-8'))) + '", "type" : "'
+                a += str(base64.b64encode(bytes(str(art.type), 'utf-8'))) + '", "description" : "'
+                a += str(base64.b64encode(bytes(str(art.description), 'utf-8'))) + '", "visible" : "'
+                a += str(base64.b64encode(bytes(str(art.visible), 'utf-8'))) + '", "quantity" : "'
+                a += str(base64.b64encode(bytes(str(art.quantity), 'utf-8'))) + '", "size" : "'
+                a += str(base64.b64encode(bytes(str(art.size), 'utf-8'))) + '", "addedby" : "'
+                try:
+                    a += str(base64.b64encode(bytes(str(art.addedByUser.authuser.username), 'utf-8'))) + '", "flashimgid" : "'
+                except Exception as e:
+                    print(e)
+                    a += str(base64.b64encode(bytes(str("admin"), 'utf-8'))) + '", "flashimgid" : "'
+                try:
+                    a += str(base64.b64encode(bytes(str(art.flashImage.id), 'utf-8'))) + '", "chestsize" : "'
+                except:
+                    a += str(base64.b64encode(bytes(str("none"), 'utf-8'))) + '", "chestsize" : "'
+                a += str(base64.b64encode(bytes(str(art.chestsize), 'utf-8'))) + '"]}\n'
+                self.payload = int(self.payload) + 1
+                return a
+            except ObjectDoesNotExist:
+                self.step -= 1
+                self.payload = None
+                return "#\n# We're done with the articles. Moving on...\n#\n"
+            except Exception as e:
+                self.step -= 1
+                self.payload = None
+                return "# There was an exception while processing the articles. Jumping to the next job.\n" \
+                        "# Exception content: " + str(e).replace("\n", "") + "\n" + traceback.format_exc().replace("\n", "\n# ")
+            return "Hier könnten ihre Artikel stehen.\n"
         else:
             # something went wrong
             if self.step < 0:
