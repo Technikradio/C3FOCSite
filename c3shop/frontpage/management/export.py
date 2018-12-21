@@ -5,7 +5,7 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle
 from django.http import HttpResponse, HttpRequest, HttpResponseForbidden, StreamingHttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from ..models import GroupReservation, Article, ArticleRequested, Media
+from ..models import GroupReservation, Article, ArticleRequested, Media, Post
 from .magic import timestamp
 from .media_actions import PATH_TO_UPLOAD_FOLDER_ON_DISK
 import logging
@@ -364,6 +364,32 @@ class DataDumpIterator:
                 return "# There was an exception while processing the articles. Jumping to the next job.\n" \
                         "# Exception content: " + str(e).replace("\n", "") + "\n" + traceback.format_exc().replace("\n", "\n# ")
             return "Hier könnten ihre Artikel stehen.\n"
+        elif self.step == 6:
+            # Saving posts to data dump
+            if self.payload == None:
+                self.payload = 1
+            try:
+                p = Post.objects.get(id=1)
+                a = '{"type" : "post", "data" : [ "title" : "'
+                a += str(base64.b64encode(bytes(str(p.title), 'utf-8'))) + '", "addedby" : "'
+                try:
+                    a += str(base64.b64encode(bytes(str(p.createdByUser.authuser.username), 'utf-8'))) + '", "username" : "'
+                except:
+                    a += str(base64.b64encode(bytes(str("admin"), 'utf-8'))) + '", "visible" : "'
+                a += str(base64.b64encode(bytes(str(p.visibleLevel), 'utf-8'))) + '", "timestamp" : "'
+                a += str(base64.b64encode(bytes(str(p.timestamp), 'utf-8'))) + '", "text" : "'
+                a += str(base64.b64encode(bytes(str(p.text), 'utf-8'))) + '"]}\n'
+                return a
+            except ObjectDoesNotExist as e:
+                self.step -= 1
+                self.payload = None
+                return "#\n# We're done with the posts. Moving on...\n#\n"
+            except Exception as e:
+                self.step -= 1
+                self.payload = None
+                return "# There was an exception while processing the posts. Jumping to the next job.\n" \
+                        "# Exception content: " + str(e).replace("\n", "") + "\n" + traceback.format_exc().replace("\n", "\n# ")
+            return "# Hier könnten ihre Posts stehen"
         else:
             # something went wrong
             if self.step < 0:
