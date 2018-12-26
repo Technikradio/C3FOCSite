@@ -31,6 +31,7 @@ def render_statistics_panel(request: HttpRequest):
         non_done_res = GroupReservation.objects.filter(open=True).filter(ready=False).count()
         a += "There are " + str(open_res) + " open reservations of which " + str(non_done_res) + \
              " still require some work.<br /><br />"
+    a += '<a href="/admin/export?method=rejectstatistics" class="button">Download rejected purchase statistics template</a>'
     a += '</div>'
     return a
 
