@@ -11,7 +11,7 @@ import PIL
 from PIL import Image
 
 
-PATH_TO_UPLOAD_FOLDER_ON_DISK: str = "./"
+PATH_TO_UPLOAD_FOLDER_ON_DISK: str = "/usr/local/www/focweb/uploads/"
 IMAGE_SCALE = 64
 
 def action_change_user_avatar(request: HttpRequest):

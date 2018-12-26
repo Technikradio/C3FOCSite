@@ -9,7 +9,7 @@ from django.http import HttpRequest
 import logging
 import math
 
-SERVER_ROOT = "http://localhost:8000"
+SERVER_ROOT = "https://c3foc.net"
 DETAILED_PAGE = SERVER_ROOT + "/article/"  # For example /article/550/
 NO_MEDIA_IMAGE = "/staticfiles/frontpage/no-image.png"  # TODO change to static file
 
