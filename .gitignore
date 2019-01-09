@@ -93,6 +93,8 @@ ENV/
 .idea/
 db.sqlite3
 
+# Backups
+*.bak
 
 #do not upload test uploads
 uploads/
