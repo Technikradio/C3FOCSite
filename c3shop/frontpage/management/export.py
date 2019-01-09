@@ -180,10 +180,13 @@ def exportOrderToPDF(request: HttpRequest, res):
                         cy, retryObject = renderArticleRequest(p, arequest, cy, retry=True)
             if cy < len(summedRequest) * 15 + 140:
                 # We need a new page in order to render the invoice
+                if page == 1:
+                    # We were on the first Page and still need to render the hint
+                    p.drawString(35, 35, "Page " + str(page))
                 p.showPage()
                 renderSideStrip(p, r)
-                p.drawString(w - 75, h - 35, "Page " + str(page))
                 page += 1
+                p.drawString(w - 75, h - 35, "Page " + str(page))
                 p.setFont("Helvetica", 14)
                 p.drawString(25, h - 35, "Reservation by: " + str(r.createdByUser.displayName))
                 p.line(25, h - 45, w - 25, h - 45)
