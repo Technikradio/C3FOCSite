@@ -22,6 +22,7 @@ INFO_STYLE = ParagraphStyle(
         border_color="#000000",
         border_width=1,
         border_padding=(7, 2, 20),
+        word_wrap = 'LTR',
         border_radius=None,
         )
 
@@ -57,7 +58,7 @@ def renderTableHeader(p: canvas.Canvas, y: int):
 
 def renderArticleRequest(p: canvas.Canvas, arequested: ArticleRequested, y: int, retry=False):
     a: Article = arequested.AID
-    text = Paragraph(str(arequested.notes).replace("\n", "<br />"), style=ARTICLE_NOTES_STYLE)
+    text = Paragraph(str(arequested.notes).replace("\n", "<br />\n"), style=ARTICLE_NOTES_STYLE)
     textwidth, textheight = text.wrapOn(p, A4[0] - 300, A4[1] - 100)
     if textheight > (y - 50) and not retry:
         return y, arequested
