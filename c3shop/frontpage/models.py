@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import CASCADE
+from django.db.models import CASCADE, DO_NOTHING
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -24,7 +24,7 @@ class Profile(models.Model):
     # changes: username -> authuser; secretkey -> deleted; passphrase -> deleted
     # UID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the user")
     authuser = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
-    avatarMedia = models.ForeignKey(Media, null=True, on_delete=CASCADE)
+    avatarMedia = models.ForeignKey(Media, null=True, on_delete=DO_NOTHING)
     creationTimestamp = models.DateTimeField(auto_now=True)
     notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact ' +
                                                          'channels)')
@@ -41,7 +41,7 @@ class Profile(models.Model):
 
 class ApiKey(models.Model):
     key = models.CharField(max_length=64, primary_key=True, help_text="The key sequence")
-    user = models.ForeignKey(Profile, null=False, help_text="The user who owns the key", on_delete=CASCADE)
+    user = models.ForeignKey(Profile, null=False, help_text="The user who owns the key", on_delete=DO_NOTHING)
 
 
 class Article(models.Model):
@@ -54,8 +54,8 @@ class Article(models.Model):
     quantity = models.IntegerField(help_text="How many articles of this kind are left?")
     size = models.CharField(max_length=10, help_text="The size of the article")
     cachedText = models.CharField(max_length=15000, help_text="The compiled markdown long text")
-    addedByUser = models.ForeignKey(Profile, on_delete=CASCADE)
-    flashImage = models.ForeignKey(Media, on_delete=None, null=True)
+    addedByUser = models.ForeignKey(Profile, null=True, on_delete=DO_NOTHING)
+    flashImage = models.ForeignKey(Media, null=True, on_delete=DO_NOTHING)
     chestsize = models.IntegerField(help_text="This field defines the unique chest size of the article. If it's 0 it will" \
             "default to the chest size defined in the settings.")
     # The image visible in the list view
@@ -68,7 +68,7 @@ class Article(models.Model):
 class Post(models.Model):
     # PID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the post")
     title = models.CharField(max_length=100)
-    createdByUser = models.ForeignKey(Profile, on_delete=None)
+    createdByUser = models.ForeignKey(Profile, on_delete=DO_NOTHING, null=True)
     cacheText = models.CharField(max_length=15000, help_text="The compiled version of the markdown >text<")
     visibleLevel = models.SmallIntegerField(help_text="What access level does the viewer need to have a look at this")
     # putting -1 in the above means that it will be disabled.
@@ -85,7 +85,7 @@ class Settings(models.Model):
     requiredLevel = models.SmallIntegerField()
     changeTimestamp = models.DateTimeField(auto_now=True)
     changeReason = models.CharField(max_length=15000, null=True)
-    changedByUser = models.ForeignKey(Profile, on_delete=None)
+    changedByUser = models.ForeignKey(Profile, on_delete=DO_NOTHING, null=True)
 
     def __str__(self):
         return str(self.SName) + ": " + str(self.property)
@@ -95,7 +95,7 @@ class GroupReservation(models.Model):
     # RID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the reservation")
     timestamp = models.DateTimeField(auto_now=True)
     ready = models.BooleanField()
-    createdByUser = models.ForeignKey(Profile, on_delete=CASCADE)
+    createdByUser = models.ForeignKey(Profile, on_delete=DO_NOTHING, null=True)
     open = models.BooleanField()
     notes = models.CharField(max_length=15000)
     pickupDate = models.DateTimeField()
@@ -103,20 +103,20 @@ class GroupReservation(models.Model):
 
 
 class ArticleRequested(models.Model):
-    RID = models.ForeignKey(GroupReservation, on_delete=CASCADE)
-    AID = models.ForeignKey(Article, on_delete=CASCADE)
+    RID = models.ForeignKey(GroupReservation, on_delete=DO_NOTHING, null=True)
+    AID = models.ForeignKey(Article, on_delete=DO_NOTHING, null=True)
     amount = models.SmallIntegerField()
     notes = models.CharField(max_length=15000)
 
 
 # further media related to the article only visible in the detailed page
 class ArticleMedia(models.Model):
-    AID = models.ForeignKey(Article, on_delete=CASCADE)
-    MID = models.ForeignKey(Media, on_delete=CASCADE)
+    AID = models.ForeignKey(Article, on_delete=DO_NOTHING, null=True)
+    MID = models.ForeignKey(Media, on_delete=DO_NOTHING, null=True)
 
 
 # The reason why we split this from the media table is due to tree conflicts while creating the database
 # This table is to identify which user uploaded which image
 class MediaUpload(models.Model):
-    MID = models.ForeignKey(Media, on_delete=None)
-    UID = models.ForeignKey(Profile, on_delete=None)
+    MID = models.ForeignKey(Media, on_delete=DO_NOTHING, null=True)
+    UID = models.ForeignKey(Profile, on_delete=DO_NOTHING, null=True)
