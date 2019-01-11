@@ -34,14 +34,28 @@ class Profile(models.Model):
     rights = models.SmallIntegerField()  # The higher the number the more rights a user will have, see README.md
     displayName = models.CharField(max_length=75)
     pgp_keyfingerprint = models.CharField(max_length=16384, default="")
+    number_of_allowed_reservations = models.SmallIntegerField(help_text='This specifies the amount of reservations a user is' +
+            'allowed to add, default is 1, -1 means unlimited', default=1)
+    must_change_password = models.BooleanField(default=False, help_text='If True the user must change the password on next login')
+    next_login_announcement = models.CharField(max_length=16384, null=True, help_text='If not null it will be displayed on next login')
 
     def __str__(self):
         return str(self.authuser.username) + ": {active: " + str(self.active) + "}"
 
 
+class Hint(models.Model):
+    head = models.CharField(help_text='This is the headline of the message', max_length=250)
+    text = models.CharField(help_text='This is the body of the message', max_length=16384)
+
+
 class ApiKey(models.Model):
     key = models.CharField(max_length=64, primary_key=True, help_text="The key sequence")
     user = models.ForeignKey(Profile, null=False, help_text="The user who owns the key", on_delete=DO_NOTHING)
+
+
+class ArticleGroup(models.Model):
+    group_name = models.CharField(max_length=150, help_text="The display name of the article group") # For example 'Zipper'
+    group_flash_image = models.ForeignKey(Media, null=True, on_delete=DO_NOTHING)
 
 
 class Article(models.Model):
@@ -58,6 +72,8 @@ class Article(models.Model):
     flashImage = models.ForeignKey(Media, null=True, on_delete=DO_NOTHING)
     chestsize = models.IntegerField(help_text="This field defines the unique chest size of the article. If it's 0 it will" \
             "default to the chest size defined in the settings.")
+    group = models.ForeignKey(ArticleGroup, null=True, on_delete=DO_NOTHING, help_text='This will be null if the article' +
+            'doesnt belong to a group')
     # The image visible in the list view
 
     def __str__(self):
@@ -100,6 +116,8 @@ class GroupReservation(models.Model):
     notes = models.CharField(max_length=15000)
     pickupDate = models.DateTimeField()
     responsiblePerson = models.CharField(max_length=50, null=True, default=None)
+    submitted = models.BooleanField(default=False, help_text="This determines if a reservation is still under construction" +
+            "or already submitted")
 
 
 class ArticleRequested(models.Model):
