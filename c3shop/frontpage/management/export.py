@@ -63,8 +63,8 @@ def renderArticleRequest(p: canvas.Canvas, arequested: ArticleRequested, y: int,
     if textheight > (y - 50) and not retry:
         return y, arequested
     p.line(50, y, A4[0] - 50, y)
-    p.drawString(55, y - 15, str(a.description))
-    p.drawString(155, y - 15, str(arequested.amount))
+    p.drawString(55, y - 12, str(a.description))
+    p.drawString(155, y - 12, str(arequested.amount))
     text.drawOn(p, 235, y - 5 - textheight)
     r = y - 15 - textheight
     # render table lines
