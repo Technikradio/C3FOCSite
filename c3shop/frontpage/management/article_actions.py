@@ -59,11 +59,11 @@ def action_save_article(request: HttpRequest):
         a.save()
         if aid < 0:
             logger.info("User '" + userp.displayName + "' created a new article (UID: "
-                         + str(userp.pk) + ")")
+                        + str(userp.pk) + ")")
             return redirect("/admin/media/select?action_url=/admin/actions/add-image-to-article&payload=" + str(a.id))
         else:
             logger.info("User '" + userp.displayName + "' modified an article (UID: "
-                         + str(userp.pk) + " AID: " + str(aid) + ")")
+                        + str(userp.pk) + " AID: " + str(aid) + ")")
             return redirect("/admin/articles")
     except Exception as e:
         logger.exception(e)

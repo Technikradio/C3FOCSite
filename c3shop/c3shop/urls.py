@@ -17,6 +17,7 @@ Including another URLconf
 from . import settings
 from django.conf.urls.static import static
 """
+
 from django.conf.urls import url, include
 from django.contrib import admin
 from frontpage import views
@@ -32,6 +33,6 @@ urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^search', views.search, name='search'),
-    #url(r'^/', include('frontpage.indexurls')),
+    # url(r'^/', include('frontpage.indexurls')),
     url(r'^$', include('frontpage.indexurls')),
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

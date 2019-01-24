@@ -56,6 +56,10 @@ class CheckEnum(Enum):
     CHECKED = 1
 
     def get_state(b: bool):
+        """
+
+        :rtype: CheckEnum
+        """
         if b:
             return CheckEnum.CHECKED
         return CheckEnum.NOT_CHECKED
@@ -231,9 +235,9 @@ class RadioList(FormObject):
 
     def generate_html_code(self, form: Form):
         if self.do_cr_at_end:
-            return self.group.generate_html_code() + "<br/>"
+            return self.group.generate_html_code(form) + "<br/>"
         else:
-            return self.group.generate_html_code()
+            return self.group.generate_html_code(form)
 
 
 class TextArea(FormObject):

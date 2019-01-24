@@ -21,7 +21,7 @@ def add_article_action(request: HttpRequest, default_foreward_url: str):
         forward_url = request.GET["redirect"]
     current_reservation = json.loads(request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY))
     aid: int = int(request.GET.get("article_id"))
-    quantity : int = int(request.POST["quantity"])
+    quantity: int = int(request.POST["quantity"])
     notes: str = request.POST["notes"]
     current_reservation.get("articles").append({"id": aid, "quantity": quantity, "notes": notes})
     response = HttpResponseRedirect(forward_url)
@@ -104,8 +104,7 @@ def action_delete_article(request: HttpRequest):
     This function removes an article from the reservation and returnes
     the required resonse.
     """
-    response =  HttpResponseRedirect("/admin/reservations/edit")
-    js_string: str = ""
+    response = HttpResponseRedirect("/admin/reservations/edit")
     if request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY):
         js_string = request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY)
     else:

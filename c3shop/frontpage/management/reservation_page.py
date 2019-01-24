@@ -6,22 +6,24 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def generate_export_link(u: Profile):
     # Check for user rights, collect open reservation id's and generate link
-    l = ""
+    link = ""
     p = None
     if u.rights > 0:
         p = GroupReservation.objects.filter(open=True).filter(ready=False)
     else:
-        return l, p
+        return link, p
     m = ""
     for r in p:
         # Iterate through each reservation and add it
         if not m == "":
             m += ','
         m += str(r.id)
-    l = '<a href="/admin/export?method=pdf&reservations=' + m + '" class="button">Generate reservations PDF</a><br/><br/><br/>'
-    return l, p
+    link = '<a href="/admin/export?method=pdf&reservations=' + m + \
+        '" class="button">Generate reservations PDF</a><br/><br/><br/>'
+    return link, p
 
 
 def render_open_order_table(u: Profile):
@@ -47,7 +49,7 @@ def render_open_order_table(u: Profile):
                 if u.rights > 1:
                     a += '<td><a href="/admin/reservations/process?reservation_id=' + str(o.pk) + '">' \
                          '<img src="/staticfiles/frontpage/process-reservation.png" class="button-img" /></a></td>' \
-                         '<td><a href="/admin/export?method=pdf&reservations=' + str(o.id) +  '"' \
+                         '<td><a href="/admin/export?method=pdf&reservations=' + str(o.id) + '"' \
                          '><img src="/staticfiles/frontpage/download.png" class="button-img" /></a></td>'
                 a += '</tr>'
             a += '</table>'
