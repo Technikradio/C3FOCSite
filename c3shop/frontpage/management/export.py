@@ -37,7 +37,7 @@ def generateQRLink(link: str):
 def renderSideStrip(p: canvas.Canvas, r: GroupReservation):
     p.setFont("Helvetica", 9)
     p.rotate(90)
-    p.drawString(34, -25, "Reservation #" + str(r.id) + ' - Created at: ' + str(r.timestamp) + ' - Pickup date: ' + str(r.pickupDate))
+    p.drawString(34, -30, "Reservation #" + str(r.id) + ' - Created at: ' + str(r.timestamp) + ' - Pickup date: ' + str(r.pickupDate))
     p.rotate(270)
 
 
