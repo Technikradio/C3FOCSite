@@ -63,7 +63,8 @@ def render_detail_selection(request: HttpRequest):
         f.add_content(TextArea(name="notes", label_text="Notes:", text=""))
         f.add_content(SubmitButton())
         a = render_headbar(request, title="Specify article details")
-        a += '<div class=""><div class="w3-row w3-padding-64 w3-twothird w3-container"><h3>Please specify further details:</h3>'
+        a += '<div class=""><div class="w3-row w3-padding-64 w3-twothird w3-container">' \
+             '<h3>Please specify further details:</h3>'
         a += f.render_html(request)
         a += '</div></div>' + render_footer(request)
         return HttpResponse(a)

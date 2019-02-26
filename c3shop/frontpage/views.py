@@ -3,10 +3,10 @@ from django.views.decorators.csrf import csrf_exempt
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
-from .management import edit_post, edit_user, post_page, dashboard_page, reservation_page, reservation_actions, media_select
+from .management import edit_post, edit_user, post_page, dashboard_page, reservation_page, reservation_actions
 from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
 from .management import edit_article, edit_reservation, article_select, reservation_processing, settings_page
-from .management import edit_settings, export
+from .management import edit_settings, export, media_select
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -157,9 +157,9 @@ def admin_export(request: HttpRequest):
         return response
     if request.GET.get("method"):
         if request.GET["method"] == "pdf":
-            return export.exportOrderToPDF(request, request.GET["reservations"].split(','))
+            return export.export_orders_to_pdf(request, request.GET["reservations"].split(','))
         if request.GET["method"] == "rejectstatistics":
-            return export.exportRejectstatistics(request)
+            return export.export_reject_statistics(request)
         if request.GET["method"] == "datadump":
             return export.request_data_dump(request)
     return HttpResponseForbidden()
@@ -217,7 +217,7 @@ def admin_select_media(request: HttpRequest):
 def handler404(request: HttpRequest):
     a = render_content_header(request)
     a += render_404_page(request)
-    a += render_footer()
+    a += render_footer(request)
     response: HttpResponse = HttpResponse(a)
     response.status_code = 404
     return response

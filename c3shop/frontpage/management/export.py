@@ -22,26 +22,27 @@ INFO_STYLE = ParagraphStyle(
         border_color="#000000",
         border_width=1,
         border_padding=(7, 2, 20),
-        word_wrap = 'LTR',
+        word_wrap='LTR',
         border_radius=None,
         )
 
 
-def generateQRLink(link: str):
-    qr = qrcode.QRCode(version=None, error_correction = qrcode.constants.ERROR_CORRECT_H, box_size = 30, border = 4)
+def generate_qr_link(link: str):
+    qr = qrcode.QRCode(version=None, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=30, border=4)
     qr.add_data(link)
     qr.make(fit=True)
     return qr.make_image()
 
 
-def renderSideStrip(p: canvas.Canvas, r: GroupReservation):
+def render_side_strip(p: canvas.Canvas, r: GroupReservation):
     p.setFont("Helvetica", 9)
     p.rotate(90)
-    p.drawString(34, -25, "Reservation #" + str(r.id) + ' - Created at: ' + str(r.timestamp) + ' - Pickup date: ' + str(r.pickupDate))
+    p.drawString(34, -25, "Reservation #" + str(r.id) + ' - Created at: ' + str(r.timestamp) + ' - Pickup date: ' + 
+                 str(r.pickupDate))
     p.rotate(270)
 
 
-def renderTableHeader(p: canvas.Canvas, y: int):
+def render_table_header(p: canvas.Canvas, y: int):
     p.line(50, y, A4[0] - 50, y)
     p.line(50, y - 25, A4[0] - 50, y - 25)
     p.drawString(55, y - 15, "Article")
@@ -56,7 +57,7 @@ def renderTableHeader(p: canvas.Canvas, y: int):
     return y - 25
 
 
-def renderArticleRequest(p: canvas.Canvas, arequested: ArticleRequested, y: int, retry=False):
+def render_article_request(p: canvas.Canvas, arequested: ArticleRequested, y: int, retry=False):
     a: Article = arequested.AID
     text = Paragraph(str(arequested.notes).replace("\n", "<br />\n"), style=ARTICLE_NOTES_STYLE)
     textwidth, textheight = text.wrapOn(p, A4[0] - 300, A4[1] - 100)
@@ -82,7 +83,7 @@ def renderArticleRequest(p: canvas.Canvas, arequested: ArticleRequested, y: int,
     return r, None
 
 
-def getPriceString(p):
+def get_price_string(p):
     """
     :param: p This takes the price in cents an renderes it to a string
     :return: The price string as EUR
@@ -90,7 +91,7 @@ def getPriceString(p):
     return '{:20,.2f}'.format(int(p) / 100) + ' €'
 
 
-def exportOrderToPDF(request: HttpRequest, res):
+def export_orders_to_pdf(request: HttpRequest, res):
     # Setup the canvas
     reservations = []
     try:
@@ -106,7 +107,7 @@ def exportOrderToPDF(request: HttpRequest, res):
     else:
         response['Content-Disposition'] = 'attachment; filename="FOC-Orders_' + timestamp() + '.pdf"'
     buffer = BytesIO()
-    p : canvas = canvas.Canvas(buffer, pagesize=A4, pageCompression=0)
+    p: canvas = canvas.Canvas(buffer, pagesize=A4, pageCompression=0)
     # Render PDF
     w, h = A4
     p.setTitle("C3FOC - Reservations")
@@ -118,18 +119,18 @@ def exportOrderToPDF(request: HttpRequest, res):
             page = 1
             p.addOutlineEntry("[" + str(r.id) + "]" + str(r.createdByUser.displayName), "r" + str(r.id))
             p.bookmarkPage("r" + str(r.id))
-            renderSideStrip(p, r)
+            render_side_strip(p, r)
             p.setFont("Helvetica", 14)
             # Render header
             p.drawString(25, h - 35, "Reservation by: " + str(r.createdByUser.displayName))
             p.line(25, h - 45, w - 25, h - 45)
             # render qr code
-            i = generateQRLink(request.build_absolute_uri('/') + "admin/confirm?back_url=/admin/reservations&forward_url=/admin/reservations/finish&payload=" + str(r.id))
+            i = generate_qr_link(request.build_absolute_uri('/') + "admin/confirm?back_url=/admin/reservations&forward_url=/admin/reservations/finish&payload=" + str(r.id))
             p.drawInlineImage(i, w - 150, h - 175, 125, 125)
             p.setFont("Helvetica", 11)
-            #text = p.beginText(30, h - 75)
-            #text.textLines(r.notes)
-            #p.drawText(text)
+            # text = p.beginText(30, h - 75)
+            # text.textLines(r.notes)
+            # p.drawText(text)
             text = Paragraph(r.notes.replace("\n", "<br />"), style=NOTES_STYLE)
             textwidth, textheight = text.wrapOn(p, w - 200, h - 250)
             text.drawOn(p, 30, h - 75 - textheight)
@@ -149,22 +150,22 @@ def exportOrderToPDF(request: HttpRequest, res):
                 text.drawOn(p, 30, h - textheight - 100)
                 textheight += 25
                 pass
-            #begin rendering of reservations
+            # begin rendering of reservations
             cy = h - 100 - textheight
             if cy > h - 200:
                 # Make sure to not draw over the qr code
                 cy = h - 200
-            cy = renderTableHeader(p, cy)
-            summedRequest = {}
+            cy = render_table_header(p, cy)
+            summed_request = {}
             for arequest in ArticleRequested.objects.filter(RID=r):
-                if arequest.AID in summedRequest.keys():
-                    summedRequest[arequest.AID] = arequest.amount + summedRequest[arequest.AID]
+                if arequest.AID in summed_request.keys():
+                    summed_request[arequest.AID] = arequest.amount + summed_request[arequest.AID]
                     # print(str(arequest.AID) + " in dict. updating.")
                 else:
-                    summedRequest[arequest.AID] = arequest.amount
+                    summed_request[arequest.AID] = arequest.amount
                     # print(str(arequest.AID) + " not in dictionary")
-                cy, retryObject = renderArticleRequest(p, arequest, cy)
-                if cy < 75 or (retryObject != None):
+                cy, retry_object = render_article_request(p, arequest, cy)
+                if cy < 75 or (retry_object is not None):
                     cy = h - 55
                     if page == 1:
                         p.drawString(35, 35, "Page " + str(page))
@@ -172,20 +173,20 @@ def exportOrderToPDF(request: HttpRequest, res):
                         p.drawString(w - 75, h - 35, "Page " + str(page))
                     p.showPage()
                     page += 1
-                    renderSideStrip(p, r)
+                    render_side_strip(p, r)
                     p.setFont("Helvetica", 14)
                     p.drawString(25, h - 35, "Reservation by: " + str(r.createdByUser.displayName))
                     p.line(25, h - 45, w - 25, h - 45)
                     p.setFont("Helvetica", 11)
-                    if retryObject != None:
-                        cy, retryObject = renderArticleRequest(p, arequest, cy, retry=True)
-            if cy < len(summedRequest) * 15 + 140:
+                    if retry_object is not None:
+                        cy, retry_object = render_article_request(p, arequest, cy, retry=True)
+            if cy < len(summed_request) * 15 + 140:
                 # We need a new page in order to render the invoice
                 if page == 1:
                     # We were on the first Page and still need to render the hint
                     p.drawString(35, 35, "Page " + str(page))
                 p.showPage()
-                renderSideStrip(p, r)
+                render_side_strip(p, r)
                 page += 1
                 p.drawString(w - 75, h - 35, "Page " + str(page))
                 p.setFont("Helvetica", 14)
@@ -207,15 +208,15 @@ def exportOrderToPDF(request: HttpRequest, res):
             p.drawString(w - 175, cy - 10, "Sum")
             cy -= 15
             total: int = 0
-            for a in summedRequest.keys():
-                amount: int = summedRequest[a]
+            for a in summed_request.keys():
+                amount: int = summed_request[a]
                 total += int(a.price) * amount
                 p.line(45, cy, 45, cy - 15)
                 p.line(w - 45, cy, w - 45, cy - 15)
                 p.drawString(100, cy - 10, a.description)
                 p.drawString(50, cy - 10, str(amount))
-                p.drawString(250, cy - 10, getPriceString(int(a.price)))
-                p.drawString(w - 175, cy - 10, getPriceString(int(a.price) * amount))
+                p.drawString(250, cy - 10, get_price_string(int(a.price)))
+                p.drawString(w - 175, cy - 10, get_price_string(int(a.price) * amount))
                 cy -= 15
             p.line(45, cy, w - 45, cy)
             p.line(45, cy, 45, cy - 15)
@@ -223,7 +224,7 @@ def exportOrderToPDF(request: HttpRequest, res):
             p.line(45, cy - 15, w - 45, cy - 15)
             p.drawString(50, cy - 10, "TOTAL:")
             p.drawString(100, cy - 10, "[EUR]")
-            p.drawString(w - 175, cy - 10, getPriceString(total))
+            p.drawString(w - 175, cy - 10, get_price_string(total))
             # Signature of person who packed and person who checked
             cy -= 75
             p.line(55, cy, 235, cy)
@@ -231,7 +232,7 @@ def exportOrderToPDF(request: HttpRequest, res):
             p.line(255, cy, 435, cy)
             p.drawString(260, cy - 10, "Signature of person who checked")
             p.showPage() # End page here (one per request)
-    #Close the canvas
+    # Close the canvas
     p.save()
     pdf = buffer.getvalue()
     buffer.close()
@@ -239,17 +240,17 @@ def exportOrderToPDF(request: HttpRequest, res):
     return response
 
 
-def exportRejectstatistics(request: HttpRequest):
+def export_reject_statistics(request: HttpRequest):
     # Begin PDF
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="FOC-RejectStatistics_' + timestamp() + '.pdf"'
     buffer = BytesIO()
-    w, h = landscape(A4) # Reversed return values in order to produce landscape orientation
-    p : canvas = canvas.Canvas(buffer, pagesize=landscape(A4), pageCompression=0)
+    w, h = landscape(A4)  # Reversed return values in order to produce landscape orientation
+    p: canvas = canvas.Canvas(buffer, pagesize=landscape(A4), pageCompression=0)
     p.setTitle("C3FOC - Missing Merch statistics")
     p.setAuthor("The robots in slavery by " + request.user.username)
-    p.setSubject("This document, originally created at " + timestamp(filestr=False) + ", is a template for the mssing merchandise" \
-            " statistics.")
+    p.setSubject("This document, originally created at " + timestamp(filestr=False) + 
+                 ", is a template for the missing merchandise statistics.")
     page = 1
     p.setFont("Helvetica", 11)
     # Render the Article list
@@ -301,7 +302,7 @@ class DataDumpIterator:
             raise StopIteration
         elif self.step == 8:
             # Return stored images
-            if self.payload == None:
+            if self.payload is None:
                 self.payload = 1 # Look up first id
             try:
                 img = Media.objects.get(id=int(self.payload))
@@ -329,12 +330,12 @@ class DataDumpIterator:
                 self.step -= 1
                 self.payload = None
                 return "# Hit an exception. Assuming that we reached the end of the media assets.\n" \
-                        "# Exception content: " + str(e).replace("\n", "") + "\n"  + traceback.format_exc().replace("\n", "\n# ")
-            return "Hier könnten ihre bilder stehen.\n"
+                        "# Exception content: " + str(e).replace("\n", "") + "\n" \
+                       + traceback.format_exc().replace("\n", "\n# ")
             pass
         elif self.step == 7:
             # Return articles
-            if self.payload == None:
+            if self.payload is None:
                 self.payload = 1 # Look up first id
             try:
                 art = Article.objects.get(id=int(self.payload))
@@ -366,19 +367,20 @@ class DataDumpIterator:
                 self.step -= 1
                 self.payload = None
                 return "# There was an exception while processing the articles. Jumping to the next job.\n" \
-                        "# Exception content: " + str(e).replace("\n", "") + "\n" + traceback.format_exc().replace("\n", "\n# ")
-            return "Hier könnten ihre Artikel stehen.\n"
+                        "# Exception content: " + str(e).replace("\n", "") + "\n" + \
+                       traceback.format_exc().replace("\n", "\n# ")
         elif self.step == 6:
             # Saving posts to data dump
-            if self.payload == None:
+            if self.payload is None:
                 self.payload = 1
             try:
                 p = Post.objects.get(id=1)
                 a = '{"type" : "post", "data" : [ "title" : "'
                 a += str(base64.b64encode(bytes(str(p.title), 'utf-8'))) + '", "addedby" : "'
                 try:
-                    a += str(base64.b64encode(bytes(str(p.createdByUser.authuser.username), 'utf-8'))) + '", "username" : "'
-                except:
+                    a += str(base64.b64encode(bytes(str(p.createdByUser.authuser.username), 'utf-8'))) + \
+                         '", "username" : "'
+                except Exception as e:
                     a += str(base64.b64encode(bytes(str("admin"), 'utf-8'))) + '", "visible" : "'
                 a += str(base64.b64encode(bytes(str(p.visibleLevel), 'utf-8'))) + '", "timestamp" : "'
                 a += str(base64.b64encode(bytes(str(p.timestamp), 'utf-8'))) + '", "text" : "'
@@ -392,8 +394,8 @@ class DataDumpIterator:
                 self.step -= 1
                 self.payload = None
                 return "# There was an exception while processing the posts. Jumping to the next job.\n" \
-                        "# Exception content: " + str(e).replace("\n", "") + "\n" + traceback.format_exc().replace("\n", "\n# ")
-            return "# Hier könnten ihre Posts stehen"
+                        "# Exception content: " + str(e).replace("\n", "") + "\n" + \
+                       traceback.format_exc().replace("\n", "\n# ")
         else:
             # something went wrong
             if self.step < 0:

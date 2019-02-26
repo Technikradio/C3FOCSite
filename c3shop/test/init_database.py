@@ -62,4 +62,4 @@ def init_db():
     print('Make sure to change both the password and the mail address.')
     pass
 
-#init_db()
+# init_db()

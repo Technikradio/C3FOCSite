@@ -6,6 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def redirect(url):
     """
     This method redirects a user to the given url

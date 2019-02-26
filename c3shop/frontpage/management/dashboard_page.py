@@ -1,6 +1,7 @@
 from .page_skeleton import render_footer, render_headbar
 from .reservation_page import render_open_order_table
 from ..models import GroupReservation, Profile, Settings, Article
+from .messages import get_message
 from . import magic
 from django.http import HttpRequest
 
@@ -31,7 +32,8 @@ def render_statistics_panel(request: HttpRequest):
         non_done_res = GroupReservation.objects.filter(open=True).filter(ready=False).count()
         a += "There are " + str(open_res) + " open reservations of which " + str(non_done_res) + \
              " still require some work.<br /><br />"
-    a += '<a href="/admin/export?method=rejectstatistics" class="button">Download rejected purchase statistics template</a>'
+    a += '<a href="/admin/export?method=rejectstatistics" class="button">' \
+         'Download rejected purchase statistics template</a>'
     a += '</div>'
     return a
 
@@ -63,8 +65,8 @@ def render_quick_article_panel():
         s: Settings = Settings.objects.get(SName="frontpage.chestsize")
         size: int = int(s.property)
         a += "<br />Quick decrease:<br />"
-        a += '<table><tr><th>Article</th><th>Quantity</th><th>Lower by Items (typically ' + str(size) + ' items)</th>' \
-        '<th> Article chest size </th></tr>'
+        a += '<table><tr><th>Article</th><th>Quantity</th><th>Lower by Items (typically ' + str(size) + \
+             ' items)</th><th> Article chest size </th></tr>'
         for article in Article.objects.exclude(quantity=0).order_by('quantity'):
             a += '<tr><td>' + article.description + '</td><td>' + str(article.quantity) + '</td>'
             a += '<td><a href="/admin/actions/reduce?article_id=' + str(article.pk) + '" class="button">'
@@ -78,18 +80,20 @@ def render_quick_article_panel():
 
 def render_error_panel(request: HttpRequest):
     if request.GET.get("error"):
-        return '<div class="error-panel w3-row w3-container">Something produced an error: ' + request.GET["error"] + '</div>'
-    else:
-        return ""
+        return '<div class="error-panel w3-row w3-container">Something produced an error: ' + request.GET["error"] + \
+               '</div>'
+    elif request.GET.get("msgid"):
+        return '<div class="error-panel w3-row w3-container">' + get_message(request.GET["msgid"]) + '</div>'
+    return ""
 
 
 def render_dashboard(request: HttpRequest):
     u: Profile = magic.get_current_user(request)
     a = render_headbar(request)
     a += '<div class="w3-main w3-padding-64">'
-    #a += render_features_bar()
+    # a += render_features_bar()
     a += render_error_panel(request)
-    #a += '<div>'
+    # a += '<div>'
     a += render_statistics_panel(request)
     a += render_features_bar()
     a += render_quick_article_panel()
