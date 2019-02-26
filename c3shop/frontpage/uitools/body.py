@@ -40,7 +40,7 @@ def render_article_overview(target):
     flash_image_link = NO_MEDIA_IMAGE
     try:
         flash_image_link = str(simage.lowResFile)
-    except:
+    except Exception as e:
         logging.debug("using default image to present article list item")
         pass
     art = '<div class="w3-row w3-padding-64 w3-container"><a href="' + link + '"><article><table><tr><td><img ' \
@@ -102,7 +102,8 @@ def render_article_detail(article_id):
 
 def render_article_properties_division(art):
     text = '<div class="article_properties_division"><br />Size: '
-    text += escape_text(art.size) + "<br />Type: " + get_type_string(int(art.type)) + "<br />Price: " + escape_text(render_price(art.price)) + "<br />"
+    text += escape_text(art.size) + "<br />Type: " + get_type_string(int(art.type)) + "<br />Price: " + \
+            escape_text(render_price(art.price)) + "<br />"
     text += "Pieces left (app.): " + str(art.quantity) + "<br /></div><br />"
     return text
 
@@ -279,10 +280,11 @@ def render_index_page(request):
     a = render_article_list()
     try:
         if Settings.objects.get(SName="frontpage.store.open").property.lower() in ("yes", "true", "t", "1"):
-            a += '<div class="w3-row w3-padding-64 w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-open.png"/>' \
+            a += '<div class="w3-row w3-padding-64 w3-third w3-container"><img class="icon" ' \
+                 'src="/staticfiles/frontpage/store-open.png"/>' \
                 '<br />The store is currently open</div>'
         else:
-            a += '<div class="w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-closed.png"/>' \
+            a += '<div class="w3-third w3-container"><img class="icon" src="/staticfiles/frontpage/store-closed.png"/>'\
                 '<br/>The store is currently closed.</div>'
     except Exception as e:
         a += '<div class="w3-third w3-container">Something terrible has happend:<br />' + str(e) + '</div>'

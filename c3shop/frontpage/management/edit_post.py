@@ -107,6 +107,6 @@ def do_edit_action(request: HttpRequest, default_forward_url: str = ".."):
 def do_delete_action(request: HttpRequest):
     if not request.GET.get("payload"):
         return redirect("/admin?error=NO_POST_ID_TO_DELETE")
-    id: int = int(request.GET["payload"])
-    Post.objects.get(pk=id).delete()
+    post_id: int = int(request.GET["payload"])
+    Post.objects.get(pk=post_id).delete()
     return redirect("/admin/posts")

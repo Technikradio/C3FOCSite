@@ -10,8 +10,7 @@ def process_link(position: int, item):
     css_class: str = "w3-bar-item w3-button w3-hide-small w3-hover-white"
     if position == 0:
         css_class = "w3-bar-item w3-button w3-theme-l1"
-    return '<a href="' + item.get('href') + '" class="' + css_class + '">' + \
-            item.get('text') + '</a>'
+    return '<a href="' + item.get('href') + '" class="' + css_class + '">' + item.get('text') + '</a>'
 
 
 def render_nav_bar(request: HttpRequest):
@@ -28,9 +27,11 @@ def render_nav_bar(request: HttpRequest):
         if request.user.is_authenticated:
             a += '<a href="/admin/" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Admin area</a>'
         else:
-            a += '<a href="/login/?next=' + request.path + '" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Login</a>'
+            a += '<a href="/login/?next=' + request.path + \
+                 '" class="w3-bar-item w3-button w3-hide-small w3-hover-white">Login</a>'
         a += render_search_bar()
         a += '</div></div>'
         return a
     except Exception as e:
-        return "<h3>An error was thrown resulting in the incapability to display the nav bar:</h3>" + str(e) + "<br />" + str(e.args)
+        return "<h3>An error was thrown resulting in the incapability to display the nav bar:</h3>" + str(e) + "<br />"\
+               + str(e.args)

@@ -34,10 +34,13 @@ class Profile(models.Model):
     rights = models.SmallIntegerField()  # The higher the number the more rights a user will have, see README.md
     displayName = models.CharField(max_length=75)
     pgp_keyfingerprint = models.CharField(max_length=16384, default="")
-    number_of_allowed_reservations = models.SmallIntegerField(help_text='This specifies the amount of reservations a user is' +
-            'allowed to add, default is 1, -1 means unlimited', default=1)
-    must_change_password = models.BooleanField(default=False, help_text='If True the user must change the password on next login')
-    next_login_announcement = models.CharField(max_length=16384, null=True, help_text='If not null it will be displayed on next login')
+    number_of_allowed_reservations = models.SmallIntegerField(
+        help_text='This specifies the amount of reservations a user is' +
+                  'allowed to add, default is 1, -1 means unlimited', default=1)
+    must_change_password = models.BooleanField(default=False,
+                                               help_text='If True the user must change the password on next login')
+    next_login_announcement = models.CharField(max_length=16384, null=True,
+                                               help_text='If not null it will be displayed on next login')
 
     def __str__(self):
         return str(self.authuser.username) + ": {active: " + str(self.active) + "}"
@@ -70,10 +73,11 @@ class Article(models.Model):
     cachedText = models.CharField(max_length=15000, help_text="The compiled markdown long text")
     addedByUser = models.ForeignKey(Profile, null=True, on_delete=DO_NOTHING)
     flashImage = models.ForeignKey(Media, null=True, on_delete=DO_NOTHING)
-    chestsize = models.IntegerField(help_text="This field defines the unique chest size of the article. If it's 0 it will" \
-            "default to the chest size defined in the settings.")
-    group = models.ForeignKey(ArticleGroup, null=True, on_delete=DO_NOTHING, help_text='This will be null if the article' +
-            'doesnt belong to a group')
+    chestsize = models.IntegerField(
+        help_text="This field defines the unique chest size of the article. If it's 0 it will" +
+                  "default to the chest size defined in the settings.")
+    group = models.ForeignKey(ArticleGroup, null=True, on_delete=DO_NOTHING,
+                              help_text='This will be null if the article doesnt belong to a group')
     # The image visible in the list view
 
     def __str__(self):
@@ -116,8 +120,8 @@ class GroupReservation(models.Model):
     notes = models.CharField(max_length=15000)
     pickupDate = models.DateTimeField()
     responsiblePerson = models.CharField(max_length=50, null=True, default=None)
-    submitted = models.BooleanField(default=False, help_text="This determines if a reservation is still under construction" +
-            "or already submitted")
+    submitted = models.BooleanField(default=False, help_text="This determines if a reservation is still"
+                                                             " under construction or already submitted")
 
 
 class ArticleRequested(models.Model):

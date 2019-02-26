@@ -7,7 +7,7 @@ from .magic import get_current_user
 def render_media_list(request: HttpRequest, u: Profile):
     m = Media.objects.all()
     if u.rights < 1:
-        #Maybe implement filtering on own media
+        # Maybe implement filtering on own media
         pass
     a = "<table><tr><th> Preview </th><th> Headline </th><th> Uploaded by User</th></tr>"
     for r in m:

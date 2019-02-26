@@ -1,5 +1,5 @@
 from .navbar import render_nav_bar
-#from .searching import render_search_bar
+# from .searching import render_search_bar
 
 
 def render_content_header(http_request, title="C3FOC", admin_popup=False):

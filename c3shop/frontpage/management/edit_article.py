@@ -51,7 +51,7 @@ def render_edit_page(http_request: HttpRequest):
     else:
         f.add_content(PlainText("<h3>Edit article #" + str(article.pk) + "</h3>Short Description / Name: "))
         f.add_content(TextField(name="description", button_text=article.description))
-        f.add_content(CheckBox(text="Visible: ", name="visible", checked=CheckEnum.get_state(b=article.visible)))
+        f.add_content(CheckBox(text="Visible: ", name="visible", checked=CheckEnum.get_state))
         f.add_content(PlainText("Price: "))
         f.add_content(TextField(name="price", do_cr_after_input=False, button_text=article.price))
         f.add_content(PlainText(" €ct<br/>Number of articles left: "))

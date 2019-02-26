@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'frontpage.apps.FrontpageConfig',
     'email_extras',
+
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -103,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 SECURE_BROWSER_XSS_FILTER = True
-#SESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 X_FRAME_OPTIONS = 'DENY'
@@ -131,7 +134,7 @@ LOGIN_URL = "/login/"
 
 # Logging settings
 LOGGING = {
-        'version' : 1,
+        'version': 1,
         'disable_existing_loggers': False,
         'handlers': {
             'mail_admins': {
@@ -141,7 +144,7 @@ LOGGING = {
             'console': {
                 'level': 'DEBUG',
                 'class': 'logging.StreamHandler',
-                #'formatter': 'simple'
+                # 'formatter': 'simple'
                 }
             },
         'loggers': {

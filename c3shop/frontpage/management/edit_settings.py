@@ -25,5 +25,5 @@ def render_header_edit_panel(request: HttpRequest):
 
 def render_footer_edit_panel(request: HttpRequest):
     return render_text_based_panel(request, 'frontpage.ui.footer.content', 'Edit footer content:',
-            'Edit the content of the footer:', "/admin/actions/set-footer", begin=False) + '</div>'
+            'Edit the content of the footer:', "/admin/actions/set-footer") + '</div>'
 
