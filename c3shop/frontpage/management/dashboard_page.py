@@ -1,6 +1,7 @@
 from .page_skeleton import render_footer, render_headbar
 from .reservation_page import render_open_order_table
 from ..models import GroupReservation, Profile, Settings, Article
+from .messages import get_message
 from . import magic
 from django.http import HttpRequest
 
@@ -81,8 +82,9 @@ def render_error_panel(request: HttpRequest):
     if request.GET.get("error"):
         return '<div class="error-panel w3-row w3-container">Something produced an error: ' + request.GET["error"] + \
                '</div>'
-    else:
-        return ""
+    elif request.GET.get("msgid"):
+        return '<div class="error-panel w3-row w3-container">' + get_message(request.GET["msgid"]) + '</div>'
+    return ""
 
 
 def render_dashboard(request: HttpRequest):
