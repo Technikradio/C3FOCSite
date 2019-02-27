@@ -1,12 +1,4 @@
-, 27. Feb. 2019, 11:08 hat Lukas Ruge <lukeslog@gmail.com> geschrieben:
-
-    Ich glaube, dein Vortrag war da zuerst.
-
-    Am Mi., 27. Feb. 2019, 11:03 hat Leon Christopher Dietrich <doralitze@chaotikum.org> geschrieben:
-
-        Hi Leute,
-
-        da d# C3FOCSite
+# C3FOCSite
 This is the repository for the C3FOC web site. Follow @c3foc on twitter
 for upcoming news. The website is written for and using python3.6.
 
@@ -31,15 +23,7 @@ installing the packages listed below using pip3:
  * django-email-extras
 
 When building the ticket server it is also required to install
-, 27. Feb. 2019, 11:08 hat Lukas Ruge <lukeslog@gmail.com> geschrieben:
-
-    Ich glaube, dein Vortrag war da zuerst.
-
-    Am Mi., 27. Feb. 2019, 11:03 hat Leon Christopher Dietrich <doralitze@chaotikum.org> geschrieben:
-
-        Hi Leute,
-
-        da dthe following:
+the following:
  * django-helpdesk
  * django-bootstrap4
 
