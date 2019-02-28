@@ -162,7 +162,6 @@ def render_image(media, width=0, height=0, high_res=True, include_link=True, rep
         return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was located: ' + str(link_exception) + '"' + cssstring + '/>'
 
 
-# TODO implement visibility level
 def render_post(post_id, request: HttpRequest, preview: bool = False):
     # post: Post = None
     try:
@@ -174,7 +173,7 @@ def render_post(post_id, request: HttpRequest, preview: bool = False):
     if post.visibleLevel > 0:
         # Check if user is allowed to see this post
         if not request.user.is_authenticated:
-            return ""
+            return "Please log in in order to view this post."
         else:
             if get_current_user(request).rights < post.visibleLevel:
                 return "You don't have the required permission in order to review this item."
@@ -246,15 +245,15 @@ def render_user_list(request, objects_per_site=50):
     a += '<a href="/admin/users/edit"><img class="button-img" src= "/staticfiles/frontpage/add-user.png" alt="Add user" />'\
          '</a><br />Displaying page ' + str(page) + ' with ' + str(objects_per_site) + ' entries per each.' \
          '<br /><table><tr><th>Edit</th><th>Avatar</th><th>Username</th><th>Display name</th>' \
-         '<th>Rights</th></tr>'
-    for p in Profile.objects.filter(pk__range=(start, end)):
+         '<th>Rights</th><th>Notes</th></tr>'
+    for p in Profile.objects.filter(pk__gt=start).filter(pk__lt=end):
         # TODO generate link to detailed user view
         a += '<tr><td><a href="/admin/users/edit?user_id=' + str(p.pk) + \
              '"><img class="button-img" src="/staticfiles/frontpage/edit.png" />' \
             '</a></td><td>' + render_image(p.avatarMedia, width=24, height=24,
                                            replace="/staticfiles/frontpage/no-avatar.png", cssclass="icon") + '</td><td>' + \
              escape_text(p.authuser.username) + '</td><td>' + escape_text(p.displayName) + '</td><td>' + \
-             str(get_right_string(p.rights)) + '</td></tr>'
+             str(get_right_string(p.rights)) + '</td><td>' + str(p.notes) + '</td></tr>'
     a += '</table></div>'
     return a
 

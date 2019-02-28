@@ -42,7 +42,6 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
             if not profile.active:
                 m = CheckEnum.NOT_CHECKED
             f.add_content(CheckBox(name="active", text="User Active", checked=m))
-    f.add_content(PlainText('Display name: '))
     if profile:
         f.add_content(PlainText("Email address: "))
         f.add_content(TextField(name='email', button_text=str(profile.authuser.email)))

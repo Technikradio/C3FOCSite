@@ -6,22 +6,26 @@ from . import magic
 from django.http import HttpRequest
 
 
-def render_features_bar():
+def render_features_bar(u: Profile):
     a = '<div class="w3-third w3-container w3-padding-64">'
     a += '<a href="/admin">Dashboard</a><br />'
     a += '<a href="/admin/posts">Posts</a><br />'
-    a += '<a href="/admin/users">Users</a><br />'
+    if u.rights > 0:
+        a += '<a href="/admin/users">Users</a><br />'
     a += '<a href="/admin/articles">Articles</a><br />'
     a += '<a href="/admin/media">Media</a><br />'
     a += '<a href="/admin/reservations">Reservations</a><br />'
-    a += '<a href="/admin/settings">Global settings</a><br />'
+    if u.rights > 2:
+        a += '<a href="/admin/settings">Global settings</a><br />'
     a += '<br/><a href="/logout/"> Logout </a><br/>'
     a += '</div>'
     return a
 
 
-def render_statistics_panel(request: HttpRequest):
+def render_statistics_panel(request: HttpRequest, u: Profile):
     a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
+    if u.rights < 1:
+        return a
     a += '<h3 class="w3-text-teal">Statistics</h3>'
     # TODO implement order and other statistics here
     # Use user access level in order to determine which info is allowed to be rendered
@@ -94,9 +98,10 @@ def render_dashboard(request: HttpRequest):
     # a += render_features_bar()
     a += render_error_panel(request)
     # a += '<div>'
-    a += render_statistics_panel(request)
-    a += render_features_bar()
-    a += render_quick_article_panel()
+    a += render_statistics_panel(request, u)
+    a += render_features_bar(u)
+    if u.rights > 0:
+        a += render_quick_article_panel()
     a += render_order_panel(u)
     if u.rights > 1:
         a += render_quick_store_panel()
