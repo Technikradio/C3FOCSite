@@ -1,4 +1,5 @@
-from ..models import Article, Profile
+from ..models import Article, Profile, Media
+from ..uitools import body
 from django.http import HttpRequest
 from .magic import get_current_user, get_article_pcs_free
 
@@ -14,7 +15,7 @@ def render_vs_status(b: bool):
         return '<img class="icon" src="/staticfiles/frontpage/error.png" alt="Invisible"/>'
 
 
-def render_article_list(request: HttpRequest):
+def render_article_list(request: HttpRequest, u: Profile):
     # TODO add method to select how many posts to display
     # TODO make layout more fancy
     page = 1
@@ -35,14 +36,23 @@ def render_article_list(request: HttpRequest):
     end_range = (page + 1) * items_per_page
 
     a = '<div class="admin-popup w3-row w3-padding-64 w3-twothird w3-container">'
-    a += '<h3>Articles:</h3><a href="/admin/articles/edit" class="button">Add a new Article</a><br/>' \
-         '<br /><table><tr><th>Edit</th><th> Article ID </th><th> Description </th><th> Size </th>' \
+    a += '<h3>Articles:</h3>'
+    if u.rights > 1:
+        a += '<a href="/admin/articles/edit" class="button">Add a new Article</a><br/>'
+    a += '<br /><table><tr>'
+    if u.rights > 1:
+        a += '<th>Edit</th>'
+    a += '<th> Article ID </th><th> Preview </th><th> Description </th><th> Size </th>' \
          '<th> Price </th><th> Pcs free </th><th> Visibility </th></tr>'
     objects = Article.objects.filter(pk__range=(start_range, end_range))
     for article in objects:
-        a += '<tr><td><a href="' + generate_edit_link(article) + '">' \
-                '<img src="/staticfiles/frontpage/edit.png" class="button-img"/></a></td><td>' + str(article.pk) + \
-             "</td><td>" + article.description + "</td><td>" + article.size + "</td><td>" + article.price + "</td><td>"\
+        a += '<tr>'
+        if u.rights > 1:
+            a += '<td><a href="' + generate_edit_link(article) + '">' \
+                '<img src="/staticfiles/frontpage/edit.png" class="button-img"/></a></td>'
+        a += '<td>' + str(article.pk) + "</td><td>" + body.render_image(article.flashImage, cssclass="icon")\
+                + "</td><td>" + article.description + "</td><td>"\
+                + article.size + "</td><td>" + article.price + "</td><td>"\
              + str(get_article_pcs_free(article)) + "</td><td>" + render_vs_status(article.visible) + "</td></tr>"
     a += '</table>'
     if page > 1:
@@ -59,6 +69,6 @@ def render_article_list(request: HttpRequest):
 def render_article_page(request: HttpRequest):
     u: Profile = get_current_user(request)
     a = '<h3>Articles</h3><br/>'
-    a += render_article_list(request)
+    a += render_article_list(request, u)
     return a
 

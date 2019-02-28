@@ -259,13 +259,16 @@ def render_user_list(request, objects_per_site=50):
 
 
 def render_image_detail(request, medium_id):
-    image = Media.objects.get(pk=int(medium_id))
-    if image is None:
-        raise Http404("No media found")
-    a = "<h2>" + image.headline + "</h2><center>"
-    a += render_image(image)
-    a += "</center><article>" + image.cachedText + "</article>"
-    return a
+    try:
+        image = Media.objects.get(pk=int(medium_id))
+        if image is None:
+            raise Http404("No media found")
+        a = "<h2>" + image.headline + "</h2><center>"
+        a += render_image(image)
+        a += "</center><article>" + image.cachedText + "</article>"
+        return a
+    except Media.DoesNotExist:
+        raise Http404("No such media found. Maybe try the search engine.")
 
 
 def render_404_page(request):

@@ -1,4 +1,5 @@
 from .navbar import render_nav_bar
+from ..management import magic
 # from .searching import render_search_bar
 
 
@@ -20,6 +21,7 @@ def render_content_header(http_request, title="C3FOC", admin_popup=False):
         a += '<div class="w3-bar w3-theme w3-top w3-left-align w3-large">'
         a += title
         a += ' | <a href="/admin">Back to dashboard</a><span class="user-menu">'
+        a += 'Logged in as ' + magic.get_current_user(http_request).displayName + ' | '
         a += '<a href="/logout"> logout </a>'
         a += '</span>'
         a += '</div>'
