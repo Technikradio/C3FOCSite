@@ -94,6 +94,7 @@ tracking anyone. Cookies are used for the following cases:
  * keeping track of logged in users (should be obvious why)
  * implementing CSFR protection
  * beeing able to modify reservations before submitting them
+
 In case you're not a registered user: don't panic, we won't track you.
 In case you don't believe us: read the source code.
 
