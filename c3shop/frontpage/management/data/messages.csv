@@ -1,0 +1,7 @@
+notimplemented;The requested feature isn't implemented yet.<br />We're sorry for your inconvinience.
+invalidrequest;Something went't wrong: Your browser didn't posted some requested values.
+changepassword.mismatch;The new passwords you typed in do not match.
+changepassword.rulemismatch;The new password does not match the criteria.
+changepassword.oldmismatch;The current password is wrong.
+changepassword.success;Successfully changed password.
+changepassword.oldisnew;You can't use the old password as the new one.

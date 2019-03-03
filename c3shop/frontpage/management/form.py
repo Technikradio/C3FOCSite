@@ -25,14 +25,17 @@ class Form:
     content = []
     is_file_handler = False
 
-    def __init__(self):
+    def __init__(self, url=""):
         self.content = []
-        self.action_url = ""
+        self.action_url = url
         self.method = "post"
         self.is_file_handler = False
 
     def add_content(self, f_object: FormObject):
         self.content.append(f_object)
+
+    def add(self, f_object: FormObject):
+        self.add_content(f_object)
 
     def render_html(self, request: HttpRequest):
         a = '<form method="%method%"'.replace("%method%", self.method)
@@ -82,10 +85,14 @@ class FieldGroup(FormObject):
 
     def __init__(self, name="", text=""):
         super(FieldGroup, self).__init__(name=name)
+        self.content = []
         self.text = text
 
     def add_content(self, f_object: FormObject):
         self.content.append(f_object)
+
+    def add(self, f_object: FormObject):
+        self.add_content(f_object)
 
     def generate_html_code(self, form: Form):
         a = "<fieldset>"

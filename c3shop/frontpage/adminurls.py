@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.admin_dashboard, name="dashboard"),
+    url(r'^changepassword', views.admin_password_page, name='change_password'),
     url(r'^posts$', views.admin_list_posts, name='list_posts'),
     url(r'^posts/$', views.admin_list_posts, name='list_posts'),
     url(r'^posts/edit', views.admin_edit_post, name="post_edit"),
@@ -30,6 +31,7 @@ urlpatterns = [
     url(r'^actions/reduce', views.action_quick_quantity_decrease, name="action_quick_decrease_articles"),
     url(r'^actions/set-header', views.action_save_header_setting, name="action_save_header"),
     url(r'^actions/set-footer', views.action_save_footer_setting, name="action_save_footer"),
+    url(r'^actions/change-password', views.action_change_password, name="action_change_password"),
     url(r'^articles/edit', views.admin_edit_article, name="article_edit"),
     url(r'^articles$', views.admin_show_articles, name="list_articles"),
     url(r'^media/select', views.admin_select_media, name="wizard_select_media"),

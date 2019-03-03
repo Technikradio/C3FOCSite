@@ -6,7 +6,7 @@ from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page, reservation_page, reservation_actions
 from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
 from .management import edit_article, edit_reservation, article_select, reservation_processing, settings_page
-from .management import edit_settings, export, media_select
+from .management import edit_settings, export, media_select, password_page
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -50,6 +50,16 @@ def admin_home(request):
     if response:
         return response
     return HttpResponse(dashboard_page.render_dashboard(request))
+
+
+def admin_password_page(request: HttpRequest):
+    response= require_login(request)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += password_page.render_password_change_panel(request)
+    a += render_footer(request)
+    return HttpResponse(a)
 
 
 def admin_edit_post(request):
@@ -120,6 +130,11 @@ def admin_list_users(request):
 def action_save_post(request):
     return edit_post.do_edit_action(request, "/admin/posts")
 
+def action_change_password(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    return password_page.action_change_password(request)
 
 def action_save_user(request):
     return edit_user.action_save_user(request, "/admin/users")
