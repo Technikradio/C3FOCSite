@@ -223,14 +223,15 @@ def require_login(request, min_required_user_rights=0):
     :type request: http_request
     :type min_required_user_rights: int
     """
+    redirect_path = settings.LOGIN_URL + '?next="' + request.path + '"'
     if not request.user.is_authenticated:
-        return redirect('%s?next="%s"' % (settings.LOGIN_URL, request.path))
+        return redirect(redirect_path)
 
     profile = Profile.objects.get(authuser=request.user)
     if not profile:
-        return redirect('%s?next="%s"' % (settings.LOGIN_URL, request.path))
+        return redirect(redirect_path)
     if profile.rights < min_required_user_rights:
-        return redirect('%s?next="%s"' % (settings.LOGIN_URL, request.path))
+        return redirect(redirect_path)
     return False  # makes sure that
 
 

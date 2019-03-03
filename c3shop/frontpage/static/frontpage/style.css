@@ -115,6 +115,15 @@ tr:hover {
     text-align: center;
 }
 
+.success-panel {
+    background: #1aff1a;
+    border-radius: 10px;
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 48px;
+    text-align: center;
+}
+
 .user_link_division {
     text-align: center;
     height: auto;
