@@ -62,6 +62,12 @@ def render_quick_store_panel():
     return a
 
 
+def render_easy_user_panel():
+    a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
+    a += '<a href="/admin/changepassword" class="button">Change Password</a>'
+    return a + '</div>'
+
+
 def render_quick_article_panel():
     a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
     a += '<h3 class="w3-text-teal">QAP</h3>'
@@ -83,11 +89,14 @@ def render_quick_article_panel():
 
 
 def render_error_panel(request: HttpRequest):
+    p = "error-panel"
+    if request.GET.get("success"):
+        p = "success-panel"
     if request.GET.get("error"):
-        return '<div class="error-panel w3-row w3-container">Something produced an error: ' + request.GET["error"] + \
+        return '<div class="' + p + ' w3-row w3-container">Something produced an error: ' + request.GET["error"] + \
                '</div>'
     elif request.GET.get("msgid"):
-        return '<div class="error-panel w3-row w3-container">' + get_message(request.GET["msgid"]) + '</div>'
+        return '<div class="' + p + ' w3-row w3-container">' + get_message(request.GET["msgid"]) + '</div>'
     return ""
 
 
@@ -105,6 +114,8 @@ def render_dashboard(request: HttpRequest):
     a += render_order_panel(u)
     if u.rights > 1:
         a += render_quick_store_panel()
+    else:
+        a += render_easy_user_panel()
     a += '</div>'
     a += render_footer(request)
     return a
