@@ -1,5 +1,6 @@
 from .navbar import render_nav_bar
 from ..management import magic
+from ..models import Profile
 # from .searching import render_search_bar
 
 
@@ -21,8 +22,12 @@ def render_content_header(http_request, title="C3FOC", admin_popup=False):
         a += '<div class="w3-bar w3-theme w3-top w3-left-align w3-large">'
         a += title
         a += ' | <a href="/admin">Back to dashboard</a><span class="user-menu">'
-        a += 'Logged in as ' + magic.get_current_user(http_request).displayName + ' | '
-        a += '<a href="/logout"> logout </a>'
+        p: Profile = magic.get_current_user(http_request)
+        if not p is None:
+            a += 'Logged in as ' + p.displayName + ' | '
+            a += '<a href="/logout"> logout </a>'
+        else:
+            a += 'Not logged in'
         a += '</span>'
         a += '</div>'
     a += '</header>'

@@ -189,9 +189,9 @@ class InputField(FormObject):
 
 class TextField(InputField):
 
-    def __init__(self, button_text="", name="", do_cr_after_input=True):
+    def __init__(self, button_text="", name="", do_cr_after_input=True, required=False):
         super(TextField, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
-                                        field_type="text")
+                                        field_type="text", required=required)
 
 
 class PasswordField(InputField):

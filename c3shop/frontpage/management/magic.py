@@ -33,6 +33,8 @@ def compile_markdown(markdown_sources: str):
 
 
 def get_current_user(request: HttpRequest):
+    if not request.user.is_authenticated:
+        return None
     return Profile.objects.get(authuser=request.user)
 
 
