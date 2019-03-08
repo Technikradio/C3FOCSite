@@ -49,13 +49,13 @@ def render_group_list(request: HttpRequest, u: Profile):
     a += '<br /><table><tr>'
     if u.rights > 1:
         a += '<th> Edit </th><th> Group ID </th>'
-    a += '<th> Article </th><th> Preview </th></tr>'
+    a += '<th> Article </th><th> Preview </th><th> Price </th></tr>'
     for g in prefilter:
         a += '<tr>'
         if u.rights > 1:
             a += '<td> Not yet Implemented </td><td>' + str(g.id) + '</td>'
         a += '<td>' + str(g.group_name) + '</td><td>' + body.render_image(g.group_flash_image, cssclass="icon")
-        a += '</td></tr>'
+        a += '</td><td> Not yet implemted </td></tr>'
     a += '</table>'
     return a
 
@@ -104,7 +104,7 @@ def render_alone_article_list(request: HttpRequest, u: Profile):
                 '<img src="/staticfiles/frontpage/edit.png" class="button-img"/></a></td>'
         a += '<td>' + str(article.pk) + "</td><td>" + body.render_image(article.flashImage, cssclass="icon")\
                 + "</td><td>" + article.description + "</td><td>"\
-                + article.size + "</td><td>" + article.price + "</td><td>"\
+                + article.size + "</td><td>" + body.render_price(article.price) + "</td><td>"\
              + str(get_article_pcs_free(article)) + "</td>"
         if u.rights > 1:
             a += "<td>" + render_vs_status(article.visible) + "</td>"
