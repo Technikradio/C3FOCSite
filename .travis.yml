@@ -17,4 +17,4 @@ install:
         - pip install markdown-checklist reportlab qrcode django-email-extras
         - pip install django-helpdesk django-bootstrap4
 script:
-        - python3 manage.py test
+        - cd c3shop && python3 manage.py test
