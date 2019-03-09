@@ -6,7 +6,8 @@ python:
         - "3.7-dev"
 os:
         - linux
-        - osx  # To aim FreeBSD
+          #- osx  # To aim FreeBSD, currently broken due to missing packages
+dist: xenial
 env:
         - DJANGO_VERSION=2.1.4
         - DJANGO_VERSION=2.1.0
