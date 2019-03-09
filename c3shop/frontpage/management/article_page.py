@@ -92,7 +92,7 @@ def render_alone_article_list(request: HttpRequest, u: Profile):
     if u.rights > 1:
         a += '<th>Edit</th>'
     a += '<th> Article ID </th><th> Preview </th><th> Description </th><th> Size </th>' \
-         '<th> Price </th><th> Pcs free </th>'
+         '<th> Price </th><th> Pcs left </th>'
     if u.rights > 1:
          a += '<th> Visibility </th>'
     a += '</tr>'
