@@ -15,7 +15,6 @@ from .uitools import ulog, searching
 def index(request):
     a = render_content_header(request)
     a += render_index_page(request)
-    a += render_article_list()
     a += render_footer(request)
     return HttpResponse(a)
 

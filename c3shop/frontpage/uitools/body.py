@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 
-from ..models import Article, Media, ArticleMedia, Post, Profile, Settings
+from ..models import Article, Media, ArticleMedia, Post, Profile, Settings, ArticleGroup
 from ..management.magic import get_current_user
 from django.conf import settings
 from django.shortcuts import redirect
@@ -16,7 +16,10 @@ NO_MEDIA_IMAGE = "/staticfiles/frontpage/no-image.png"  # TODO change to static 
 
 def render_article_list():
     a = '<div class="w3-padding-64 w3-twothird w3-container">'
-    for art in Article.objects.all().filter(visible=True):
+    for grp in ArticleGroup.objects.all():
+        # Render sample from group
+        a += render_article_overview(Article.objects.all().filter(group=grp)[0], group=True)
+    for art in Article.objects.all().filter(group=None).filter(visible=True):
         a += render_article_overview(art)
     a += '</div>'
     return a
@@ -34,7 +37,7 @@ def render_price(a: str):
         return a
 
 
-def render_article_overview(target):
+def render_article_overview(target, group=False):
     simage = target.flashImage
     link = DETAILED_PAGE + str(target.id)
     flash_image_link = NO_MEDIA_IMAGE
@@ -48,11 +51,15 @@ def render_article_overview(target):
     art += flash_image_link + '"></td><td>'
     art += '<h3 class="w3-text-teal">' + escape_text(target.description) 
     art += '</h3>' + get_type_string(int(target.type)) + " "
-    art += escape_text(target.size) + " "
-    if target.quantity > 0:
-        art += escape_text(render_price(target.price)) + "<br/>" + str(target.quantity) + " left"
+    if not group:
+	new_child_event::new_child_event(std::shared_ptr<ui_context> sender) {
+        art += escape_text(target.size) + " "
+        if target.quantity > 0:
+            art += escape_text(render_price(target.price)) + "<br/>" + str(target.quantity) + " left"
+        else:
+            art += "<br/>sold out"
     else:
-        art += "<br/>sold out"
+        art += "<br />Please review this article to see aviable sizes and prices."
     art += "</td></tr></table></article></a></div>"
     return art
 
