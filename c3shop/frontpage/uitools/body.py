@@ -52,7 +52,6 @@ def render_article_overview(target, group=False):
     art += '<h3 class="w3-text-teal">' + escape_text(target.description) 
     art += '</h3>' + get_type_string(int(target.type)) + " "
     if not group:
-	new_child_event::new_child_event(std::shared_ptr<ui_context> sender) {
         art += escape_text(target.size) + " "
         if target.quantity > 0:
             art += escape_text(render_price(target.price)) + "<br/>" + str(target.quantity) + " left"
