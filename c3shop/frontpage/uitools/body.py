@@ -25,14 +25,14 @@ def render_article_list():
     return a
 
 
-def render_price(a: str):
+def render_price(a: str, currency="€"):
     try:
         p: int = int(a)
         z = p / 100
         m = ''
         if math.floor(z) == z:
             m = '0'
-        return str(z) + m + ' €'
+        return str(z) + m + ' ' + currency
     except Exception as e:
         return a
 
@@ -63,7 +63,7 @@ def render_article_overview(target, group=False):
     return art
 
 
-def get_type_string(type_sym):
+def get_type_string(type_sym: int):
     if type_sym == 0:
         return "Unisex"
     if type_sym == 1:
@@ -72,13 +72,14 @@ def get_type_string(type_sym):
         return "Male"
     if type_sym == 3:
         return "Kids"
+    return "Aliens"
 
 
-def get_right_string(rights):
+def get_right_string(rights: int):
     if rights == 0:
-        return "unprivileged"  # He isn't allowed to do anything
+        return "normal user"  # He isn't allowed to do anything, except ordering
     if rights == 1:
-        return "normal user"  # He is allowed to make team orders
+        return "FOC Angel"  # He is allowed to edit team orders
     if rights == 2:
         return "shop manager"  # He is also allowed to manage the article db
     if rights == 3:
