@@ -67,7 +67,7 @@ def render_alone_article_list(request: HttpRequest, u: Profile):
     items_per_page = 50
     if request.GET.get('objects'):
         items_per_page = int(request.GET["objects"])
-    prefilter = Article.objects.all().filter(group=None)
+    prefilter = Article.objects.all().filter(group=None).filter(underConstruction=False)
     if request.GET.get("namefilter"):
         prefilter = prefilter.filter(description=str(request.GET.get("namefilter")))
     if request.GET.get("onlyvisible"):

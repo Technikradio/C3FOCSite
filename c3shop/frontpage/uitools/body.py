@@ -19,7 +19,7 @@ def render_article_list():
     for grp in ArticleGroup.objects.all():
         # Render sample from group
         a += render_article_overview(Article.objects.all().filter(group=grp)[0], group=True)
-    for art in Article.objects.all().filter(group=None).filter(visible=True):
+    for art in Article.objects.all().filter(group=None).filter(underConstruction=False).filter(visible=True):
         a += render_article_overview(art)
     a += '</div>'
     return a

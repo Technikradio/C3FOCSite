@@ -78,6 +78,8 @@ class Article(models.Model):
                   "default to the chest size defined in the settings.")
     group = models.ForeignKey(ArticleGroup, null=True, on_delete=DO_NOTHING,
                               help_text='This will be null if the article doesnt belong to a group')
+    underConstruction = models.BooleanField(default=False, help_text='If this is set to true the' +
+            'article is being constructed')
     # The image visible in the list view
 
     def __str__(self):
