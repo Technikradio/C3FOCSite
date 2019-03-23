@@ -5,14 +5,16 @@ from ..models import Profile, Media, MediaUpload
 from .magic import compile_markdown, get_current_user
 
 import logging
+import ntpath
 import os
 import math
 import PIL
 from PIL import Image
 
 
-PATH_TO_UPLOAD_FOLDER_ON_DISK: str = "/usr/local/www/focweb/uploads/"
+PATH_TO_UPLOAD_FOLDER_ON_DISK: str = "/usr/local/www/focweb/"
 IMAGE_SCALE = 64
+
 
 def action_change_user_avatar(request: HttpRequest):
     try:
@@ -33,8 +35,8 @@ def action_change_user_avatar(request: HttpRequest):
 def handle_file(u: Profile, headline: str, category: str, text: str, file):
     m: Media = Media()
     upload_base_path: str = 'uploads/' + str(date.today().year)
-    high_res_file_name = upload_base_path + '/HIGHRES_' + file.name.replace(" ", "_")
-    low_res_file_name = upload_base_path + '/LOWRES_' + file.name.replace(" ", "_")
+    high_res_file_name = upload_base_path + '/HIGHRES_' + ntpath.basename(file.name.replace(" ", "_"))
+    low_res_file_name = upload_base_path + '/LOWRES_' + ntpath.basename(file.name.replace(" ", "_"))
     if not os.path.exists(PATH_TO_UPLOAD_FOLDER_ON_DISK + upload_base_path):
         os.makedirs(PATH_TO_UPLOAD_FOLDER_ON_DISK + upload_base_path)
     with open(high_res_file_name, 'wb+') as destination:
