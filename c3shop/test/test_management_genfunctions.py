@@ -5,7 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from frontpage.management.magic import compile_markdown
 from frontpage.management import media_actions
-from frontpage.models import Profile
+from frontpage.models import Profile, Media, MediaUpload
 
 from .init_database import init_db
 
@@ -40,6 +40,15 @@ class TestManagementGenericFunctions(TestCase):
         self.assertTrue(os.path.isfile(assumed_path_hr))
         self.assertTrue(os.path.isfile(assumed_path_lr))
         self.assertTrue(os.path.getsize(assumed_path_hr) > os.path.getsize(assumed_path_lr))
+        med_obj: Media = Media.objects.all()[0]
+        self.assertEquals(med_obj.headline, "A Test image headline")
+        self.assertEquals(med_obj.category, "Silly Test Images")
+        self.assertEquals(med_obj.text, "This is a more detailed description of a CC test image")
+        self.assertEquals(med_obj.cachedText,
+                          compile_markdown("This is a more detailed description of a CC test image"))
+        self.assertEquals(med_obj.lowResFile, "/" + assumed_path_lr)
+        self.assertEquals(med_obj.highResFile, "/" + assumed_path_hr)
+        self.assertEquals(MediaUpload.objects.get(MID=med_obj).UID, p)
         # Clean up FS
         os.remove(assumed_path_lr)
         os.remove(assumed_path_hr)
