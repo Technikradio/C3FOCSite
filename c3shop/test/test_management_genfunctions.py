@@ -39,6 +39,7 @@ class TestManagementGenericFunctions(TestCase):
         assumed_path_lr = "uploads/" + str(date.today().year) + "/LOWRES_cc-test-image.jpg"
         self.assertTrue(os.path.isfile(assumed_path_hr))
         self.assertTrue(os.path.isfile(assumed_path_lr))
+        self.assertTrue(os.path.getsize(assumed_path_hr) > os.path.getsize(assumed_path_lr))
         # Clean up FS
         os.remove(assumed_path_lr)
         os.remove(assumed_path_hr)
