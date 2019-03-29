@@ -12,10 +12,11 @@ env:
         - DJANGO_VERSION=2.1.4
         - DJANGO_VERSION=2.1.0
         - DJANGO_VERSION=2.1.5
+        - DJANGO_Version=2.1.7
 install:
         - pip install Django==$DJANGO_VERSION markdown MarkdownSuperscript MarkdownSubscript
         - pip install pyembed-markdown django_extensions pillow
         - pip install markdown-checklist reportlab qrcode django-email-extras
-        - pip install django-helpdesk django-bootstrap4
+        - pip install django-helpdesk django-bootstrap4 django-nose coverage
 script:
         - cd c3shop && python3 manage.py test

@@ -17,6 +17,7 @@ def render_features_bar(u: Profile):
     a += '<a href="/admin/reservations">Reservations</a><br />'
     if u.rights > 2:
         a += '<a href="/admin/settings">Global settings</a><br />'
+        a += '<br /><a href="/admin/changepassword">Change Password</a><br />'
     a += '<br/><a href="/logout/"> Logout </a><br/>'
     a += '</div>'
     return a
@@ -90,13 +91,15 @@ def render_quick_article_panel():
 
 def render_error_panel(request: HttpRequest):
     p = "error-panel"
+    idtag = ""
     if request.GET.get("success"):
         p = "success-panel"
+        idtag = ' id="hideMe" '
     if request.GET.get("error"):
         return '<div class="' + p + ' w3-row w3-container">Something produced an error: ' + request.GET["error"] + \
                '</div>'
     elif request.GET.get("msgid"):
-        return '<div class="' + p + ' w3-row w3-container">' + get_message(request.GET["msgid"]) + '</div>'
+        return '<div' + idtag + ' class="' + p + ' w3-row w3-container">' + get_message(request.GET["msgid"]) + '</div>'
     return ""
 
 

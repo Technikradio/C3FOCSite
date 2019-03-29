@@ -20,7 +20,7 @@ class TestManagementGenericFunctions(TestCase):
         this_dir, this_filename = os.path.split(__file__)
         self.test_image_path = os.path.join(this_dir, "testdata", "cc-test-image.jpg")
         media_actions.PATH_TO_UPLOAD_FOLDER_ON_DISK = ""
-        init_db()
+        init_db(suppress_warnings=True)
         pass
 
     def test_markdown_generation(self):

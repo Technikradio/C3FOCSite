@@ -5,3 +5,6 @@ changepassword.rulemismatch;The new password does not match the criteria.
 changepassword.oldmismatch;The current password is wrong.
 changepassword.success;Successfully changed password.
 changepassword.oldisnew;You can't use the old password as the new one.
+editgroup.brokenrequest;Somehow your request got corrupted. Please try again.
+editgroup.updatefailed;Something went wrong while updating the group.
+editgroup.updated;Successfully updated group.

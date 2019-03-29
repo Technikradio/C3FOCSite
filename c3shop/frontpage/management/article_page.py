@@ -29,19 +29,20 @@ def render_objects_form(request: HttpRequest):
         only_visible = True
     f: Form = Form(request.path)
     f.method = "get"
-    f.add(PlainText("<h4>Filter:</h4><br />Objects per page: "))
+    f.add(PlainText('<details><summary class="button">Toggle filter</summary><h4>Filter:</h4><br />Objects per page: '))
     f.add(NumberField(name="objects", button_text=str(items_per_page)))
     f.add(PlainText("Description: "))
     f.add(TextField(name="namefilter", button_text=name_filter, required=False))
     f.add(CheckBox(text="Display only visible entries: ", name="onlyvisible", checked=CheckEnum.get_state(only_visible)))
     f.add(SubmitButton(button_text="Sort"))
+    f.add(PlainText("</details>"))
     return f.render_html(request)
 
 
 def render_group_list(request: HttpRequest, u: Profile):
     a = '<h4>Article groups:</h4>'
     if u.rights > 1:
-        a += '<a href="' + request.path + '?msgid=notimplemented" class="button">Add Group</a><br />'
+        a += '<a href="/admin/articles/editgroup" class="button">Add Group</a><br />'
 
     prefilter = ArticleGroup.objects.all()
     if request.GET.get("namefilter"):
@@ -53,7 +54,9 @@ def render_group_list(request: HttpRequest, u: Profile):
     for g in prefilter:
         a += '<tr>'
         if u.rights > 1:
-            a += '<td> Not yet Implemented </td><td>' + str(g.id) + '</td>'
+            a += '<td><a href="/admin/articles/editgroup?gid=' + str(g.id) + \
+                    '" ><img src="/staticfiles/frontpage/edit.png" class="button-img" />' + \
+                    '</a></td><td>' + str(g.id) + '</td>'
         a += '<td>' + str(g.group_name) + '</td><td>' + body.render_image(g.group_flash_image, cssclass="icon")
         a += '</td><td> Not yet implemted </td></tr>'
     a += '</table>'

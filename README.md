@@ -27,6 +27,10 @@ the following:
  * django-helpdesk
  * django-bootstrap4
 
+For testing:
+ * django-nose
+ * coverage
+
 ## Database engine to use
 While it is fine to test the software using sqlite the intendet engine
 for production ussage is postgresql. The software works with pgsql

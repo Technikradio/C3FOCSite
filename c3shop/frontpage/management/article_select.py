@@ -6,9 +6,11 @@ from ..models import Article
 from .page_skeleton import render_headbar, render_footer
 from .form import Form, NumberField, TextArea, SubmitButton, PlainText
 from .magic import get_article_pcs_free
+from ..uitools.body import get_type_string
 
 
 def render_article_selection_page(request: HttpRequest):
+    # TODO make this method group aware
     page = 1
     if request.GET.get('page'):
         page = int(request.GET['page'])
@@ -27,7 +29,8 @@ def render_article_selection_page(request: HttpRequest):
     end_range = (page + 1) * items_per_page
     a = render_headbar(request, title="Select article")
     a += '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
-    a += '<h3>Please select your desired article</h3><table><tr><th>Select</th><th>Preview</th><th>Title</th></tr>'
+    a += '<h3>Please select your desired article</h3><table><tr><th>Select</th><th>Preview</th>' \
+            + '<th>Title</th><th>Size</th><th>Type</th></tr>'
     objects = Article.objects.filter(pk__range=(start_range, end_range))
     for article in objects:
         s: str = None
@@ -38,7 +41,8 @@ def render_article_selection_page(request: HttpRequest):
             s = "/staticfiles/frontpage/no-image.png"
         a += '<tr><td><a href="/admin/reservations/article-detail-select?article_id=' + str(article.pk)
         a += '"><img src="/staticfiles/frontpage/order-article.png" class="button-img"/></a></td><td><img src="'
-        a += s + '" /></td><td>' + article.description + '</td></tr>'
+        a += s + '" /></td><td>' + article.description + '</td><td>' + article.size + '</td><td>' + \
+                get_type_string(article.type) + '</td></tr>'
     a += '</table>'
     if page > 1:
         a += '<a href="' + request.path + '?page=' + str(page - 1) + '&objects=' + str(objects) + \
