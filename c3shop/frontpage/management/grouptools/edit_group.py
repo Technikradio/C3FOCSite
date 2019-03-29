@@ -1,10 +1,10 @@
 import operator
 
 from django.http import HttpRequest
-from ..models import ArticleGroup, Article
-from .form import Form, SubmitButton, TextField, PlainText, NumberField, Select, TextArea, FieldGroup, CheckBox
-from .dashboard_page import render_error_panel
-from ..uitools.body import get_type_string
+from frontpage.models import ArticleGroup, Article
+from frontpage.management.form import Form, SubmitButton, TextField, PlainText, NumberField, Select, TextArea, FieldGroup, CheckBox
+from frontpage.management.dashboard_page import render_error_panel
+from frontpage.uitools.body import get_type_string
 
 def get_article_dict(grp: ArticleGroup):
     arts = Article.objects.all().filter(group=grp)

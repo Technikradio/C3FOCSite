@@ -1,5 +1,5 @@
 from django.http import HttpRequest
-from .form import Form, FileUpload, PlainText, TextField, TextArea, SubmitButton
+from frontpage.management.form import Form, FileUpload, PlainText, TextField, TextArea, SubmitButton
 
 
 def render_single_form(request: HttpRequest):

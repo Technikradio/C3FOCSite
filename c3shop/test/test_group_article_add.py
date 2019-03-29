@@ -1,7 +1,9 @@
 from django.test import TestCase
 
 from frontpage.models import Article, ArticleGroup, Profile
-from frontpage.management.grouptools.grouparticlesupdate import add_article_to_group, release_group, update_group_metadata
+from frontpage.management.grouptools.grouparticlesrelease import release_group
+from frontpage.management.grouptools.grouparticlesadd import add_article_to_group
+from frontpage.management.grouptools.groupmetaupdate import update_group_metadata
 from frontpage.management.grouptools.grouparticlesupdate import update_group_article_matrix
 
 

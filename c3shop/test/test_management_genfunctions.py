@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from frontpage.management.magic import compile_markdown
-from frontpage.management import media_actions
+from frontpage.management.mediatools import media_actions
 from frontpage.models import Profile, Media, MediaUpload
 
 from .init_database import init_db

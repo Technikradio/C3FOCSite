@@ -1,14 +1,19 @@
-from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page, reservation_page, reservation_actions
-from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
-from .management import edit_article, edit_reservation, article_select, reservation_processing, settings_page
-from .management import edit_settings, export, media_select, password_page, edit_group
+from .management import random_actions
+from frontpage.management.mediatools import media_page, media_upload_page, media_actions, media_select
+from .management import edit_reservation, reservation_processing, settings_page
+from frontpage.management.articletools import article_select, article_actions, article_page, edit_article
+from .management import edit_settings, export, password_page
+from frontpage.management.grouptools import edit_group
 
-from .management.grouptools.grouparticlesupdate import handle_group_articles_request, handle_group_article_add
-from .management.grouptools.grouparticlesupdate import handle_group_metadata_update, handle_release_group_request
+from .management.grouptools.grouparticlesupdate import handle_group_articles_request
+from frontpage.management.grouptools.grouparticlesadd import handle_group_article_add
+from frontpage.management.grouptools.grouparticlesrelease import handle_release_group_request
+from frontpage.management.grouptools.groupmetaupdate import handle_group_metadata_update
 from .uitools import ulog, searching
 
 # Create your views here.

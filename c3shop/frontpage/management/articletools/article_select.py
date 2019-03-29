@@ -2,11 +2,11 @@
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from ..models import Article
-from .page_skeleton import render_headbar, render_footer
-from .form import Form, NumberField, TextArea, SubmitButton, PlainText
-from .magic import get_article_pcs_free
-from ..uitools.body import get_type_string
+from frontpage.models import Article
+from frontpage.management.page_skeleton import render_headbar, render_footer
+from frontpage.management.form import Form, NumberField, TextArea, SubmitButton, PlainText
+from frontpage.management.magic import get_article_pcs_free
+from frontpage.uitools.body import get_type_string
 
 
 def render_article_selection_page(request: HttpRequest):

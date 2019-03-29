@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from frontpage.models import Article, ArticleGroup
-from frontpage.management.edit_group import get_article_dict, get_default_description
+from frontpage.management.grouptools.edit_group import get_article_dict, get_default_description
 
 
 class TestManagementGenericFunctions(TestCase):

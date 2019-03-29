@@ -1,9 +1,9 @@
-from ..models import Article, Profile, Media, ArticleGroup
-from ..uitools import body
+from frontpage.models import Article, Profile, Media, ArticleGroup
+from frontpage.uitools import body
 from django.http import HttpRequest
-from .magic import get_current_user, get_article_pcs_free
-from .form import Form, PlainText, SubmitButton, NumberField, TextField, CheckBox, CheckEnum
-from .dashboard_page import render_error_panel
+from frontpage.management.magic import get_current_user, get_article_pcs_free
+from frontpage.management.form import Form, PlainText, SubmitButton, NumberField, TextField, CheckBox, CheckEnum
+from frontpage.management.dashboard_page import render_error_panel
 
 
 def generate_edit_link(a: Article):

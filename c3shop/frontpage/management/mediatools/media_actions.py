@@ -1,8 +1,8 @@
 from datetime import date, time
 from django.shortcuts import redirect
 from django.http import HttpRequest, HttpResponseBadRequest
-from ..models import Profile, Media, MediaUpload
-from .magic import compile_markdown, get_current_user
+from frontpage.models import Profile, Media, MediaUpload
+from frontpage.management.magic import compile_markdown, get_current_user
 
 import logging
 import ntpath

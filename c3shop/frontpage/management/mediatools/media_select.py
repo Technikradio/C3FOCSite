@@ -1,8 +1,8 @@
 from django.http import HttpRequest
 from django.http import HttpResponseNotAllowed
 from django.http import HttpResponse
-from ..models import Media
-from .page_skeleton import render_headbar, render_footer
+from frontpage.models import Media
+from frontpage.management.page_skeleton import render_headbar, render_footer
 
 
 def render_media_selection_page(request: HttpRequest):

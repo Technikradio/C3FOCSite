@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpRequest, HttpResponseForbidden, Stream
 from django.core.exceptions import ObjectDoesNotExist
 from ..models import GroupReservation, Article, ArticleRequested, Media, Post
 from .magic import timestamp
-from .media_actions import PATH_TO_UPLOAD_FOLDER_ON_DISK
+from frontpage.management.mediatools.media_actions import PATH_TO_UPLOAD_FOLDER_ON_DISK
 import logging
 import qrcode
 import base64
