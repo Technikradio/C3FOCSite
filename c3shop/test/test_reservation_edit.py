@@ -1,10 +1,10 @@
 from django.test import TestCase
 
 from frontpage.models import Article, ArticleGroup
-from frontpage.management.grouptools.edit_group import get_article_dict, get_default_description
+from frontpage.management.articletools.article_select import get_group_variations
+from frontpage.uitools.body import get_type_string
 
-
-class TestGroupMatrix(TestCase):
+class TestReservationEditing(TestCase):
     def setUp(self):
         # Setup test articles
         g: ArticleGroup = ArticleGroup()
@@ -65,17 +65,8 @@ class TestGroupMatrix(TestCase):
         pass
 
 
-    def test_article_group_dictionary(self):
-        sizes, types, dictionary = get_article_dict(ArticleGroup.objects.all()[0])
-        # Due to django clean up there shouldn't be any further groups
-        self.assertEquals(sizes, ["S", "XXL"])
-        self.assertEquals(types, [2, 3])
-        self.assertEquals(dictionary, {
-            "S": {2: (169, "1111", 4, "A description", True),
-                3: (250, "2500", 2, "A description", True)},
-            "XXL": {2: (1313, "1337", 3, "A description", True),
-                3: (100, "3000", 1, "A different description", False)}})
+    def test_group_vars_generation(self):
+        sizes, types = get_group_variations(ArticleGroup.objects.all()[0])
+        self.assertTrue(" S XXL " == sizes)
+        self.assertTrue(" " + get_type_string(2) + " " + get_type_string(3) + " " == types)
 
-    def test_default_description(self):
-        self.assertEquals(get_default_description(ArticleGroup.objects.all()[0]),
-                          ("A description", 100, "A long text"))
