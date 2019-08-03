@@ -1,8 +1,12 @@
 from django.test import TestCase
 
-from frontpage.models import Article, ArticleGroup
+from frontpage.models import Article, ArticleGroup, GroupReservation, ArticleRequested
 from frontpage.management.articletools.article_select import get_group_variations
+from frontpage.management.magic import get_article_pcs_free
 from frontpage.uitools.body import get_type_string
+
+#from .tools import make_testing_db
+#from .init_database import init_db
 
 class TestReservationEditing(TestCase):
     def setUp(self):
@@ -62,6 +66,8 @@ class TestReservationEditing(TestCase):
         a.chestsize = 100
         a.underConstruction = True
         a.save()
+        #init_db()
+        #make_testing_db()
         pass
 
 
@@ -69,4 +75,30 @@ class TestReservationEditing(TestCase):
         sizes, types = get_group_variations(ArticleGroup.objects.all()[0])
         self.assertTrue(" S XXL " == sizes)
         self.assertTrue(" " + get_type_string(2) + " " + get_type_string(3) + " " == types)
+
+    def test_reservation_group_append(self):
+        pass
+
+    def test_reservation_single_append(self):
+        pass
+
+    def test_reservation_article_decrease(self):
+        a: Article = Article.objects.get(pk=1)
+        self.assertEqual(get_article_pcs_free(a), 100)
+        res: GroupReservation = GroupReservation()
+        res.ready = False
+        res.open = True
+        res.notes = ""
+        res.submitted = True
+        import datetime
+        res.pickupDate = datetime.datetime.now()
+        res.save()
+        req: ArticleRequested = ArticleRequested()
+        req.RID = res
+        req.AID = a
+        req.amount = 15
+        req.notes = ""
+        req.save()
+        self.assertEqual(get_article_pcs_free(a), 85)
+
 

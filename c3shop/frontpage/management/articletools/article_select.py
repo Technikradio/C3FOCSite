@@ -121,6 +121,7 @@ def render_detail_selection(request: HttpRequest):
                 button_text="1"))
             f.add_content(PlainText("Maybe add some optional notes:"))
             f.add_content(TextArea(name="notes", label_text="Notes:", text=""))
+            f.add_content(PlainText("<br />"))
         else:
             grp = a.group
             f.action_url = "/admin/actions/add-article-to-reservation?group_id=" + str(grp.pk) + \

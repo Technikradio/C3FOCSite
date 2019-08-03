@@ -39,6 +39,20 @@ def render_objects_form(request: HttpRequest):
     return f.render_html(request)
 
 
+def get_group_prices(g: ArticleGroup):
+    articles = Article.objects.all().filter(group=g)
+    prices = []
+    for a in articles:
+        if not a.price in prices:
+            prices.append(a.price)
+    a = ''
+    for p in prices:
+        if a != '':
+            a += ', '
+        a += body.render_price(p)
+    return a
+
+
 def render_group_list(request: HttpRequest, u: Profile):
     a = '<h4>Article groups:</h4>'
     if u.rights > 1:
@@ -58,7 +72,7 @@ def render_group_list(request: HttpRequest, u: Profile):
                     '" ><img src="/staticfiles/frontpage/edit.png" class="button-img" />' + \
                     '</a></td><td>' + str(g.id) + '</td>'
         a += '<td>' + str(g.group_name) + '</td><td>' + body.render_image(g.group_flash_image, cssclass="icon")
-        a += '</td><td> Not yet implemted </td></tr>'
+        a += '</td><td>' + get_group_prices(g) + '</td></tr>'
     a += '</table>'
     return a
 

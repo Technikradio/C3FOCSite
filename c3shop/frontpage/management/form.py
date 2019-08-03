@@ -152,16 +152,18 @@ class InputField(FormObject):
 
     do_cr_after_input = True
     required = True
+    enabled = True
     checked: CheckEnum = CheckEnum.DISABLED
     css_class = ""
 
     def __init__(self, button_text="", name="", field_type="text", do_cr_after_input=True, required=True,
-                 component_checked: CheckEnum = CheckEnum.DISABLED):
+                 component_checked: CheckEnum = CheckEnum.DISABLED, enabled=True):
         super(InputField, self).__init__(name=name)
         self.button_text = button_text
         self.input_type = field_type
         self.do_cr_after_input = do_cr_after_input
         self.required = required
+        self.enabled = enabled
         self.checked = component_checked
         self.css_class = ""
 
@@ -183,6 +185,10 @@ class InputField(FormObject):
             a += ' pattern="' + self.regex_pattern + '"'
         if self.required:
             a += ' required="' + str(self.required).lower() + '"'
+        if self.enabled:
+            pass
+        else:
+            a += ' disabled="disabled" readonly'
         if self.checked == CheckEnum.CHECKED:
             a += " checked"
         if end:
@@ -194,9 +200,9 @@ class InputField(FormObject):
 
 class TextField(InputField):
 
-    def __init__(self, button_text="", name="", do_cr_after_input=True, required=False):
+    def __init__(self, button_text="", name="", do_cr_after_input=True, required=False, enabled=True):
         super(TextField, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
-                                        field_type="text", required=required)
+                                        field_type="text", required=required, enabled=enabled)
 
 
 class PasswordField(InputField):
