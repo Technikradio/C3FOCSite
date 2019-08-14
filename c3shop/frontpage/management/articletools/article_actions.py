@@ -1,8 +1,8 @@
 from django.shortcuts import redirect
 from django.http import HttpRequest
-from ..models import Article, ArticleMedia, Profile, Media, Settings
-from .magic import get_current_user, parse_bool
-from .magic import compile_markdown
+from frontpage.models import Article, ArticleMedia, Profile, Media, Settings
+from frontpage.management.magic import get_current_user, parse_bool
+from frontpage.management.magic import compile_markdown
 import logging
 
 logger: logging.Logger = logging.getLogger(__name__)

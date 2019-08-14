@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from frontpage.models import Profile, Settings
 
 
-def init_db():
+def init_db(suppress_warnings=False):
     # add a default user 'admin' using password 'password' and set default values for the header and footer settings
     # Profile = apps.get_model('frontpage', 'Profile')
     # Settings = apps.get_model('frontpage', 'Settings')
@@ -58,8 +58,9 @@ def init_db():
     cs.changeReason = "Initial setup"
     cs.changedByUser = p
     cs.save()
-    print('created default user \'admin\' with password \'password\' and an random mail address.')
-    print('Make sure to change both the password and the mail address.')
+    if not suppress_warnings:
+        print('created default user \'admin\' with password \'password\' and an random mail address.')
+        print('Make sure to change both the password and the mail address.')
     pass
 
 # init_db()

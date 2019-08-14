@@ -1,7 +1,7 @@
 from django.http import HttpRequest
-from ..models import Media, Profile
-from ..models import MediaUpload
-from .magic import get_current_user
+from frontpage.models import Media, Profile
+from frontpage.models import MediaUpload
+from frontpage.management.magic import get_current_user
 
 
 def render_media_list(request: HttpRequest, u: Profile):

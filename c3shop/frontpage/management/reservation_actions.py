@@ -1,8 +1,9 @@
 from django.http import HttpRequest, HttpResponseRedirect
 # from django.shortcuts import redirect
-from ..models import GroupReservation, ArticleRequested, Article
+from ..models import GroupReservation, ArticleRequested, Article, ArticleGroup
 from .magic import get_current_user
 import json
+import datetime
 
 RESERVATION_CONSTRUCTION_COOKIE_KEY: str = "org.technikradio.c3shop.frontpage" + \
         ".reservation.cookiekey"
@@ -15,17 +16,54 @@ EMPTY_COOKY_VALUE: str = '''
 '''
 
 
+def update_reservation_articles(postdict, rid):
+    res: GroupReservation = GroupReservation.objects.get(id=rid)
+
+
+
 def add_article_action(request: HttpRequest, default_foreward_url: str):
     forward_url: str = default_foreward_url
     if request.GET.get("redirect"):
         forward_url = request.GET["redirect"]
-    current_reservation = json.loads(request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY))
-    aid: int = int(request.GET.get("article_id"))
-    quantity: int = int(request.POST["quantity"])
-    notes: str = request.POST["notes"]
-    current_reservation.get("articles").append({"id": aid, "quantity": quantity, "notes": notes})
-    response = HttpResponseRedirect(forward_url)
-    response.set_cookie(RESERVATION_CONSTRUCTION_COOKIE_KEY, json.dumps(current_reservation, indent=4))
+    else:
+        forward_url = "/admin"
+    if "rid" not in request.GET:
+        return HttpResponseRedirect("/admin?error=Missing%20reservation%20id%20in%20request")
+    u: Profile = get_current_user(request)
+    current_reservation = GroupReservation.objects.get(id=str(request.GET["rid"]))
+    if current_reservation.createdByUser != u and u.rights < 2:
+        return HttpResponseRedirect("/admin?error=noyb")
+    if current_reservation.submitted == True:
+        return HttpResponseRedirect("/admin?error=Already%20submitted")
+    # Test for multiple or single article
+    if "article_id" in request.POST:
+        # Actual adding of article
+        aid: int = int(request.GET.get("article_id"))
+        quantity: int = int(request.POST["quantity"])
+        notes: str = request.POST["notes"]
+        ar = ArticleRequested()
+        ar.AID = Article.objects.get(id=aid)
+        ar.RID = current_reservation
+        ar.amount = quantity
+        ar.notes = notes
+        ar.save()
+    # Actual adding of multiple articles
+    else:
+        if "group_id" not in request.GET:
+            return HttpResponseRedirect("/admin?error=missing%20group%20id")
+        g: ArticleGroup = ArticleGroup.objects.get(id=int(request.GET["group_id"]))
+        for art in Article.objects.all().filter(group=g):
+            if str("quantity_" + str(art.id)) not in request.POST or str("notes_" + str(art.id)) not in request.POST:
+                return HttpResponseRedirect("/admin?error=Missing%20article%20data%20in%20request")
+            amount = int(request.POST["quantity_" + str(art.id)])
+            if amount > 0:
+                ar = ArticleRequested()
+                ar.AID = art
+                ar.RID = current_reservation
+                ar.amount = amount
+                ar.notes = str(request.POST[str("notes_" + str(art.id))])
+                ar.save()
+    response = HttpResponseRedirect(forward_url + "?rid=" + str(current_reservation.id))
     return response
 
 
@@ -35,44 +73,20 @@ def write_db_reservation_action(request: HttpRequest):
     cookie stored inside the client. This function automatically crafts
     the required HttpResponse.
     """
-    forward_url = "/admin/reservations"
+    u: Profile = get_current_user(request)
+    forward_url = "/admin?success"
+    if u.rights > 0:
+        forward_url = "/admin/reservations"
     if request.GET.get("redirect"):
         forward_url = request.GET["redirect"]
-    current_reservation = json.loads(request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY))
-    r: GroupReservation = None
-    fresh: bool = False
-    if not request.GET.get("id"):
-        r = GroupReservation()
-        fresh = True
-    else:
-        r = GroupReservation.objects.get(pk=int(request.GET["id"]))
-    r.createdByUser = get_current_user(request)
-    r.open = True
-    r.notes = current_reservation.get("notes")
-    r.pickupDate = current_reservation.get("pickup_date")  # TODO parse to date
-    r.ready = False
-    r.save()
-    for arts in current_reservation.get("articles"):
-        aid = int(arts.get("id"))
-        q = int(arts.get("quantity"))
-        notes = arts.get("notes")
-        a: Article = Article.objects.get(pk=aid)
-        req: ArticleRequested = None
-        if fresh:
-            req = ArticleRequested()
-        else:
-            if ArticleRequested.objects.all().filter(AID=a).filter(RID=r).count() > 0:
-                req = ArticleRequested.objects.all().filter(AID=a).filter(RID=r)[0]
-            else:
-                req = ArticleRequested()
-        req.RID = r
-        req.AID = a
-        req.amount = q
-        req.notes = notes
-        req.save()
-    # Do not simply redirect but also delete the construction cookie
+    if "payload" not in request.GET:
+        return HttpResponseRedirect("/admin?error=No%20id%20provided")
+    current_reservation = GroupReservation.objects.get(id=int(request.GET["payload"]))
+    if current_reservation.createdByUser != u and u. rights < 2:
+        return HttpResponseRedirect("/admin?error=noyb")
+    current_reservation.submitted = True
+    current_reservation.save()
     res: HttpResponseRedirect = HttpResponseRedirect(forward_url)
-    res.delete_cookie(RESERVATION_CONSTRUCTION_COOKIE_KEY)
     return res
 
 
@@ -82,20 +96,31 @@ def manipulate_reservation_action(request: HttpRequest, default_foreward_url: st
     a cookie. This function automatically crafts the required response.
     """
     js_string: str = ""
-    if request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY):
-        js_string = request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY)
+    r: GroupReservation = None
+    u: Profile = get_current_user(request)
+    if "rid" in request.GET:
+        # update reservation
+        r = GroupReservation.objects.get(id=int(request.GET["rid"]))
+    elif u.number_of_allowed_reservations < GroupReservation.objects.all().filter(createdByUser=u).count():
+        r = GroupReservation()
+        r.createdByUser = u
+        r.ready = False
+        r.open = True
+        r.pickupDate = datetime.datetime.now()
     else:
-        js_string = EMPTY_COOKY_VALUE
-    current_reservation = json.loads(js_string)
+        return HttpResponseRedirect("/admin?error=noyb")
     if request.POST.get("notes"):
-        current_reservation["notes"] = request.POST["notes"]
-    if request.POST.get("pickup_date"):
-        current_reservation["pickup_date"] = request.POST["pickup_date"]
+        r.notes = request.POST["notes"]
+    if request.POST.get("contact"):
+        r.responsiblePerson = str(request.POST["contact"])
+    if (r.createdByUser == u or o.rights > 1) and not r.submitted:
+        r.save()
+    else:
+        return HttpResponseRedirect("/admin?error=noyb")
     forward_url: str = default_foreward_url
     if request.GET.get("redirect"):
         forward_url = request.GET["redirect"]
-    response: HttpResponseRedirect = HttpResponseRedirect(forward_url)
-    response.set_cookie(RESERVATION_CONSTRUCTION_COOKIE_KEY, json.dumps(current_reservation, indent=4))
+    response: HttpResponseRedirect = HttpResponseRedirect(forward_url + "?rid=" + str(r.id))
     return response
 
 
@@ -104,14 +129,16 @@ def action_delete_article(request: HttpRequest):
     This function removes an article from the reservation and returnes
     the required resonse.
     """
-    response = HttpResponseRedirect("/admin/reservations/edit")
-    if request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY):
-        js_string = request.COOKIES.get(RESERVATION_CONSTRUCTION_COOKIE_KEY)
+    u: Profile = get_current_user(request)
+    if "rid" in request.GET:
+        response = HttpResponseRedirect("/admin/reservations/edit?rid=" + str(int(request.GET["rid"])))
     else:
-        js_string = EMPTY_COOKY_VALUE
-    current_reservation = json.loads(js_string)
+        return HttpResponseRedirect("/admin?error=Missing%20reservation%20id%20in%20request")
     if request.GET.get("id"):
-        aid: int = int(request.GET["id"])
-        del current_reservation.get("articles")[aid]
-    response.set_cookie(RESERVATION_CONSTRUCTION_COOKIE_KEY, json.dumps(current_reservation, indent=4))
+        aid: ArticleRequested = ArticleRequested.objects.get(id=int(request.GET["id"]))
+        r: GroupReservation = GroupReservation.objects.get(id=int(request.GET["rid"]))
+        if (aid.RID.createdByUser == u or u.rights > 1) and aid.RID == r and not r.submitted:
+            aid.delete()
+        else:
+            return HttpResponseRedirect("/admin?error=You're%20not%20allowed%20to%20do%20this")
     return response

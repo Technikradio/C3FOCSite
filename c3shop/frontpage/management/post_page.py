@@ -1,5 +1,6 @@
 from django.http import HttpRequest
-from ..models import Post
+from ..models import Post, Profile
+from . import magic
 
 
 def generate_edit_link(p: Post):
@@ -26,9 +27,12 @@ def render_post_list(request: HttpRequest):
         start_range = 0
     end_range = (page + 1) * items_per_page
     a = '<div class="admin-popup w3-row w3-padding-64 w3-twothird w3-container">'
-    a += '<h3>Posts:</h3>Add Post: <a href="/admin/posts/edit"><img class="button-img" alt="Add a new Post" ' \
-         'src="/staticfiles/frontpage/add-post.png"/></a><br />' \
-        '<table><tr><th> Edit </th><th> Post ID </th><th>Post title</th><th> visibility level</th>' \
+    a += '<h3>Posts:</h3>'
+    u: Profile = magic.get_current_user(request)
+    if u.rights > 1:
+        a += 'Add Post: <a href="/admin/posts/edit"><img class="button-img" alt="Add a new Post" ' \
+            'src="/staticfiles/frontpage/add-post.png"/></a><br />'
+    a += '<table><tr><th> Edit </th><th> Post ID </th><th>Post title</th><th> visibility level</th>' \
         '<th> Author </th><th> Delete </th></tr>'
     objects = Post.objects.filter(pk__range=(start_range, end_range))
     for post in objects:

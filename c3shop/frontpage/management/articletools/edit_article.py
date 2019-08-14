@@ -1,8 +1,8 @@
 from django.http import HttpRequest
-from . import page_skeleton, magic
-from .form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, CheckBox, CheckEnum, Select
-from ..models import Article, ArticleMedia
-from ..uitools.dataforge import get_csrf_form_element
+from frontpage.management import page_skeleton, magic
+from frontpage.management.form import Form, TextField, PlainText, TextArea, SubmitButton, NumberField, CheckBox, CheckEnum, Select
+from frontpage.models import Article, ArticleMedia
+from frontpage.uitools.dataforge import get_csrf_form_element
 
 
 def render_image_table(art: Article):

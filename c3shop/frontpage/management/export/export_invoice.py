@@ -1,17 +1,14 @@
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph
-from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
-from django.http import HttpResponse, HttpRequest, HttpResponseForbidden, StreamingHttpResponse
-from django.core.exceptions import ObjectDoesNotExist
-from ..models import GroupReservation, Article, ArticleRequested, Media, Post
-from .magic import timestamp
-from .media_actions import PATH_TO_UPLOAD_FOLDER_ON_DISK
+from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
+from frontpage.models import GroupReservation, Article, ArticleRequested
+from frontpage.management.magic import timestamp
+from frontpage.uitools.body import get_type_string
 import logging
 import qrcode
-import base64
-import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +61,7 @@ def render_article_request(p: canvas.Canvas, arequested: ArticleRequested, y: in
     if textheight > (y - 50) and not retry:
         return y, arequested
     p.line(50, y, A4[0] - 50, y)
-    p.drawString(55, y - 12, str(a.description))
+    p.drawString(55, y - 12, str(a.description + " [" + a.size + ", " + get_type_string(a.type) + "]"))
     p.drawString(155, y - 12, str(arequested.amount))
     text.drawOn(p, 235, y - 5 - textheight)
     r = y - 15 - textheight
@@ -125,7 +122,8 @@ def export_orders_to_pdf(request: HttpRequest, res):
             p.drawString(25, h - 35, "Reservation by: " + str(r.createdByUser.displayName))
             p.line(25, h - 45, w - 25, h - 45)
             # render qr code
-            i = generate_qr_link(request.build_absolute_uri('/') + "admin/confirm?back_url=/admin/reservations&forward_url=/admin/reservations/finish&payload=" + str(r.id))
+            i = generate_qr_link(request.build_absolute_uri('/') + \
+                    "admin/confirm?back_url=/admin/reservations&forward_url=/admin/reservations/finish&payload=" + str(r.id))
             p.drawInlineImage(i, w - 150, h - 175, 125, 125)
             p.setFont("Helvetica", 11)
             # text = p.beginText(30, h - 75)
@@ -240,177 +238,3 @@ def export_orders_to_pdf(request: HttpRequest, res):
     return response
 
 
-def export_reject_statistics(request: HttpRequest):
-    # Begin PDF
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="FOC-RejectStatistics_' + timestamp() + '.pdf"'
-    buffer = BytesIO()
-    w, h = landscape(A4)  # Reversed return values in order to produce landscape orientation
-    p: canvas = canvas.Canvas(buffer, pagesize=landscape(A4), pageCompression=0)
-    p.setTitle("C3FOC - Missing Merch statistics")
-    p.setAuthor("The robots in slavery by " + request.user.username)
-    p.setSubject("This document, originally created at " + timestamp(filestr=False) + 
-                 ", is a template for the missing merchandise statistics.")
-    page = 1
-    p.setFont("Helvetica", 11)
-    # Render the Article list
-    cy = h - 50
-    for a in Article.objects.all():
-        p.line(50, cy, w - 50, cy)
-        p.drawString(55, cy - 10, "[" + str(a.id) + "]: " + str(a.description))
-        p.line(50, cy - 50, w - 50, cy - 50)
-        p.line(50, cy, 50, cy - 50)
-        p.line(w - 50, cy, w - 50, cy - 50)
-        cy -= 50
-        if cy <= 65:
-            # Break page
-            p.drawString(50, 50, "Page " + str(page) + ", " + timestamp())
-            p.showPage()
-            page += 1
-            cy = h - 50
-    if page == 1:
-        p.drawString(50, 50, timestamp(filestr=False))
-    # Finish PDF
-    p.showPage()
-    p.save()
-    pdf = buffer.getvalue()
-    buffer.close()
-    response.write(pdf)
-    return response
-
-
-"""
-========================================================================================================
-Begin Section of data export feature ===================================================================
-========================================================================================================
-There should be the consideration to put this into a separate file and use the print submodule for PDFs.
-"""
-
-
-class DataDumpIterator:
-
-    step: int = 8
-    payload = None
-
-    def __iter__(self):
-        self.step = 8
-        self.payload = None
-        return self
-
-    def __next__(self):
-        if self.step == 0:
-            raise StopIteration
-        elif self.step == 8:
-            # Return stored images
-            if self.payload is None:
-                self.payload = 1 # Look up first id
-            try:
-                img = Media.objects.get(id=int(self.payload))
-                a = '{"type" : "media", "data" : [ "category" : "'
-                a += str(base64.b64encode(bytes(str(img.category), 'utf-8'))) + '", "headline" : "'
-                a += str(base64.b64encode(bytes(str(img.headline), 'utf-8'))) + '", "text" : "'
-                a += str(base64.b64encode(bytes(str(img.text), 'utf-8'))) + '", "timestamp" : "'
-                # We'll not save the cached text here as it can be recreated
-                a += str(base64.b64encode(bytes(str(img.uploadTimestamp), 'utf-8'))) + '", "highfilepath" : "'
-                a += str(base64.b64encode(bytes(str(img.highResFile), 'utf-8'))) + '", "lowfilepath" : "'
-                a += str(base64.b64encode(bytes(str(img.lowResFile), 'utf-8'))) + '", "highresfile" : "'
-                f = open(PATH_TO_UPLOAD_FOLDER_ON_DISK + str(img.highResFile)[1:], "rb") # remove trailing /
-                a += str(base64.b64encode(f.read())) + '", "lowresfile" : "'
-                f.close()
-                f = open(PATH_TO_UPLOAD_FOLDER_ON_DISK + str(img.lowResFile)[1:], "rb")
-                a += str(base64.b64encode(f.read())) + '"]}\n'
-                f.close()
-                self.payload = int(self.payload) + 1
-                return a
-            except ObjectDoesNotExist:
-                self.step -= 1
-                self.payload = None
-                return "#\n# We're finished with the media assets. Moving on...\n#\n"
-            except Exception as e:
-                self.step -= 1
-                self.payload = None
-                return "# Hit an exception. Assuming that we reached the end of the media assets.\n" \
-                        "# Exception content: " + str(e).replace("\n", "") + "\n" \
-                       + traceback.format_exc().replace("\n", "\n# ")
-            pass
-        elif self.step == 7:
-            # Return articles
-            if self.payload is None:
-                self.payload = 1 # Look up first id
-            try:
-                art = Article.objects.get(id=int(self.payload))
-                a = '{"type" : "article", "data" : [ "price" : "'
-                a += str(base64.b64encode(bytes(str(art.price), 'utf-8'))) + '", "largeText" : "'
-                a += str(base64.b64encode(bytes(str(art.largeText), 'utf-8'))) + '", "type" : "'
-                a += str(base64.b64encode(bytes(str(art.type), 'utf-8'))) + '", "description" : "'
-                a += str(base64.b64encode(bytes(str(art.description), 'utf-8'))) + '", "visible" : "'
-                a += str(base64.b64encode(bytes(str(art.visible), 'utf-8'))) + '", "quantity" : "'
-                a += str(base64.b64encode(bytes(str(art.quantity), 'utf-8'))) + '", "size" : "'
-                a += str(base64.b64encode(bytes(str(art.size), 'utf-8'))) + '", "addedby" : "'
-                try:
-                    a += str(base64.b64encode(bytes(str(art.addedByUser.authuser.username), 'utf-8'))) + '", "flashimgid" : "'
-                except Exception as e:
-                    print(e)
-                    a += str(base64.b64encode(bytes(str("admin"), 'utf-8'))) + '", "flashimgid" : "'
-                try:
-                    a += str(base64.b64encode(bytes(str(art.flashImage.id), 'utf-8'))) + '", "chestsize" : "'
-                except:
-                    a += str(base64.b64encode(bytes(str("none"), 'utf-8'))) + '", "chestsize" : "'
-                a += str(base64.b64encode(bytes(str(art.chestsize), 'utf-8'))) + '"]}\n'
-                self.payload = int(self.payload) + 1
-                return a
-            except ObjectDoesNotExist:
-                self.step -= 1
-                self.payload = None
-                return "#\n# We're done with the articles. Moving on...\n#\n"
-            except Exception as e:
-                self.step -= 1
-                self.payload = None
-                return "# There was an exception while processing the articles. Jumping to the next job.\n" \
-                        "# Exception content: " + str(e).replace("\n", "") + "\n" + \
-                       traceback.format_exc().replace("\n", "\n# ")
-        elif self.step == 6:
-            # Saving posts to data dump
-            if self.payload is None:
-                self.payload = 1
-            try:
-                p = Post.objects.get(id=1)
-                a = '{"type" : "post", "data" : [ "title" : "'
-                a += str(base64.b64encode(bytes(str(p.title), 'utf-8'))) + '", "addedby" : "'
-                try:
-                    a += str(base64.b64encode(bytes(str(p.createdByUser.authuser.username), 'utf-8'))) + \
-                         '", "username" : "'
-                except Exception as e:
-                    a += str(base64.b64encode(bytes(str("admin"), 'utf-8'))) + '", "visible" : "'
-                a += str(base64.b64encode(bytes(str(p.visibleLevel), 'utf-8'))) + '", "timestamp" : "'
-                a += str(base64.b64encode(bytes(str(p.timestamp), 'utf-8'))) + '", "text" : "'
-                a += str(base64.b64encode(bytes(str(p.text), 'utf-8'))) + '"]}\n'
-                return a
-            except ObjectDoesNotExist as e:
-                self.step -= 1
-                self.payload = None
-                return "#\n# We're done with the posts. Moving on...\n#\n"
-            except Exception as e:
-                self.step -= 1
-                self.payload = None
-                return "# There was an exception while processing the posts. Jumping to the next job.\n" \
-                        "# Exception content: " + str(e).replace("\n", "") + "\n" + \
-                       traceback.format_exc().replace("\n", "\n# ")
-        else:
-            # something went wrong
-            if self.step < 0:
-                self.step = 0
-                return StopIteration
-            self.step -= 1
-            return self.__next__()
-
-
-def get_dump_iterator():
-    return iter(DataDumpIterator())
-
-
-def request_data_dump(request: HttpRequest):
-    response: StreamingHttpResponse = StreamingHttpResponse(get_dump_iterator())
-    response['Content-Type'] = 'application/focdump-demformat'
-    response['Content-Disposition'] = 'attachment; filename="c3foc-datadump-' + timestamp() + '.pxtz"'
-    return response

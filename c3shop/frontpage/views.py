@@ -1,12 +1,21 @@
-from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
-from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse, HttpResponseForbidden
+
+from frontpage.management.export import export_dbhints, export_statistics, export_invoice
 from .uitools.footerfunctions import render_footer
 from .uitools.headerfunctions import render_content_header
 from .uitools.body import *
 from .management import edit_post, edit_user, post_page, dashboard_page, reservation_page, reservation_actions
-from .management import media_actions, media_upload_page, media_page, random_actions, article_actions, article_page
-from .management import edit_article, edit_reservation, article_select, reservation_processing, settings_page
-from .management import edit_settings, export, media_select, password_page
+from .management import random_actions
+from frontpage.management.mediatools import media_page, media_upload_page, media_actions, media_select
+from .management import edit_reservation, reservation_processing, settings_page
+from frontpage.management.articletools import article_select, article_actions, article_page, edit_article
+from .management import edit_settings, password_page
+from frontpage.management.grouptools import edit_group
+
+from .management.grouptools.grouparticlesupdate import handle_group_articles_request
+from frontpage.management.grouptools.grouparticlesadd import handle_group_article_add
+from frontpage.management.grouptools.grouparticlesrelease import handle_release_group_request
+from frontpage.management.grouptools.groupmetaupdate import handle_group_metadata_update
 from .uitools import ulog, searching
 
 # Create your views here.
@@ -15,7 +24,6 @@ from .uitools import ulog, searching
 def index(request):
     a = render_content_header(request)
     a += render_index_page(request)
-    a += render_article_list()
     a += render_footer(request)
     return HttpResponse(a)
 
@@ -130,11 +138,13 @@ def admin_list_users(request):
 def action_save_post(request):
     return edit_post.do_edit_action(request, "/admin/posts")
 
+
 def action_change_password(request: HttpRequest):
     response = require_login(request, min_required_user_rights=0)
     if response:
         return response
     return password_page.action_change_password(request)
+
 
 def action_save_user(request):
     return edit_user.action_save_user(request, "/admin/users")
@@ -166,18 +176,56 @@ def action_save_article(request: HttpRequest):
     return article_actions.action_save_article(request)
 
 
+def action_update_group_articles(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    return handle_group_articles_request(request)
+
+
+def action_add_article_to_group(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    return handle_group_article_add(request)
+
+
+def action_alter_group_metadata(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    return handle_group_metadata_update(request)
+
+
+def action_release_group(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    return handle_release_group_request(request)
+
+
 def admin_export(request: HttpRequest):
     response = require_login(request, min_required_user_rights=2)
     if response:
         return response
     if request.GET.get("method"):
         if request.GET["method"] == "pdf":
-            return export.export_orders_to_pdf(request, request.GET["reservations"].split(','))
+            return export_invoice.export_orders_to_pdf(request, request.GET["reservations"].split(','))
         if request.GET["method"] == "rejectstatistics":
-            return export.export_reject_statistics(request)
+            return export_statistics.export_reject_statistics(request)
         if request.GET["method"] == "datadump":
-            return export.request_data_dump(request)
+            return export_dbhints.request_data_dump(request)
     return HttpResponseForbidden()
+
+
+def admin_edit_group(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=4)
+    if response:
+        return response
+    a = render_content_header(request, admin_popup=True)
+    a += edit_group.render_edit_page(request)
+    a += render_footer(response)
+    return HttpResponse(a)
 
 
 def logout(request):

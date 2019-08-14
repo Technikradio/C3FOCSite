@@ -6,22 +6,27 @@ from . import magic
 from django.http import HttpRequest
 
 
-def render_features_bar():
+def render_features_bar(u: Profile):
     a = '<div class="w3-third w3-container w3-padding-64">'
     a += '<a href="/admin">Dashboard</a><br />'
     a += '<a href="/admin/posts">Posts</a><br />'
-    a += '<a href="/admin/users">Users</a><br />'
+    if u.rights > 0:
+        a += '<a href="/admin/users">Users</a><br />'
     a += '<a href="/admin/articles">Articles</a><br />'
     a += '<a href="/admin/media">Media</a><br />'
     a += '<a href="/admin/reservations">Reservations</a><br />'
-    a += '<a href="/admin/settings">Global settings</a><br />'
+    if u.rights > 2:
+        a += '<a href="/admin/settings">Global settings</a><br />'
+        a += '<br /><a href="/admin/changepassword">Change Password</a><br />'
     a += '<br/><a href="/logout/"> Logout </a><br/>'
     a += '</div>'
     return a
 
 
-def render_statistics_panel(request: HttpRequest):
+def render_statistics_panel(request: HttpRequest, u: Profile):
     a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
+    if u.rights < 1:
+        return a
     a += '<h3 class="w3-text-teal">Statistics</h3>'
     # TODO implement order and other statistics here
     # Use user access level in order to determine which info is allowed to be rendered
@@ -58,9 +63,25 @@ def render_quick_store_panel():
     return a
 
 
-def render_easy_user_panel():
+def render_easy_user_panel(u: Profile):
     a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
-    a += '<a href="/admin/changepassword" class="button">Change Password</a>'
+    res = GroupReservation.objects.all().filter(createdByUser=u)
+    if u.number_of_allowed_reservations > res.count():
+        a += '<a href="/admin/reservations/edit" class="button">Add a reservation</a><br /><br />'
+    else:
+        # Edit existing reservations
+        a += '<table><tr><th> ID </th><th> Edit </th><th>Add subreservation</th><th>Submit reservation (final)</th></tr>'
+        for r in res:
+            a += '<tr><td>' + str(r.id) + '</td><td>'
+            if not r.submitted:
+                a += '<a href="/admin/reservations/edit?rid=' + str(r.id) + \
+                        '"><img class="button-img" src="/staticfiles/frontpage/edit.png" /></a>'
+            else:
+                a += 'Already submitted'
+            a += '</td><td>Adding of subreservations isn\'T implemeted yet.</td><td>NYI</td></tr>'
+            a += '<tr><td> Subreservation listing not yet implemented </td></tr>'
+        a += '</table><br />'
+    a += '<a href="/admin/changepassword" class="button">Change Password</a><br />'
     return a + '</div>'
 
 
@@ -86,13 +107,15 @@ def render_quick_article_panel():
 
 def render_error_panel(request: HttpRequest):
     p = "error-panel"
+    idtag = ""
     if request.GET.get("success"):
         p = "success-panel"
+        idtag = ' id="hideMe" '
     if request.GET.get("error"):
         return '<div class="' + p + ' w3-row w3-container">Something produced an error: ' + request.GET["error"] + \
                '</div>'
     elif request.GET.get("msgid"):
-        return '<div class="' + p + ' w3-row w3-container">' + get_message(request.GET["msgid"]) + '</div>'
+        return '<div' + idtag + ' class="' + p + ' w3-row w3-container">' + get_message(request.GET["msgid"]) + '</div>'
     return ""
 
 
@@ -103,14 +126,15 @@ def render_dashboard(request: HttpRequest):
     # a += render_features_bar()
     a += render_error_panel(request)
     # a += '<div>'
-    a += render_statistics_panel(request)
-    a += render_features_bar()
-    a += render_quick_article_panel()
+    a += render_statistics_panel(request, u)
+    a += render_features_bar(u)
+    if u.rights > 0:
+        a += render_quick_article_panel()
     a += render_order_panel(u)
     if u.rights > 1:
         a += render_quick_store_panel()
     else:
-        a += render_easy_user_panel()
+        a += render_easy_user_panel(u)
     a += '</div>'
     a += render_footer(request)
     return a

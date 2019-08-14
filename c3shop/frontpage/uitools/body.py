@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 
-from ..models import Article, Media, ArticleMedia, Post, Profile, Settings
+from ..models import Article, Media, ArticleMedia, Post, Profile, Settings, ArticleGroup
 from ..management.magic import get_current_user
 from django.conf import settings
 from django.shortcuts import redirect
@@ -16,25 +16,28 @@ NO_MEDIA_IMAGE = "/staticfiles/frontpage/no-image.png"  # TODO change to static 
 
 def render_article_list():
     a = '<div class="w3-padding-64 w3-twothird w3-container">'
-    for art in Article.objects.all().filter(visible=True):
+    for grp in ArticleGroup.objects.all():
+        # Render sample from group
+        a += render_article_overview(Article.objects.all().filter(group=grp)[0], group=True)
+    for art in Article.objects.all().filter(group=None).filter(underConstruction=False).filter(visible=True):
         a += render_article_overview(art)
     a += '</div>'
     return a
 
 
-def render_price(a: str):
+def render_price(a: str, currency="€"):
     try:
         p: int = int(a)
         z = p / 100
         m = ''
         if math.floor(z) == z:
             m = '0'
-        return str(z) + m + ' €'
+        return str(z) + m + ' ' + currency
     except Exception as e:
         return a
 
 
-def render_article_overview(target):
+def render_article_overview(target, group=False):
     simage = target.flashImage
     link = DETAILED_PAGE + str(target.id)
     flash_image_link = NO_MEDIA_IMAGE
@@ -48,16 +51,19 @@ def render_article_overview(target):
     art += flash_image_link + '"></td><td>'
     art += '<h3 class="w3-text-teal">' + escape_text(target.description) 
     art += '</h3>' + get_type_string(int(target.type)) + " "
-    art += escape_text(target.size) + " "
-    if target.quantity > 0:
-        art += escape_text(render_price(target.price)) + "<br/>" + str(target.quantity) + " left"
+    if not group:
+        art += escape_text(target.size) + " "
+        if target.quantity > 0:
+            art += escape_text(render_price(target.price)) + "<br/>" + str(target.quantity) + " left"
+        else:
+            art += "<br/>sold out"
     else:
-        art += "<br/>sold out"
+        art += "<br />Please review this article to see aviable sizes and prices."
     art += "</td></tr></table></article></a></div>"
     return art
 
 
-def get_type_string(type_sym):
+def get_type_string(type_sym: int):
     if type_sym == 0:
         return "Unisex"
     if type_sym == 1:
@@ -66,13 +72,14 @@ def get_type_string(type_sym):
         return "Male"
     if type_sym == 3:
         return "Kids"
+    return "Aliens"
 
 
-def get_right_string(rights):
+def get_right_string(rights: int):
     if rights == 0:
-        return "unprivileged"  # He isn't allowed to do anything
+        return "normal user"  # He isn't allowed to do anything, except ordering
     if rights == 1:
-        return "normal user"  # He is allowed to make team orders
+        return "FOC Angel"  # He is allowed to edit team orders
     if rights == 2:
         return "shop manager"  # He is also allowed to manage the article db
     if rights == 3:
@@ -162,7 +169,6 @@ def render_image(media, width=0, height=0, high_res=True, include_link=True, rep
         return '<img src="' + NO_MEDIA_IMAGE + '" alt="No suitable image was located: ' + str(link_exception) + '"' + cssstring + '/>'
 
 
-# TODO implement visibility level
 def render_post(post_id, request: HttpRequest, preview: bool = False):
     # post: Post = None
     try:
@@ -174,7 +180,7 @@ def render_post(post_id, request: HttpRequest, preview: bool = False):
     if post.visibleLevel > 0:
         # Check if user is allowed to see this post
         if not request.user.is_authenticated:
-            return ""
+            return "Please log in in order to view this post."
         else:
             if get_current_user(request).rights < post.visibleLevel:
                 return "You don't have the required permission in order to review this item."
@@ -247,27 +253,30 @@ def render_user_list(request, objects_per_site=50):
     a += '<a href="/admin/users/edit"><img class="button-img" src= "/staticfiles/frontpage/add-user.png" alt="Add user" />'\
          '</a><br />Displaying page ' + str(page) + ' with ' + str(objects_per_site) + ' entries per each.' \
          '<br /><table><tr><th>Edit</th><th>Avatar</th><th>Username</th><th>Display name</th>' \
-         '<th>Rights</th></tr>'
-    for p in Profile.objects.filter(pk__range=(start, end)):
+         '<th>Rights</th><th>Notes</th></tr>'
+    for p in Profile.objects.filter(pk__gt=start).filter(pk__lt=end):
         # TODO generate link to detailed user view
         a += '<tr><td><a href="/admin/users/edit?user_id=' + str(p.pk) + \
              '"><img class="button-img" src="/staticfiles/frontpage/edit.png" />' \
             '</a></td><td>' + render_image(p.avatarMedia, width=24, height=24,
                                            replace="/staticfiles/frontpage/no-avatar.png", cssclass="icon") + '</td><td>' + \
              escape_text(p.authuser.username) + '</td><td>' + escape_text(p.displayName) + '</td><td>' + \
-             str(get_right_string(p.rights)) + '</td></tr>'
+             str(get_right_string(p.rights)) + '</td><td>' + str(p.notes) + '</td></tr>'
     a += '</table></div>'
     return a
 
 
 def render_image_detail(request, medium_id):
-    image = Media.objects.get(pk=int(medium_id))
-    if image is None:
-        raise Http404("No media found")
-    a = "<h2>" + image.headline + "</h2><center>"
-    a += render_image(image)
-    a += "</center><article>" + image.cachedText + "</article>"
-    return a
+    try:
+        image = Media.objects.get(pk=int(medium_id))
+        if image is None:
+            raise Http404("No media found")
+        a = "<h2>" + image.headline + "</h2><center>"
+        a += render_image(image)
+        a += "</center><article>" + image.cachedText + "</article>"
+        return a
+    except Media.DoesNotExist:
+        raise Http404("No such media found. Maybe try the search engine.")
 
 
 def render_404_page(request):

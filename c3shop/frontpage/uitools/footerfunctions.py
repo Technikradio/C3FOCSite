@@ -13,7 +13,8 @@ def process_link(position: int, item):
 
 
 def render_footer(http_request: HttpRequest):
-    a = '<br/></div><footer class="w3-container w3-theme-l1 w3-container">'
+    a = '<br/></div><footer class="w3-container w3-theme-l1 w3-container">' \
+            + '<div class="w3-row"><div class="w3-container w3-twothird">'
     try:
         feature_line: str = Settings.objects.get(SName=FOOTER_SETTINGS_KEY).property
         parts = json.loads(feature_line)
@@ -24,5 +25,6 @@ def render_footer(http_request: HttpRequest):
                 a += process_link(pos, item)
     except Exception as e:
         a += "<h3>An error was thrown resulting in the incapability to display this footer:</h3>" + str(e)
-    a += "<br /><center>Copyright (c) 2017 - 2018 Doralitze</center></footer></body></html>"
+    a += '<br /></div><div class="w3-container w3-third"><center>Copyright (c) 2017 - 2019 Doralitze<br />'\
+            + 'Version 1.3.1.2</center></div></div></footer></body></html>'
     return a

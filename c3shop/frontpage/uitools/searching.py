@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 from django.core.exceptions import ObjectDoesNotExist
 from ..management.form import Form, SearchBar, SubmitButton
-from ..models import *
+from ..models import Article, Post, Media
 
 
 def render_search_bar(small: bool = True):
@@ -26,22 +26,26 @@ Also have a look on PostgreSQL search tuning.
 
 def perform_query(request: HttpRequest):
     term = ""
-    results = []
     include_sold_out_articles = False
     if request.GET.get('search'):
         term = str(request.GET["search"])
     if request.GET.get('includeso'):
         include_sold_out_articles = bool(request.GET["includeso"])
+    return perform_query_helper(term, include_sold_out_articles)
+
+
+def perform_query_helper(term: str, include_sold_out_articles: bool):
+    results = []
     if term is not "":
         try:
             for o in Article.objects.filter(description__contains=term):
-                if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
+                if (o not in results) and (o.quantity > 0 or include_sold_out_articles) and o.visible:
                     results.append(o)
         except ObjectDoesNotExist as e:
             pass  # It's not bad to drop this exception since no results simply means no data
         try:
             for o in Article.objects.filter(cachedText__contains=term):
-                if (o not in results) and (o.quantity > 0 or include_sold_out_articles):
+                if (o not in results) and (o.quantity > 0 or include_sold_out_articles) and o.visible:
                     results.append(o)
         except ObjectDoesNotExist as e:
             pass

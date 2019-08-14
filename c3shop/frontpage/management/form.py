@@ -134,6 +134,7 @@ class Select(FormObject):
             if self.selected == i:
                 p = ' selected'
             a += '<option value="' + str(o[0]) + '"' + str(p) + '>' + str(o[1]) + "</option>"
+            i += 1
         a += "</select>"
         if self.cr_at_end:
             a += "<br/>"
@@ -151,16 +152,20 @@ class InputField(FormObject):
 
     do_cr_after_input = True
     required = True
+    enabled = True
     checked: CheckEnum = CheckEnum.DISABLED
+    css_class = ""
 
     def __init__(self, button_text="", name="", field_type="text", do_cr_after_input=True, required=True,
-                 component_checked: CheckEnum = CheckEnum.DISABLED):
+                 component_checked: CheckEnum = CheckEnum.DISABLED, enabled=True):
         super(InputField, self).__init__(name=name)
         self.button_text = button_text
         self.input_type = field_type
         self.do_cr_after_input = do_cr_after_input
         self.required = required
+        self.enabled = enabled
         self.checked = component_checked
+        self.css_class = ""
 
     def generate_html_code(self, form: Form, end: bool = True):
         a = '<input type="' + self.input_type + '"'
@@ -168,6 +173,8 @@ class InputField(FormObject):
             a += ' name="' + self.object_name + '"'
         if not self.button_text == "":
             a += ' value="' + str(self.button_text) + '"'
+        if self.css_class:
+            a += ' class="' + str(self.css_class) + '"'
         if self.max_length > 0:
             a += ' maxlenght="' + str(self.max_length) + '"'
         if not self.minimum == sys.maxsize:
@@ -178,6 +185,10 @@ class InputField(FormObject):
             a += ' pattern="' + self.regex_pattern + '"'
         if self.required:
             a += ' required="' + str(self.required).lower() + '"'
+        if self.enabled:
+            pass
+        else:
+            a += ' disabled="disabled" readonly'
         if self.checked == CheckEnum.CHECKED:
             a += " checked"
         if end:
@@ -189,9 +200,9 @@ class InputField(FormObject):
 
 class TextField(InputField):
 
-    def __init__(self, button_text="", name="", do_cr_after_input=True):
+    def __init__(self, button_text="", name="", do_cr_after_input=True, required=False, enabled=True):
         super(TextField, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
-                                        field_type="text")
+                                        field_type="text", required=required, enabled=enabled)
 
 
 class PasswordField(InputField):
@@ -213,6 +224,7 @@ class SubmitButton(InputField):
     def __init__(self, button_text="OK", name="", do_cr_after_input=True):
         super(SubmitButton, self).__init__(button_text=button_text, name=name, do_cr_after_input=do_cr_after_input,
                                            field_type="submit")
+        self.css_class = "button"
 
 
 class RadioList(FormObject):
@@ -253,14 +265,16 @@ class TextArea(FormObject):
     label_content = None
     text = ""
     placeholder = ""
+    enabled = True
 
-    def __init__(self, name="", max_colums=0, max_rows=0, label_text=None, text="", placeholder: str = ""):
+    def __init__(self, name="", max_colums=0, max_rows=0, label_text=None, text="", placeholder: str = "", enabled=True):
         super(TextArea, self).__init__(name=name)
         self.colums = max_colums
         self.rows = max_rows
         self.label_content = label_text
         self.text = text
         self.placeholder = placeholder
+        self.enabled = enabled
 
     def generate_html_code(self, form: Form):
         a = None
@@ -276,6 +290,8 @@ class TextArea(FormObject):
             a += ' rows="' + str(self.rows) + '"'
         if self.placeholder != "":
             a += ' placeholder="' + str(self.placeholder) + '"'
+        if not self.enabled:
+            a += ' disabled'
         a += '>' + self.text + '</textarea>'
         return a
 

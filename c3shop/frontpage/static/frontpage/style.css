@@ -71,6 +71,12 @@ tr:hover {
     background: #009688!important;
     font-weight: bold;
     display: inline;
+    margin-left: 0px;
+    margin-right: 15px;
+    margin-top: 15px auto;
+    margin-bottom: 15px auto;
+    width: auto;
+    height: auto;
 }
 
 .button-img {
@@ -139,4 +145,38 @@ tr:hover {
 img.large-flash-image {
     width: inherit;
     height: auto;
+}
+
+#hideMe {
+    -moz-animation: cssAnimation 0s ease-in 7s forwards;
+    /* Firefox */
+    -webkit-animation: cssAnimation 0s ease-in 7s forwards;
+    /* Safari and Chrome */
+    -o-animation: cssAnimation 0s ease-in 7s forwards;
+    /* Opera */
+    animation: cssAnimation 0s ease-in 7s forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+@keyframes cssAnimation {
+    to {
+        width:0;
+        height:0;
+	padding:0;
+	line-height: 0;
+	text-decoration-color: transparent;
+	font-size: 0;
+        overflow:hidden;
+    }
+}
+@-webkit-keyframes cssAnimation {
+    to {
+        width:0;
+        height:0;
+	padding:0;
+	line-height: 0;
+        text-decoration-color: transparent;
+        font-size: 0;
+        visibility:hidden;
+    }
 }

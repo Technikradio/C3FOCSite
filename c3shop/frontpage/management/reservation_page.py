@@ -29,9 +29,9 @@ def generate_export_link(u: Profile):
 def render_open_order_table(u: Profile):
     # We don't have to deal with performance here since it won't get hit that much
     try:
-        a, m = generate_export_link(u)
         if not u.rights > 1:
-            a = ""
+            return ""
+        a, m = generate_export_link(u)
         a += '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th>'
         if u.rights > 1:
             a += '<th>Process</th><th>Download</th>'

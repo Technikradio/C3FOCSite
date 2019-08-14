@@ -14,7 +14,7 @@ class Media(models.Model):
     lowResFile = models.CharField(max_length=15000, help_text="A link to a low resolution version of the image")
     highResFile = models.CharField(max_length=15000, help_text="A link to a high resolution version of the image")
     # uploadedByUser = models.ForeignKey(Profile)
-    uploadTimestamp = models.DateTimeField(auto_now=True)
+    uploadTimestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.headline + ": " + str(self.uploadTimestamp)
@@ -25,7 +25,7 @@ class Profile(models.Model):
     # UID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the user")
     authuser = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     avatarMedia = models.ForeignKey(Media, null=True, on_delete=DO_NOTHING)
-    creationTimestamp = models.DateTimeField(auto_now=True)
+    creationTimestamp = models.DateTimeField(auto_now_add=True)
     notes = models.CharField(max_length=15000, help_text='some notes on the user (for example additional contact ' +
                                                          'channels)')
     active = models.BooleanField(default=True)
@@ -78,6 +78,8 @@ class Article(models.Model):
                   "default to the chest size defined in the settings.")
     group = models.ForeignKey(ArticleGroup, null=True, on_delete=DO_NOTHING,
                               help_text='This will be null if the article doesnt belong to a group')
+    underConstruction = models.BooleanField(default=False, help_text='If this is set to true the' +
+            'article is being constructed')
     # The image visible in the list view
 
     def __str__(self):
@@ -92,7 +94,7 @@ class Post(models.Model):
     cacheText = models.CharField(max_length=15000, help_text="The compiled version of the markdown >text<")
     visibleLevel = models.SmallIntegerField(help_text="What access level does the viewer need to have a look at this")
     # putting -1 in the above means that it will be disabled.
-    timestamp = models.DateTimeField(auto_now=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     text = models.CharField(max_length=15000, help_text="The markdown version of the article text")
 
     def __str__(self):
@@ -103,7 +105,7 @@ class Settings(models.Model):
     SName = models.CharField(max_length=50, primary_key=True, unique=True, editable=False)
     property = models.CharField(max_length=15000)
     requiredLevel = models.SmallIntegerField()
-    changeTimestamp = models.DateTimeField(auto_now=True)
+    changeTimestamp = models.DateTimeField(auto_now_add=True)
     changeReason = models.CharField(max_length=15000, null=True)
     changedByUser = models.ForeignKey(Profile, on_delete=DO_NOTHING, null=True)
 
@@ -113,7 +115,7 @@ class Settings(models.Model):
 
 class GroupReservation(models.Model):
     # RID = models.BigIntegerField(primary_key=True, unique=True, editable=False, help_text="The ID of the reservation")
-    timestamp = models.DateTimeField(auto_now=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     ready = models.BooleanField()
     createdByUser = models.ForeignKey(Profile, on_delete=DO_NOTHING, null=True)
     open = models.BooleanField()

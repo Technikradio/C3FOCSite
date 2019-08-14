@@ -11,7 +11,7 @@ On FreeBSD it might be required to run the following comman before
 installing the packages listed below using pip3:
 <code>[sudo] pkg install jpeg tiff webp lcms2 freetype2</code>
  * django
- * markdown
+ * markdown==3.0.1
  * MarkdownSuperscript
  * MarkdownSubscript
  * pyembed-markdown
@@ -26,6 +26,10 @@ When building the ticket server it is also required to install
 the following:
  * django-helpdesk
  * django-bootstrap4
+
+For testing:
+ * django-nose
+ * coverage
 
 ## Database engine to use
 While it is fine to test the software using sqlite the intendet engine
