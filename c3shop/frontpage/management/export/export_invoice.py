@@ -6,6 +6,7 @@ from reportlab.lib.styles import ParagraphStyle
 from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
 from frontpage.models import GroupReservation, Article, ArticleRequested
 from frontpage.management.magic import timestamp
+from frontpage.uitools.body import get_type_string
 import logging
 import qrcode
 
@@ -60,7 +61,7 @@ def render_article_request(p: canvas.Canvas, arequested: ArticleRequested, y: in
     if textheight > (y - 50) and not retry:
         return y, arequested
     p.line(50, y, A4[0] - 50, y)
-    p.drawString(55, y - 12, str(a.description))
+    p.drawString(55, y - 12, str(a.description + " [" + a.size + ", " + get_type_string(a.type) + "]"))
     p.drawString(155, y - 12, str(arequested.amount))
     text.drawOn(p, 235, y - 5 - textheight)
     r = y - 15 - textheight

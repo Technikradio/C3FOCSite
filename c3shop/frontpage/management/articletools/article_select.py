@@ -127,7 +127,7 @@ def render_detail_selection(request: HttpRequest):
         else:
             grp = a.group
             f.action_url = "/admin/actions/add-article-to-reservation?group_id=" + str(grp.pk) + \
-                    "&redirect=/admin/reservations/edit"
+                    "&redirect=/admin/reservations/edit&rid=" + str(int(request.GET["rid"]))
             sizes, types, sizesdict = get_article_dict(grp)
             f.add(PlainText("<table><thead><tr><th> Version </th>"))
             for s in sizes:

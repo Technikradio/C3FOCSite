@@ -1,9 +1,10 @@
 from django.http import HttpRequest
-from .form import Form, PlainText, Date, TextArea, SubmitButton
+from .form import Form, PlainText, TextField, TextArea, SubmitButton
 from .reservation_actions import EMPTY_COOKY_VALUE
 from .reservation_actions import RESERVATION_CONSTRUCTION_COOKIE_KEY
 from .magic import get_current_user
 from ..models import Article, Profile, GroupReservation, ArticleRequested
+from ..uitools.body import get_type_string
 import json
 
 
@@ -24,7 +25,8 @@ def render_edit_page(request: HttpRequest):
     f: Form = Form()
     f.action_url = "/admin/actions/alter-current-reservation?redirect=/admin/reservations/edit"
     f.add_content(PlainText("<h3>Edit reservation: </h3>"))
-    f.add_content(PlainText("Enter date: "))
+    f.add_content(PlainText("Enter responsible contact: "))
+    f.add_content(TextField(name="contact"))
     f.add_content(PlainText("Notes:<br/>"))
     if current_reservation:
         f.add_content(TextArea(name="notes", placeholder="Write additional notes here.", text=current_reservation.notes))
@@ -38,11 +40,12 @@ def render_edit_page(request: HttpRequest):
         a += '<br />Add article: <a href="/admin/reservations/select-article?rid=' + str (current_reservation.id) + \
                 '"><img src="/staticfiles/frontpage/order-' \
              'article.png" class="button-img"/></a>'
-        a += "<table><tr><th> Headline </th><th> Amount </th><th> Notes </th><th> Delete </th></tr>"
+        a += "<table><tr><th> Headline </th><th> Size </th><th> Conducting </th><th> Amount </th><th> Notes </th><th> Delete </th></tr>"
         i = 0
         for ar in ArticleRequested.objects.all().filter(RID=current_reservation):
             r_art: Article = ar.AID
-            a += "<tr><td>" + r_art.description + "</td><td>" + str(ar.amount) + "</td>"
+            a += "<tr><td>" + r_art.description + "</td><td>" + str(r_art.size) + "</td><td>" + \
+                    get_type_string(r_art.type) + "</td><td>" + str(ar.amount) + "</td>"
             a += "<td>" + str(ar.notes) + '</td><td><a href="/admin/actions/delete-article?id=' + str(ar.id) + \
                  '&rid=' + str(current_reservation.id) + '"><img src="/staticfiles/frontpage/delete.png" class="button-img"/></a></td></tr>'
             i += 1

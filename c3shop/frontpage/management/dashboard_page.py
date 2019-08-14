@@ -70,9 +70,15 @@ def render_easy_user_panel(u: Profile):
         a += '<a href="/admin/reservations/edit" class="button">Add a reservation</a><br /><br />'
     else:
         # Edit existing reservations
-        a += '<table><tr><th> ID </th><th>Add subreservation</th><th>Submit reservation (final)</th></tr>'
+        a += '<table><tr><th> ID </th><th> Edit </th><th>Add subreservation</th><th>Submit reservation (final)</th></tr>'
         for r in res:
-            a += '<tr><td>' + str(r.id) + '</td><td>Adding of subreservations isn\'T implemeted yet.</td><td>NYI</td></tr>'
+            a += '<tr><td>' + str(r.id) + '</td><td>'
+            if not r.submitted:
+                a += '<a href="/admin/reservations/edit?rid=' + str(r.id) + \
+                        '"><img class="button-img" src="/staticfiles/frontpage/edit.png" /></a>'
+            else:
+                a += 'Already submitted'
+            a += '</td><td>Adding of subreservations isn\'T implemeted yet.</td><td>NYI</td></tr>'
             a += '<tr><td> Subreservation listing not yet implemented </td></tr>'
         a += '</table><br />'
     a += '<a href="/admin/changepassword" class="button">Change Password</a><br />'

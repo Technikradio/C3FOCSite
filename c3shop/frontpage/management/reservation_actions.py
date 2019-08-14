@@ -1,6 +1,6 @@
 from django.http import HttpRequest, HttpResponseRedirect
 # from django.shortcuts import redirect
-from ..models import GroupReservation, ArticleRequested, Article
+from ..models import GroupReservation, ArticleRequested, Article, ArticleGroup
 from .magic import get_current_user
 import json
 import datetime
@@ -35,15 +35,34 @@ def add_article_action(request: HttpRequest, default_foreward_url: str):
         return HttpResponseRedirect("/admin?error=noyb")
     if current_reservation.submitted == True:
         return HttpResponseRedirect("/admin?error=Already%20submitted")
-    aid: int = int(request.GET.get("article_id"))
-    quantity: int = int(request.POST["quantity"])
-    notes: str = request.POST["notes"]
-    ar = ArticleRequested()
-    ar.AID = Article.objects.get(id=aid)
-    ar.RID = current_reservation
-    ar.amount = quantity
-    ar.notes = notes
-    ar.save()
+    # Test for multiple or single article
+    if "article_id" in request.POST:
+        # Actual adding of article
+        aid: int = int(request.GET.get("article_id"))
+        quantity: int = int(request.POST["quantity"])
+        notes: str = request.POST["notes"]
+        ar = ArticleRequested()
+        ar.AID = Article.objects.get(id=aid)
+        ar.RID = current_reservation
+        ar.amount = quantity
+        ar.notes = notes
+        ar.save()
+    # Actual adding of multiple articles
+    else:
+        if "group_id" not in request.GET:
+            return HttpResponseRedirect("/admin?error=missing%20group%20id")
+        g: ArticleGroup = ArticleGroup.objects.get(id=int(request.GET["group_id"]))
+        for art in Article.objects.all().filter(group=g):
+            if str("quantity_" + str(art.id)) not in request.POST or str("notes_" + str(art.id)) not in request.POST:
+                return HttpResponseRedirect("/admin?error=Missing%20article%20data%20in%20request")
+            amount = int(request.POST["quantity_" + str(art.id)])
+            if amount > 0:
+                ar = ArticleRequested()
+                ar.AID = art
+                ar.RID = current_reservation
+                ar.amount = amount
+                ar.notes = str(request.POST[str("notes_" + str(art.id))])
+                ar.save()
     response = HttpResponseRedirect(forward_url + "?rid=" + str(current_reservation.id))
     return response
 
@@ -117,7 +136,7 @@ def action_delete_article(request: HttpRequest):
         return HttpResponseRedirect("/admin?error=Missing%20reservation%20id%20in%20request")
     if request.GET.get("id"):
         aid: ArticleRequested = ArticleRequested.objects.get(id=int(request.GET["id"]))
-        r: GroupReservation = GroupReservation.objects.get(id == int(request.GET["rid"]))
+        r: GroupReservation = GroupReservation.objects.get(id=int(request.GET["rid"]))
         if (aid.RID.createdByUser == u or u.rights > 1) and aid.RID == r and not r.submitted:
             aid.delete()
         else:
