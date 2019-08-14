@@ -42,15 +42,17 @@ def render_objects_form(request: HttpRequest):
 def get_group_prices(g: ArticleGroup):
     articles = Article.objects.all().filter(group=g)
     prices = []
+    visible = True
     for a in articles:
         if not a.price in prices:
             prices.append(a.price)
+        visible &= a.visible
     a = ''
     for p in prices:
         if a != '':
             a += ', '
         a += body.render_price(p)
-    return a
+    return (a, visible)
 
 
 def render_group_list(request: HttpRequest, u: Profile):
@@ -64,7 +66,7 @@ def render_group_list(request: HttpRequest, u: Profile):
     a += '<br /><table><tr>'
     if u.rights > 1:
         a += '<th> Edit </th><th> Group ID </th>'
-    a += '<th> Article </th><th> Preview </th><th> Price </th></tr>'
+    a += '<th> Article </th><th> Preview </th><th> Price </th><th> Visible </th></tr>'
     for g in prefilter:
         a += '<tr>'
         if u.rights > 1:
@@ -72,7 +74,8 @@ def render_group_list(request: HttpRequest, u: Profile):
                     '" ><img src="/staticfiles/frontpage/edit.png" class="button-img" />' + \
                     '</a></td><td>' + str(g.id) + '</td>'
         a += '<td>' + str(g.group_name) + '</td><td>' + body.render_image(g.group_flash_image, cssclass="icon")
-        a += '</td><td>' + get_group_prices(g) + '</td></tr>'
+        t = get_group_prices(g)
+        a += '</td><td>' + t[0] + '</td><td>' + str(t[1]) + '</td></tr>'
     a += '</table>'
     return a
 

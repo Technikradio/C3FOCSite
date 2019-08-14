@@ -111,10 +111,12 @@ def render_detail_selection(request: HttpRequest):
                     " Caused an exception: " + traceback.format_exc() + "\n\n")
             return redirect("/admin/?msgid=editreservation.invalidrequest;" + str(e))
         a: Article = Article.objects.get(pk=int(request.GET["article_id"]))
+        if "rid" not in request.GET:
+            raise Exception("No reservation provided")
         f: Form = Form()
         if a.group is None:
-            f.action_url = "/admin/actions/add-article-to-reservation?article_id=" + str(a.pk) + \
-                        "&redirect=/admin/reservations/edit"
+            f.action_url = "/admin/actions/add-article-to-reservation?rid=" + str(int(request.GET["rid"])) + \
+                    "&article_id=" + str(a.pk) + "&redirect=/admin/reservations/edit"
             f.add(PlainText("Price: " + render_price(a.price) + "<br />"))
             f.add_content(PlainText("Specify amount: "))
             f.add_content(NumberField(name="quantity", minimum=1, maximum=get_article_pcs_free(a),

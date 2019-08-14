@@ -63,9 +63,19 @@ def render_quick_store_panel():
     return a
 
 
-def render_easy_user_panel():
+def render_easy_user_panel(u: Profile):
     a = '<div class="w3-row w3-padding-64 w3-twothird w3-container">'
-    a += '<a href="/admin/changepassword" class="button">Change Password</a>'
+    res = GroupReservation.objects.all().filter(createdByUser=u)
+    if u.number_of_allowed_reservations > res.count():
+        a += '<a href="/admin/reservations/edit" class="button">Add a reservation</a><br /><br />'
+    else:
+        # Edit existing reservations
+        a += '<table><tr><th> ID </th><th>Add subreservation</th><th>Submit reservation (final)</th></tr>'
+        for r in res:
+            a += '<tr><td>' + str(r.id) + '</td><td>Adding of subreservations isn\'T implemeted yet.</td><td>NYI</td></tr>'
+            a += '<tr><td> Subreservation listing not yet implemented </td></tr>'
+        a += '</table><br />'
+    a += '<a href="/admin/changepassword" class="button">Change Password</a><br />'
     return a + '</div>'
 
 
@@ -118,7 +128,7 @@ def render_dashboard(request: HttpRequest):
     if u.rights > 1:
         a += render_quick_store_panel()
     else:
-        a += render_easy_user_panel()
+        a += render_easy_user_panel(u)
     a += '</div>'
     a += render_footer(request)
     return a
