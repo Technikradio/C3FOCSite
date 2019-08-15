@@ -49,6 +49,8 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
         f.add_content(TextField(name='display_name', button_text=profile.displayName))
         f.add_content(PlainText('DECT: '))
         f.add_content(NumberField(name='dect', button_text=str(profile.dect), minimum=0))
+        f.add_content(PlainText('Number of allowed reservations: '))
+        f.add_content(NumberField(name='allowed_reservations', button_text=str(profile.number_of_allowed_reservations), minimum=0))
         f.add_content(PlainText("Rights: "))
         f.add_content(NumberField(name="rights", button_text=str(profile.rights), minimum=0, maximum=4))
         f.add_content(PlainText('Notes:<br/>'))
@@ -60,6 +62,8 @@ def render_edit_page(http_request: HttpRequest, action_url: str):
         f.add_content(TextField(name='display_name'))
         f.add_content(PlainText('DECT: '))
         f.add_content(NumberField(name='dect', minimum=0))
+        f.add_content(PlainText('Number of allowed reservations: '))
+        f.add_content(NumberField(name='allowed_reservations', button_text=str(1), minimum=0))
         f.add_content(PlainText("Rights: "))
         f.add_content(NumberField(name="rights", button_text=str(0), minimum=0, maximum=4))
         f.add_content(PlainText('Notes:<br/>'))
@@ -127,6 +131,7 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
             user.dect = dect
             user.notes = notes
             user.rights = rights
+            user.number_of_allowed_reservations = int(request.POST["allowed_reservations"])
             if request.POST.get("active"):
                 user.active = magic.parse_bool(request.POST["active"])
             au: User = user.authuser
@@ -154,6 +159,7 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
             auth_user.save()
             user: Profile = Profile()
             user.rights = rights
+            user.number_of_allowed_reservations = int(request.POST["allowed_reservations"])
             user.displayName = displayname
             user.authuser = auth_user
             user.dect = dect

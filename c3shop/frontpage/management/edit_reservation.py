@@ -15,13 +15,21 @@ def render_edit_page(request: HttpRequest):
     settings. The table below will list all selected articles including
     the amount and notes. It will now require an database object
     """
-    a = '<div class="admin-popup w3-twothird w3-padding-64 w3-row w3-container">'
+    a = '<div class="w3-main admin-popup w3-twothird w3-padding-64 w3-row w3-container">'
     current_reservation = None
     u: Profile = get_current_user(request)
     if "rid" in request.GET:
-        current_reservation = GroupReservation.objects.get(id=int(request.GET["rid"]))
+        try:
+            current_reservation = GroupReservation.objects.get(id=int(request.GET["rid"]))
+        except ObjectDoesNotExist:
+            return "You dont't habe the permission to review this reservation.</div>"
         if current_reservation.createdByUser != u and u.rights < 2:
             return "You dont't habe the permission to review this reservation.</div>"
+    elif (GroupReservation.objects.all().filter(createdByUser=u).count() + 1 > u.number_of_allowed_reservations) and (u.rights < 2):
+        return "You're not allowed to create more reservations than you currently have." + \
+                "<br />Please contact an C3FOC admin if you really feel that you need to have" + \
+                " more individual reservations than you currently have. Please also keep" + \
+                " in mind that you can create an (nearly) infinite amount of subreservations.</div>"
     f: Form = Form()
     f.action_url = "/admin/actions/alter-current-reservation?redirect=/admin/reservations/edit"
     f.add_content(PlainText("<h3>Edit reservation: </h3>"))

@@ -101,7 +101,7 @@ def manipulate_reservation_action(request: HttpRequest, default_foreward_url: st
     if "rid" in request.GET:
         # update reservation
         r = GroupReservation.objects.get(id=int(request.GET["rid"]))
-    elif u.number_of_allowed_reservations < GroupReservation.objects.all().filter(createdByUser=u).count():
+    elif u.number_of_allowed_reservations > GroupReservation.objects.all().filter(createdByUser=u).count():
         r = GroupReservation()
         r.createdByUser = u
         r.ready = False
