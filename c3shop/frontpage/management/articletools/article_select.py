@@ -68,6 +68,8 @@ def render_article_selection_page(request: HttpRequest):
             else:
                 s = "/staticfiles/frontpage/no-image.png"
             a += '<tr><td><a href="/admin/reservations/article-detail-select?article_id=' + str(article.pk)
+            if request.GET.get("srid"):
+                a += '&srid=' + str(request.GET["srid"])
             a += '&rid=' + rid + '"><img src="/staticfiles/frontpage/order-article.png" class="button-img"/>' + \
                     '</a></td><td><img src="'
             a += s + '" /></td><td>' + article.description + '</td><td>' + article.size + '</td><td>' + \
@@ -82,6 +84,8 @@ def render_article_selection_page(request: HttpRequest):
                 s = "/staticfiles/frontpage/no-image.png"
             sizes, types = get_group_variations(group)
             a += '<tr><td><a href="/admin/reservations/article-detail-select?article_id=' + str(article.pk)
+            if request.GET.get("srid"):
+                a += '&srid=' + str(request.GET["srid"])
             a += '&rid=' + rid + '"><img src="/staticfiles/frontpage/order-article.png" ' + \
                     'class="button-img"/></a></td><td><img src="'
             a += s + '" /></td><td>' + group.group_name + '</td><td>' + sizes + '</td><td>' + \
@@ -117,6 +121,8 @@ def render_detail_selection(request: HttpRequest):
         if a.group is None:
             f.action_url = "/admin/actions/add-article-to-reservation?rid=" + str(int(request.GET["rid"])) + \
                     "&article_id=" + str(a.pk) + "&redirect=/admin/reservations/edit"
+            if request.GET.get("srid"):
+                f.action_url += '&srid=' + str(request.GET["srid"])
             f.add(PlainText("Price: " + render_price(a.price) + "<br />"))
             f.add_content(PlainText("Specify amount: "))
             f.add_content(NumberField(name="quantity", minimum=1, maximum=get_article_pcs_free(a),
@@ -128,6 +134,8 @@ def render_detail_selection(request: HttpRequest):
             grp = a.group
             f.action_url = "/admin/actions/add-article-to-reservation?group_id=" + str(grp.pk) + \
                     "&redirect=/admin/reservations/edit&rid=" + str(int(request.GET["rid"]))
+            if request.GET.get("srid"):
+                f.action_url += '&srid=' + str(request.GET["srid"])
             sizes, types, sizesdict = get_article_dict(grp)
             f.add(PlainText("<table><thead><tr><th> Version </th>"))
             for s in sizes:

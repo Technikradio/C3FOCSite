@@ -242,3 +242,53 @@ def export_orders_to_pdf(request: HttpRequest, res):
     return response
 
 
+def export_user_invoice(request: HttpRequest, rid: int):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="FOC-Order_' + str(request.user.username) + "_" + timestamp() + "_" + str(rid) + '.pdf"'
+    buffer = BytesIO()
+    p: canvas = canvas.Canvas(buffer, pagesize=A4, pageCompression=0)
+    w, h = A4
+    p.setTitle("C3FOC - Reservations")
+    p.setAuthor("The robots in slavery by " + request.user.username)
+    p.setSubject("This document, originally created at " + timestamp(filestr=False) + ", contains the requested reservation.")
+    r: GroupReservation = GroupReservation.objects.get(id=rid)
+    p.addOutlineEntry("Main reservation [" + str(r.id) + "] of " + str(r.createdByUser.displayName), "r" + str(r.id))
+    p.bookmarkPage("r" + str(r.id))
+    render_side_strip(p, r)
+    p.setFont("Helvetica", 14)
+    page = 1
+    summed_request = {}
+    p.drawString(50, h - 50, "Main reservation [" + str(r.id) + "] of " + str(r.createdByUser.displayName))
+    cy = render_table_header(p, h - 100)
+    p.drawString(w - 100, 35, "Page " + str(page))
+    # Render main content
+    text = Paragraph(r.notes.replace("\n", "<br />"), style=NOTES_STYLE)
+    textwidth, textheight = text.wrapOn(p, w - 200, h - 250)
+    text.drawOn(p, 30, h - 75 - textheight)
+    cy = render_table_header(p, h - 100 - textheight)
+    for arequest in ArticleRequested.objects.all().filter(RID=r).filter(SRID=None):
+        if arequest.AID in summed_request.keys():
+            summed_request[arequest.AID] = arequest.amount + summed_request[arequest.AID]
+        else:
+            summed_request[arequest.AID] = arequest.amount
+        cy, retry_object = render_article_request(p, arequest, cy)
+        if cy < 75 or (retry_object is not None):
+            p.showPage()
+            page += 1
+            p.drawString(w - 100, 35, "Page " + str(page))
+            cy = render_table_header(p, h - 100)
+            render_side_strip(p, r)
+            if retry_object is not None:
+                cy, retry_object = render_article_request(p, arequest, cy, retry=True)
+    total = 0
+    for a in summed_request.keys():
+        total += int(a.price) * summed_request[a]
+    p.drawString(w - 200, cy - 15, "Partial total: " + get_price_string(total))
+    page += 1
+    p.showPage()
+    # show sub reservations
+    p.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response

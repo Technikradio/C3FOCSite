@@ -12,7 +12,7 @@ def generate_export_link(u: Profile):
     link = ""
     p = None
     if u.rights > 0:
-        p = GroupReservation.objects.filter(open=True).filter(ready=False)
+        p = GroupReservation.objects.filter(submitted=True).filter(open=True).filter(ready=False)
     else:
         return link, p
     m = ""
@@ -32,11 +32,12 @@ def render_open_order_table(u: Profile):
         if not u.rights > 1:
             return ""
         a, m = generate_export_link(u)
+        a += 'Note: this view only displays submitted reservations.'
         a += '<table class="order_table"><tr><th>Ready</th><th>Pickup date</th><th>Created by User</th>'
         if u.rights > 1:
             a += '<th>Process</th><th>Download</th>'
         a += '</tr>'
-        p = GroupReservation.objects.all().filter(open=True)
+        p = GroupReservation.objects.all().filter(open=True).filter(submitted=True)
         if u.rights < 1:
             p = p.filter(createdByUser=u)
         if p.count() > 0:
@@ -102,7 +103,7 @@ def render_order_list(request: HttpRequest):
     end_range = (page + 1) * items_per_page
     a = '<h3>Orders:</h3>' \
         '<table><tr><th> ID </th><th> Open </th><th> Ready </th><th> Pickup date </th><th> Issuer </th>' \
-        '<th>Close after pickup</th></tr>'
+        '<th>Close after pickup</th><th>Submitted</th></tr>'
     objects = GroupReservation.objects.filter(pk__range=(start_range, end_range))
     for order in objects:
         a += '<a href="' + generate_edit_link(order) + '"><tr><td>' + str(order.pk) + "</td><td> " \
@@ -117,6 +118,8 @@ def render_order_list(request: HttpRequest):
             a += "This reservation isn't ready yet."
         else:
             a += "Already closed."
+        a += "</td><td>"
+        a += str(order.submitted)
         a += "</td></tr></a>"
     a += '</table>'
     if page > 1:

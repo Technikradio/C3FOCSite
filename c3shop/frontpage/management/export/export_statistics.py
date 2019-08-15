@@ -6,7 +6,7 @@ from reportlab.pdfgen import canvas
 
 from frontpage.management.magic import timestamp
 from frontpage.models import Article
-
+from frontpage.uitools.body import get_type_string
 
 def export_reject_statistics(request: HttpRequest):
     # Begin PDF
@@ -25,7 +25,7 @@ def export_reject_statistics(request: HttpRequest):
     cy = h - 50
     for a in Article.objects.all():
         p.line(50, cy, w - 50, cy)
-        p.drawString(55, cy - 10, "[" + str(a.id) + "]: " + str(a.description))
+        p.drawString(55, cy - 10, "[" + str(a.id) + "]: " + str(a.description) + str(" [" + a.size + ", " + get_type_string(a.type) + "]"))
         p.line(50, cy - 50, w - 50, cy - 50)
         p.line(50, cy, 50, cy - 50)
         p.line(w - 50, cy, w - 50, cy - 50)

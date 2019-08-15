@@ -68,7 +68,7 @@ def add_article_action(request: HttpRequest, default_foreward_url: str):
                 ar.notes = str(request.POST[str("notes_" + str(art.id))])
                 ar.save()
     if "srid" in request.GET:
-        response = HttpResponseRedirect(forward_url + "?rid=" + str(current_reservation.id)) + "&srid=" + request.GET["srid"]
+        response = HttpResponseRedirect(forward_url + "?rid=" + str(current_reservation.id) + "&srid=" + request.GET["srid"])
     else:
         response = HttpResponseRedirect(forward_url + "?rid=" + str(current_reservation.id))
     return response
@@ -115,12 +115,14 @@ def manipulate_reservation_action(request: HttpRequest, default_foreward_url: st
             sr = SubReservation()
         else:
             sr = SubReservation.objects.get(id=srid)
-        if request.GET.get("notes"):
-            sr.notes = request.GET["notes"]
+        if request.POST.get("notes"):
+            sr.notes = request.POST["notes"]
         else:
             sr.notes = " "
         sr.primary_reservation = GroupReservation.objects.get(id=int(request.GET["rid"]))
         sr.save()
+        print(request.POST)
+        print(sr.notes)
         return HttpResponseRedirect("/admin/reservations/edit?rid=" + str(int(request.GET["rid"])) + "&srid=" + str(sr.id))
     if "rid" in request.GET:
         # update reservation
@@ -152,7 +154,11 @@ def action_delete_article(request: HttpRequest):
     """
     u: Profile = get_current_user(request)
     if "rid" in request.GET:
-        response = HttpResponseRedirect("/admin/reservations/edit?rid=" + str(int(request.GET["rid"])))
+        if "srid" in request.GET:
+            response = HttpResponseRedirect("/admin/reservations/edit?rid=" + str(int(request.GET["rid"])) + \
+                    '&srid=' + str(int(request.GET['srid'])))
+        else:
+            response = HttpResponseRedirect("/admin/reservations/edit?rid=" + str(int(request.GET["rid"])))
     else:
         return HttpResponseRedirect("/admin?error=Missing%20reservation%20id%20in%20request")
     if request.GET.get("id"):

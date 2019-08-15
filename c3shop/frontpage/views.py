@@ -205,6 +205,11 @@ def action_release_group(request: HttpRequest):
 
 
 def admin_export(request: HttpRequest):
+    response = require_login(request, min_required_user_rights=0)
+    if response:
+        return response
+    if request.GET["method"] == "userpdf":
+        return export_invoice.export_user_invoice(request, int(request.GET["reservation"]))
     response = require_login(request, min_required_user_rights=2)
     if response:
         return response

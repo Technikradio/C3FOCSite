@@ -81,10 +81,14 @@ def render_easy_user_panel(u: Profile, request: HttpRequest):
                         'Add subreservation</a>'
             else:
                 a += 'Already submitted'
-            a += '</td><td><a href="/admin/confirm?back_url=' + \
+            a += '</td><td>'
+            if r.submitted:
+                a += '<a href="/admin/export?method=userpdf&reservation=' + str(r.id) + '" class="button">Download Order</a>'
+            else:
+                a += '<a href="/admin/confirm?back_url=' + \
                     str(request.get_full_path()) + '&payload=' + res_id_str + \
-                    '&forward_url=/admin/actions/save-current-reservation" class="button">Submit Reservation (final) </a></td></tr>'
-            a += '<tr><td> Subreservation listing not yet implemented </td></tr>'
+                    '&forward_url=/admin/actions/save-current-reservation" class="button">Submit</a>'
+            a += '</td></tr><tr><td> Subreservation listing not yet implemented </td></tr>'
         a += '</table><br />'
     a += '<a href="/admin/changepassword" class="button">Change Password</a><br />'
     return a + '</div>'

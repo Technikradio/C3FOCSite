@@ -81,8 +81,10 @@ def render_edit_page(request: HttpRequest):
                 a += "<tr><td>" + r_art.description + "</td><td>" + str(r_art.size) + "</td><td>" + \
                         get_type_string(r_art.type) + "</td><td>" + str(ar.amount) + "</td>"
                 a += "<td>" + str(ar.notes) + '</td><td><a href="/admin/actions/delete-article?id=' + str(ar.id) + \
-                    '&rid=' + str(current_reservation.id) + '"><img src="/staticfiles/frontpage/delete.png" class="button-img"/>' + \
-                    '</a></td></tr>'
+                    '&rid=' + str(current_reservation.id)
+                if is_subreservation:
+                    a += '&srid=' + request.GET["srid"]
+                a += '"><img src="/staticfiles/frontpage/delete.png" class="button-img"/></a></td></tr>'
             i += 1
         a += "</table>"
         if not is_subreservation:
