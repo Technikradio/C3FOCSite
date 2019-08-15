@@ -4,7 +4,7 @@ from reportlab.platypus import Paragraph
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
-from frontpage.models import GroupReservation, Article, ArticleRequested
+from frontpage.models import GroupReservation, Article, ArticleRequested, SubReservation
 from frontpage.management.magic import timestamp
 from frontpage.uitools.body import get_type_string
 import logging
@@ -252,14 +252,13 @@ def export_user_invoice(request: HttpRequest, rid: int):
     p.setAuthor("The robots in slavery by " + request.user.username)
     p.setSubject("This document, originally created at " + timestamp(filestr=False) + ", contains the requested reservation.")
     r: GroupReservation = GroupReservation.objects.get(id=rid)
-    p.addOutlineEntry("Main reservation [" + str(r.id) + "] of " + str(r.createdByUser.displayName), "r" + str(r.id))
-    p.bookmarkPage("r" + str(r.id))
+    p.addOutlineEntry("Main reservation [" + str(r.id) + "] of " + str(r.createdByUser.displayName), "r0")
+    p.bookmarkPage("r0")
     render_side_strip(p, r)
     p.setFont("Helvetica", 14)
     page = 1
     summed_request = {}
     p.drawString(50, h - 50, "Main reservation [" + str(r.id) + "] of " + str(r.createdByUser.displayName))
-    cy = render_table_header(p, h - 100)
     p.drawString(w - 100, 35, "Page " + str(page))
     # Render main content
     text = Paragraph(r.notes.replace("\n", "<br />"), style=NOTES_STYLE)
@@ -281,12 +280,61 @@ def export_user_invoice(request: HttpRequest, rid: int):
             if retry_object is not None:
                 cy, retry_object = render_article_request(p, arequest, cy, retry=True)
     total = 0
+    supertotal = 0
     for a in summed_request.keys():
         total += int(a.price) * summed_request[a]
+    supertotal += total
     p.drawString(w - 200, cy - 15, "Partial total: " + get_price_string(total))
     page += 1
     p.showPage()
+    render_side_strip(p, r)
     # show sub reservations
+    i = 0
+    for sr in SubReservation.objects.all().filter(primary_reservation=r):
+        summed_request = {}
+        i += 1
+        p.addOutlineEntry("sub reservation [" + str(i) + "]", "r" + str(i))
+        p.bookmarkPage("r" + str(i))
+        p.drawString(w - 100, 35, "Page " + str(page))
+        p.drawString(50, h - 50, "Sub reservation " + str(i))
+        text = Paragraph(sr.notes.replace("\n", "<br />"), style=NOTES_STYLE)
+        textwidth, textheight = text.wrapOn(p, w - 200, h - 250)
+        text.drawOn(p, 30, h - 75 - textheight)
+        cy = render_table_header(p, h - 100 - textheight)
+        for arequest in ArticleRequested.objects.all().filter(RID=r).filter(SRID=sr):
+            if arequest.AID in summed_request.keys():
+                summed_request[arequest.AID] = arequest.amount + summed_request[arequest.AID]
+            else:
+                summed_request[arequest.AID] = arequest.amount
+            cy, retry_object = render_article_request(p, arequest, cy)
+            if cy < 75 or (retry_object is not None):
+                p.showPage()
+                page += 1
+                p.drawString(w - 100, 35, "Page " + str(page))
+                cy = render_table_header(p, h - 100)
+                render_side_strip(p, r)
+                if retry_object is not None:
+                    cy, retry_object = render_article_request(p, arequest, cy, retry=True)
+        total = 0
+        for a in summed_request.keys():
+            total += int(a.price) * summed_request[a]
+        p.drawString(w - 200, cy - 15, "Partial total: " + get_price_string(total))
+        page += 1
+        p.showPage()
+        render_side_strip(p, r)
+        supertotal += total
+    # Render final Sum
+    p.addOutlineEntry("aggregated amount", "a")
+    p.bookmarkPage("a")
+    p.drawString(w - 100, 35, "Page " + str(page))
+    p.drawString(50, h - 50, "Aggregated Amount")
+    text = Paragraph("The aggregated amount of money to pay for this reservation is " + \
+            get_price_string(supertotal) + ". The order will be prepared soon. Exact information" + \
+            "when the order is done being prepared will be provided by the C3FOC team." + \
+            " A final invoice will be avaiable on pickup.", style=NOTES_STYLE)
+    textwidth, textheight = text.wrapOn(p, w - 200, h - 250)
+    text.drawOn(p, 50, h - 150 - textheight)
+    p.showPage()
     p.save()
     pdf = buffer.getvalue()
     buffer.close()

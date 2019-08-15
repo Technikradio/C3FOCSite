@@ -1,6 +1,6 @@
 from .page_skeleton import render_footer, render_headbar
 from .reservation_page import render_open_order_table
-from ..models import GroupReservation, Profile, Settings, Article
+from ..models import GroupReservation, Profile, Settings, Article, SubReservation
 from .messages import get_message
 from . import magic
 from django.http import HttpRequest
@@ -88,7 +88,15 @@ def render_easy_user_panel(u: Profile, request: HttpRequest):
                 a += '<a href="/admin/confirm?back_url=' + \
                     str(request.get_full_path()) + '&payload=' + res_id_str + \
                     '&forward_url=/admin/actions/save-current-reservation" class="button">Submit</a>'
-            a += '</td></tr><tr><td> Subreservation listing not yet implemented </td></tr>'
+            a += '</td></tr>'
+            if not r.submitted:
+                a += '<tr><td><ul>'
+                i = 0
+                for sr in SubReservation.objects.all().filter(primary_reservation=r):
+                    a += '<li>Edit subreservation ' + str(i) + ': <a href="/admin/reservations/edit?rid=' + res_id_str + \
+                            '&srid=' + str(sr.id) + '"><img class="button-img" src="/staticfiles/frontpage/edit.png" /></a></li>'
+                    i += 1
+                a += '</ul></td></tr>'
         a += '</table><br />'
     a += '<a href="/admin/changepassword" class="button">Change Password</a><br />'
     return a + '</div>'
