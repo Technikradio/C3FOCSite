@@ -1,4 +1,5 @@
 from django.http import HttpRequest
+from django.core.exceptions import ObjectDoesNotExist
 from .form import Form, PlainText, TextField, TextArea, SubmitButton
 from .reservation_actions import EMPTY_COOKY_VALUE
 from .reservation_actions import RESERVATION_CONSTRUCTION_COOKIE_KEY
@@ -21,10 +22,12 @@ def render_edit_page(request: HttpRequest):
     if "rid" in request.GET:
         try:
             current_reservation = GroupReservation.objects.get(id=int(request.GET["rid"]))
-        except ObjectDoesNotExist:
+        except GroupReservation.DoesNotExist:
             return "You dont't habe the permission to review this reservation.</div>"
         if current_reservation.createdByUser != u and u.rights < 2:
             return "You dont't habe the permission to review this reservation.</div>"
+        if current_reservation.submitted:
+            return "This reservation is already submitted."
     elif (GroupReservation.objects.all().filter(createdByUser=u).count() + 1 > u.number_of_allowed_reservations) and (u.rights < 2):
         return "You're not allowed to create more reservations than you currently have." + \
                 "<br />Please contact an C3FOC admin if you really feel that you need to have" + \
