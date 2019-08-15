@@ -76,8 +76,8 @@ def render_easy_user_panel(u: Profile, request: HttpRequest):
             res_id_str: str = str(r.id)
             if not r.submitted:
                 a += '<a href="/admin/reservations/edit?rid=' + res_id_str + \
-                        '"><img class="button-img" src="/staticfiles/frontpage/edit.png" /></a>'
-                a += '<a href="/admin/reservations/editsubreservation?rid=' + res_id_str + '" class="button">' + \
+                        '"><img class="button-img" src="/staticfiles/frontpage/edit.png" /></a><br />'
+                a += '<a href="/admin/reservations/editreservation?rid=' + res_id_str + '&srid=0" class="button">' + \
                         'Add subreservation</a>'
             else:
                 a += 'Already submitted'

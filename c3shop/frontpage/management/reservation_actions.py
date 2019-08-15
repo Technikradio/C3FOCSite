@@ -1,6 +1,6 @@
 from django.http import HttpRequest, HttpResponseRedirect
 # from django.shortcuts import redirect
-from ..models import GroupReservation, ArticleRequested, Article, ArticleGroup
+from ..models import GroupReservation, ArticleRequested, Article, ArticleGroup, SubReservation
 from .magic import get_current_user
 import json
 import datetime
@@ -44,6 +44,8 @@ def add_article_action(request: HttpRequest, default_foreward_url: str):
         ar = ArticleRequested()
         ar.AID = Article.objects.get(id=aid)
         ar.RID = current_reservation
+        if "srid" in request.GET:
+            ar.SRID = SubReservation.objects.get(id=int(request.GET["srid"]))
         ar.amount = quantity
         ar.notes = notes
         ar.save()
@@ -61,17 +63,20 @@ def add_article_action(request: HttpRequest, default_foreward_url: str):
                 ar.AID = art
                 ar.RID = current_reservation
                 ar.amount = amount
+                if "srid" in request.GET:
+                    ar.SRID = SubReservation.objects.get(id=int(request.GET["srid"]))
                 ar.notes = str(request.POST[str("notes_" + str(art.id))])
                 ar.save()
-    response = HttpResponseRedirect(forward_url + "?rid=" + str(current_reservation.id))
+    if "srid" in request.GET:
+        response = HttpResponseRedirect(forward_url + "?rid=" + str(current_reservation.id)) + "&srid=" + request.GET["srid"]
+    else:
+        response = HttpResponseRedirect(forward_url + "?rid=" + str(current_reservation.id))
     return response
 
 
 def write_db_reservation_action(request: HttpRequest):
     """
-    This function is used to add a reservation to the database from the
-    cookie stored inside the client. This function automatically crafts
-    the required HttpResponse.
+    This function is used to submit the reservation
     """
     u: Profile = get_current_user(request)
     forward_url = "/admin?success"
@@ -98,6 +103,25 @@ def manipulate_reservation_action(request: HttpRequest, default_foreward_url: st
     js_string: str = ""
     r: GroupReservation = None
     u: Profile = get_current_user(request)
+    forward_url: str = default_foreward_url
+    if request.GET.get("redirect"):
+        forward_url = request.GET["redirect"]
+    if "srid" in request.GET:
+        if not request.GET.get("rid"):
+            return HttpResponseRedirect("/admin?error=missing%20primary%20reservation%20id")
+        srid: int = int(request.GET["srid"])
+        sr: SubReservation = None
+        if srid == 0:
+            sr = SubReservation()
+        else:
+            sr = SubReservation.objects.get(id=srid)
+        if request.GET.get("notes"):
+            sr.notes = request.GET["notes"]
+        else:
+            sr.notes = " "
+        sr.primary_reservation = GroupReservation.objects.get(id=int(request.GET["rid"]))
+        sr.save()
+        return HttpResponseRedirect("/admin/reservations/edit?rid=" + str(int(request.GET["rid"])) + "&srid=" + str(sr.id))
     if "rid" in request.GET:
         # update reservation
         r = GroupReservation.objects.get(id=int(request.GET["rid"]))
@@ -108,7 +132,7 @@ def manipulate_reservation_action(request: HttpRequest, default_foreward_url: st
         r.open = True
         r.pickupDate = datetime.datetime.now()
     else:
-        return HttpResponseRedirect("/admin?error=noyb")
+        return HttpResponseRedirect("/admin?error=Too%20Many%20reservations")
     if request.POST.get("notes"):
         r.notes = request.POST["notes"]
     if request.POST.get("contact"):
@@ -117,9 +141,6 @@ def manipulate_reservation_action(request: HttpRequest, default_foreward_url: st
         r.save()
     else:
         return HttpResponseRedirect("/admin?error=noyb")
-    forward_url: str = default_foreward_url
-    if request.GET.get("redirect"):
-        forward_url = request.GET["redirect"]
     response: HttpResponseRedirect = HttpResponseRedirect(forward_url + "?rid=" + str(r.id))
     return response
 

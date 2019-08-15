@@ -125,10 +125,14 @@ class GroupReservation(models.Model):
     submitted = models.BooleanField(default=False, help_text="This determines if a reservation is still"
                                                              " under construction or already submitted")
 
+class SubReservation(models.Model):
+    primary_reservation = models.ForeignKey(GroupReservation, on_delete=DO_NOTHING, null=False)
+    notes = models.CharField(max_length=15000)
 
 class ArticleRequested(models.Model):
     RID = models.ForeignKey(GroupReservation, on_delete=DO_NOTHING, null=True)
     AID = models.ForeignKey(Article, on_delete=DO_NOTHING, null=True)
+    SRID = models.ForeignKey(SubReservation, on_delete=DO_NOTHING, null=True)
     amount = models.SmallIntegerField()
     notes = models.CharField(max_length=15000)
 
