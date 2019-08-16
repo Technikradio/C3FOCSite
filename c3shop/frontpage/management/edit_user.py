@@ -1,4 +1,5 @@
 from django.http import HttpRequest, HttpResponseForbidden, HttpResponseBadRequest
+from django.utils.html import escape
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from . import page_skeleton, magic
@@ -127,9 +128,9 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
             mail = str(request.POST["email"])
             rights = int(request.POST["rights"])
             user: Profile = Profile.objects.get(pk=pid)
-            user.displayName = displayname
+            user.displayName = escape(displayname)
             user.dect = dect
-            user.notes = notes
+            user.notes = escape(notes)
             user.rights = rights
             user.number_of_allowed_reservations = int(request.POST["allowed_reservations"])
             if request.POST.get("active"):
@@ -140,7 +141,7 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
                 au.set_password(pw1)
             else:
                 logging.log(logging.INFO, "Failed to set password for: " + user.displayName)
-            au.email = mail
+            au.email = escape(mail)
             au.save()
             user.save()
         else:
@@ -155,15 +156,15 @@ def action_save_user(request: HttpRequest, default_forward_url: str = "/admin/us
             rights = int(request.POST["rights"])
             if not check_password_conformity(pw1, pw2):
                 recreate_form('password mismatch')
-            auth_user: User = User.objects.create_user(username=username, email=mail, password=pw1)
+            auth_user: User = User.objects.create_user(username=escape(username), email=escape(mail), password=pw1)
             auth_user.save()
             user: Profile = Profile()
             user.rights = rights
             user.number_of_allowed_reservations = int(request.POST["allowed_reservations"])
-            user.displayName = displayname
+            user.displayName = escape(displayname)
             user.authuser = auth_user
             user.dect = dect
-            user.notes = notes
+            user.notes = escape(notes)
             user.active = True
             user.save()
             pass

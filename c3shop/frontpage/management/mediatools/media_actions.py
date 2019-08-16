@@ -1,6 +1,7 @@
 from datetime import date, time
 from django.shortcuts import redirect
 from django.http import HttpRequest, HttpResponseBadRequest
+from django.utils.html import escape
 from frontpage.models import Profile, Media, MediaUpload
 from frontpage.management.magic import compile_markdown, get_current_user
 
@@ -52,12 +53,12 @@ def handle_file(u: Profile, headline: str, category: str, text: str, file):
     height *= IMAGE_SCALE
     cropped = original.resize((int(width), int(height)), PIL.Image.LANCZOS)
     cropped.save(low_res_file_name)
-    m.text = text
-    m.cachedText = compile_markdown(text)
-    m.category = category
+    m.text = escape(text)
+    m.cachedText = compile_markdown(escape(text))
+    m.category = escape(category)
     m.highResFile = "/" + high_res_file_name
     m.lowResFile = "/" + low_res_file_name
-    m.headline = headline
+    m.headline = escape(headline)
     m.save()
     mu: MediaUpload = MediaUpload()
     mu.UID = u

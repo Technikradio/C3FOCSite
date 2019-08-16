@@ -1,4 +1,5 @@
 from django.http import HttpRequest, HttpResponseRedirect
+from django.utils.html import escape
 # from django.shortcuts import redirect
 from ..models import GroupReservation, ArticleRequested, Article, ArticleGroup, SubReservation
 from .magic import get_current_user
@@ -40,7 +41,7 @@ def add_article_action(request: HttpRequest, default_foreward_url: str):
         # Actual adding of article
         aid: int = int(request.GET.get("article_id"))
         quantity: int = int(request.POST["quantity"])
-        notes: str = request.POST["notes"]
+        notes: str = escape(request.POST["notes"])
         ar = ArticleRequested()
         ar.AID = Article.objects.get(id=aid)
         ar.RID = current_reservation
@@ -65,7 +66,7 @@ def add_article_action(request: HttpRequest, default_foreward_url: str):
                 ar.amount = amount
                 if "srid" in request.GET:
                     ar.SRID = SubReservation.objects.get(id=int(request.GET["srid"]))
-                ar.notes = str(request.POST[str("notes_" + str(art.id))])
+                ar.notes = escape(str(request.POST[str("notes_" + str(art.id))]))
                 ar.save()
     if "srid" in request.GET:
         response = HttpResponseRedirect(forward_url + "?rid=" + str(current_reservation.id) + "&srid=" + request.GET["srid"])
@@ -116,7 +117,7 @@ def manipulate_reservation_action(request: HttpRequest, default_foreward_url: st
         else:
             sr = SubReservation.objects.get(id=srid)
         if request.POST.get("notes"):
-            sr.notes = request.POST["notes"]
+            sr.notes = escape(request.POST["notes"])
         else:
             sr.notes = " "
         sr.primary_reservation = GroupReservation.objects.get(id=int(request.GET["rid"]))
@@ -136,9 +137,9 @@ def manipulate_reservation_action(request: HttpRequest, default_foreward_url: st
     else:
         return HttpResponseRedirect("/admin?error=Too%20Many%20reservations")
     if request.POST.get("notes"):
-        r.notes = request.POST["notes"]
+        r.notes = escape(request.POST["notes"])
     if request.POST.get("contact"):
-        r.responsiblePerson = str(request.POST["contact"])
+        r.responsiblePerson = escape(str(request.POST["contact"]))
     if (r.createdByUser == u or o.rights > 1) and not r.submitted:
         r.save()
     else:
