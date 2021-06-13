@@ -1,5 +1,7 @@
 # C3FOCSite
-This is the repository for the C3FOC web site. Follow @c3foc on twitter
+This repository is archived due to us using the newer version avaiable
+[here](https://github.com/c3foc/hagrid). Please don't use this software anymore.
+This was the repository for the C3FOC web site. Follow @c3foc on twitter
 for upcoming news. The website is written for and using python3.6.
 
 ## required python version
